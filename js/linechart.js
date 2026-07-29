@@ -135,7 +135,14 @@ function renderLineChart(root, tooltipEl, opts) {
   }
 
   /* --- Etichete pe axa X, rărite ca să nu se suprapună -------------- */
-  const labelEvery = Math.max(1, Math.ceil(xValues.length / 8));
+  // Numărul de etichete care încap depinde de lățimea disponibilă, nu doar
+  // de un plafon fix — pe ecrane înguste, altfel etichetele se suprapun.
+  const xLabelStrings = xValues.map((xv) => (opts.xFormat ? opts.xFormat(xv) : String(xv)));
+  const maxLabelChars = Math.max(1, ...xLabelStrings.map((s) => s.length));
+  const estLabelWidth = maxLabelChars * 6.5 + 12;
+  const maxLabelsByWidth = Math.max(2, Math.floor(plotW / estLabelWidth));
+  const targetLabels = Math.min(8, maxLabelsByWidth);
+  const labelEvery = Math.max(1, Math.ceil(xValues.length / targetLabels));
   const lastIdx = xValues.length - 1;
   const lastRegularIdx = Math.floor(lastIdx / labelEvery) * labelEvery;
   // Dacă ultima etichetă "regulată" e prea aproape de capăt, o sărim.
