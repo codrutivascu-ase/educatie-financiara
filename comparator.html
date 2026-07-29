@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chirie vs. cumpărare — Educație Financiară</title>
+  <meta name="description" content="Compară averea netă pe termen lung: cumperi o locuință cu credit sau stai în chirie și investești diferența la bursă." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2a78d6" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Sari la conținut</a>
+  <header class="site-header">
+    <nav class="site-nav" id="site-nav" aria-label="Navigație principală"></nav>
+  </header>
+
+  <main id="main">
+    <h1>Chirie vs. cumpărare</h1>
+    <p class="subtitle">Compară averea netă pe termen lung dintre a cumpăra o locuință cu credit și a sta în chirie, investind diferența.</p>
+
+    <details class="explainer">
+      <summary>Cum funcționează comparația</summary>
+      <p>„Chiria înseamnă bani aruncați” este cea mai frecventă simplificare din discuțiile despre locuință. Realitatea e că și cumpărarea are costuri care nu se recuperează: <strong>dobânda</strong> plătită băncii, <strong>întreținerea</strong>, taxele notariale și impozitele.</p>
+      <p>Ca să fie corectă, comparația pune două persoane cu <em>exact același capital de start și aceeași disponibilitate lunară</em>:</p>
+      <ul>
+        <li><strong>Cumpărătorul</strong> dă avansul pe casă și plătește rata plus întreținerea.</li>
+        <li><strong>Chiriașul</strong> investește avansul la bursă și plătește chiria.</li>
+      </ul>
+      <p>În fiecare lună, cel care plătește mai puțin investește diferența. Fără această regulă, comparația ar arăta doar cine are cheltuiala lunară mai mică — nu ce se întâmplă cu banii economisiți, care este chiar întrebarea importantă.</p>
+    </details>
+
+    <div class="card">
+      <h2>Cumpărare</h2>
+      <div class="field-grid">
+        <div class="field">
+          <label for="pret">Preț locuință (lei)</label>
+          <input type="number" id="pret" min="0" step="5000" value="400000" />
+        </div>
+        <div class="field">
+          <label for="avans">Avans disponibil (lei)</label>
+          <input type="number" id="avans" min="0" step="5000" value="80000" aria-describedby="avans-avertisment" />
+          <p class="field-hint">Băncile cer de obicei minimum 15%.</p>
+          <p class="field-hint warn-inline hidden" id="avans-avertisment" role="status"></p>
+        </div>
+        <div class="field">
+          <label for="dobanda-credit">Dobândă credit (%/an)</label>
+          <input type="number" id="dobanda-credit" min="0" step="0.1" value="6.5" />
+        </div>
+        <div class="field">
+          <label for="perioada-credit">Perioadă credit (ani)</label>
+          <input type="number" id="perioada-credit" min="1" max="35" step="1" value="25" />
+        </div>
+        <div class="field">
+          <label for="crestere-imobil">Creștere anuală preț imobil (%)</label>
+          <input type="number" id="crestere-imobil" min="-10" max="20" step="0.5" value="3" />
+          <p class="field-hint">Pe termen lung, prețurile cresc aproximativ cu inflația.</p>
+        </div>
+        <div class="field">
+          <label for="intretinere">Întreținere anuală (% din valoare)</label>
+          <input type="number" id="intretinere" min="0" max="10" step="0.1" value="1" />
+          <p class="field-hint">Reparații, impozit, asigurare. Uzual 1%/an.</p>
+        </div>
+        <div class="field">
+          <label for="cost-achizitie">Costuri de achiziție (% din preț)</label>
+          <input type="number" id="cost-achizitie" min="0" max="15" step="0.1" value="2" />
+          <p class="field-hint">Notar, intabulare, comision agenție — plătite o singură dată.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Chirie și investiții</h2>
+      <div class="field-grid">
+        <div class="field">
+          <label for="chirie">Chirie lunară curentă (lei)</label>
+          <input type="number" id="chirie" min="0" step="50" value="1800" />
+          <p class="field-hint">Pentru o locuință comparabilă cu cea cumpărată.</p>
+        </div>
+        <div class="field">
+          <label for="crestere-chirie">Creștere anuală chirie (%)</label>
+          <input type="number" id="crestere-chirie" min="-10" max="20" step="0.5" value="4" />
+        </div>
+        <div class="field">
+          <label for="randament-bursa">Randament anual la bursă (%)</label>
+          <input type="number" id="randament-bursa" min="-10" max="20" step="0.5" value="7" />
+          <p class="field-hint">Media istorică a piețelor dezvoltate a fost ~7%/an peste inflație, dar cu ani puternic negativi pe parcurs.</p>
+        </div>
+        <div class="field">
+          <label for="orizont">Orizont de comparație (ani)</label>
+          <input type="number" id="orizont" min="1" max="40" step="1" value="25" />
+        </div>
+      </div>
+      <div class="button-row">
+        <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Rezultat</h2>
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Credit necesar</div>
+          <div class="value" id="stat-credit">0 lei</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Rată lunară</div>
+          <div class="value" id="stat-rata-lunara">0 lei</div>
+        </div>
+        <div class="stat-tile with-id" id="tile-cumparare">
+          <div class="label">Avere netă — Cumpărare</div>
+          <div class="value" id="stat-avere-cumparare">0 lei</div>
+        </div>
+        <div class="stat-tile with-id" id="tile-chirie">
+          <div class="label">Avere netă — Chirie + bursă</div>
+          <div class="value" id="stat-avere-chirie">0 lei</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Diferență</div>
+          <div class="value" id="stat-diferenta">0 lei</div>
+          <div class="label" style="margin-top:4px">în favoarea: <span id="stat-castigator">—</span></div>
+        </div>
+      </div>
+
+      <p id="insight" class="insight"></p>
+
+      <div class="view-toggle" role="group" aria-label="Mod de afișare">
+        <button id="btn-view-chart" class="primary" type="button">Grafic</button>
+        <button id="btn-view-table" type="button">Tabel</button>
+        <button id="btn-export-csv" type="button" class="ghost">Descarcă CSV</button>
+      </div>
+
+      <div id="chart-view" class="line-chart-wrap">
+        <div id="chart"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div id="table-view" class="hidden table-scroll">
+        <table class="data-table">
+          <caption class="sr-only">Evoluție an cu an</caption>
+          <thead>
+            <tr>
+              <th scope="col">An</th>
+              <th scope="col">Valoare imobil</th>
+              <th scope="col">Sold credit</th>
+              <th scope="col">Investiții cumpărător</th>
+              <th scope="col">Avere netă cumpărare</th>
+              <th scope="col">Avere netă chirie+bursă</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Ce nu spune calculul</h2>
+      <ul class="notes-list">
+        <li><strong>Randamentele nu sunt garantate.</strong> Simularea folosește un randament constant; în realitate bursa poate scădea cu 30-50% în anii de criză, exact când ai putea avea nevoie de bani.</li>
+        <li><strong>Disciplina contează.</strong> Varianta cu chirie funcționează doar dacă diferența chiar este investită lună de lună. Rata la bancă este o economisire forțată; contul de investiții nu este.</li>
+        <li><strong>Impozitele nu sunt incluse</strong> — nici pe câștigul de capital la bursă, nici cele pe tranzacția imobiliară la revânzare.</li>
+        <li><strong>Flexibilitate vs. stabilitate.</strong> Chiria îți permite să te muți repede pentru un job mai bun; proprietatea îți dă siguranța că nu ești dat afară și că rata nu crește (la dobândă fixă).</li>
+        <li><strong>Costul emoțional</strong> nu apare în niciun tabel, dar este real pentru majoritatea oamenilor.</li>
+      </ul>
+    </div>
+  </main>
+
+  <div id="tooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <p>Datele introduse rămân salvate doar în browserul tău (localStorage) și nu sunt trimise nicăieri.</p>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/finance.js"></script>
+  <script src="js/linechart.js"></script>
+  <script src="js/comparator.js"></script>
+  <script>renderNav("comparator.html");</script>
+</body>
+</html>

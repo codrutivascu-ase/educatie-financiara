@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Glosar — Educație Financiară</title>
+  <meta name="description" content="Termenii financiari care apar în aplicație, explicați pe scurt și în context: DAE, ETF, volatilitate, randament real, piloni de pensie." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2a78d6" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Sari la conținut</a>
+  <header class="site-header">
+    <nav class="site-nav" id="site-nav" aria-label="Navigație principală"></nav>
+  </header>
+
+  <main id="main">
+    <h1>Glosar</h1>
+    <p class="subtitle">Termenii care apar în aplicație, explicați în context. Nu definiții de dicționar, ci ce trebuie să știi ca să iei o decizie.</p>
+
+    <div class="card">
+      <div class="field">
+        <label for="cauta">Caută un termen</label>
+        <input type="text" id="cauta" placeholder="ex. DAE, volatilitate, Pilon II" autocomplete="off" />
+      </div>
+      <div class="chip-row" id="filtre" role="group" aria-label="Filtrează pe categorii"></div>
+      <p class="field-hint" id="rezultate-info" aria-live="polite"></p>
+    </div>
+
+    <div id="glosar-mount"></div>
+
+    <div class="card">
+      <h2>Cum e organizat</h2>
+      <ul class="notes-list">
+        <li><strong>Fiecare termen are două niveluri.</strong> O propoziție care răspunde imediat, urmată de contextul care contează atunci când chiar trebuie să decizi ceva.</li>
+        <li><strong>Termenii sunt legați între ei.</strong> „Vezi și” duce la conceptele care nu se înțeleg separat — DAE fără comision, diversificare fără risc specific.</li>
+        <li><strong>Cifrele sunt orientative.</strong> Cotele de contribuții, plafoanele și pragurile se schimbă prin lege. Mecanismele din spate nu.</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Proiect educațional — datele introduse rămân doar în browserul tău, nu sunt trimise nicăieri.</p>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/glosar-data.js"></script>
+  <script src="js/glosar.js"></script>
+  <script>renderNav("glosar.html");</script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Investiții — Educație Financiară</title>
+  <meta name="description" content="Simulator de dobândă compusă: vezi cum crește o sumă economisită lunar la diferite randamente și orizonturi de timp." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2a78d6" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Sari la conținut</a>
+  <header class="site-header">
+    <nav class="site-nav" id="site-nav" aria-label="Navigație principală"></nav>
+  </header>
+
+  <main id="main">
+    <h1>Investiții și dobândă compusă</h1>
+    <p class="subtitle">Vezi cum crește în timp o sumă economisită lunar, în funcție de randamentul ales.</p>
+
+    <details class="explainer">
+      <summary>Ce este dobânda compusă și de ce contează timpul</summary>
+      <p>Dobânda compusă înseamnă că randamentul se aplică nu doar banilor depuși de tine, ci și randamentului acumulat anterior. Câștigul de anul trecut începe, la rândul lui, să producă câștig.</p>
+      <p>Efectul este aproape invizibil în primii ani și devine dominant spre final — de aceea graficul nu este o linie dreaptă, ci se curbează în sus. Consecința practică: <strong>numărul de ani contează mai mult decât suma lunară</strong>. Cine începe la 25 de ani cu 300 lei/lună ajunge de obicei mai departe decât cine începe la 40 cu 600 lei/lună.</p>
+      <p class="warn">Atenție: randamentele trecute nu garantează randamente viitoare. Bursa poate scădea cu 30-50% în anii de criză, iar o simulare cu randament constant arată o traiectorie mult mai lină decât realitatea.</p>
+    </details>
+
+    <div class="card">
+      <h2>Parametri</h2>
+      <div class="field-grid">
+        <div class="field">
+          <label for="suma-initiala">Sumă inițială (lei)</label>
+          <input type="number" id="suma-initiala" min="0" step="100" value="0" />
+        </div>
+        <div class="field">
+          <label for="contributie-lunara">Contribuție lunară (lei)</label>
+          <input type="number" id="contributie-lunara" min="0" step="50" value="500" />
+        </div>
+        <div class="field">
+          <label for="orizont">Orizont de timp (ani)</label>
+          <input type="number" id="orizont" min="1" max="40" step="1" value="10" />
+        </div>
+        <div class="field">
+          <label for="inflatie">Inflație anuală estimată (%)</label>
+          <input type="number" id="inflatie" min="0" max="20" step="0.1" value="4" />
+          <p class="field-hint">Se folosește pentru a arăta cât valorează suma finală în puterea de cumpărare de azi.</p>
+        </div>
+      </div>
+      <div id="prefill-slot"></div>
+    </div>
+
+    <div class="card">
+      <h2>Scenarii de randament anual</h2>
+      <div id="scenario-rows"></div>
+      <p class="insight">Valorile implicite sunt orientative: depozitele bancare se apropie de dobânda de politică monetară, un fond index urmărește o piață întreagă (media istorică pe termen lung a fost în jur de 7%/an peste inflație), iar acțiunile individuale pot da mai mult, dar cu risc semnificativ mai mare, inclusiv de pierdere totală. <strong>Nu sunt recomandări de investiție.</strong></p>
+      <div class="button-row">
+        <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Rezultat</h2>
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Bani depuși de tine</div>
+          <div class="value" id="stat-depus">0 lei</div>
+        </div>
+      </div>
+      <div class="stat-row" id="scenario-stats"></div>
+
+      <p id="insight" class="insight"></p>
+
+      <p class="field-hint">Linia punctată arată cât ai depus tu, an cu an — crește în linie dreaptă, pentru că depui aceeași sumă în fiecare lună. Distanța dintre ea și celelalte linii, la orice an, este exact câștigul acumulat până atunci.</p>
+
+      <div class="view-toggle" role="group" aria-label="Mod de afișare">
+        <button id="btn-view-chart" class="primary" type="button">Grafic</button>
+        <button id="btn-view-table" type="button">Tabel</button>
+        <button id="btn-export-csv" type="button" class="ghost">Descarcă CSV</button>
+      </div>
+
+      <div id="chart-view" class="line-chart-wrap">
+        <div id="chart"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div id="table-view" class="hidden table-scroll">
+        <table class="data-table">
+          <caption class="sr-only">Evoluția soldului an cu an</caption>
+          <thead><tr id="table-head"></tr></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cum arată același plan cu randament variabil</h2>
+      <p class="field-hint">Simulările de mai sus folosesc un randament constant. Realitatea nu funcționează așa: bursa are ani de +25% și ani de −35%, iar ordinea în care apar contează. Butonul de mai jos rulează 500 de simulări cu randamente extrase aleator și arată plaja de rezultate posibile.</p>
+
+      <div class="field-grid">
+        <div class="field">
+          <label for="mc-randament">Randament mediu anual (%)</label>
+          <input type="number" id="mc-randament" min="-5" max="20" step="0.5" value="7" />
+        </div>
+        <div class="field">
+          <label for="mc-volatilitate">Volatilitate anuală (%)</label>
+          <input type="number" id="mc-volatilitate" min="0" max="50" step="1" value="16" />
+          <p class="field-hint">Abaterea standard a randamentelor. Pentru un indice larg de acțiuni, valorile istorice sunt 15-20%.</p>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button id="btn-monte-carlo" type="button" class="primary">Rulează simularea</button>
+      </div>
+
+      <div id="mc-results" class="hidden">
+        <div class="stat-row">
+          <div class="stat-tile">
+            <div class="label">Scenariu pesimist (percentila 10)</div>
+            <div class="value" id="mc-p10">—</div>
+            <div class="label" style="margin-top:4px">1 din 10 simulări a ieșit sub această valoare</div>
+          </div>
+          <div class="stat-tile">
+            <div class="label">Scenariu median</div>
+            <div class="value" id="mc-p50">—</div>
+            <div class="label" style="margin-top:4px">jumătate din simulări au ieșit peste</div>
+          </div>
+          <div class="stat-tile">
+            <div class="label">Scenariu optimist (percentila 90)</div>
+            <div class="value" id="mc-p90">—</div>
+            <div class="label" style="margin-top:4px">1 din 10 simulări a depășit această valoare</div>
+          </div>
+          <div class="stat-tile">
+            <div class="label">Șansa de a ieși în pierdere</div>
+            <div class="value" id="mc-pierdere">—</div>
+            <div class="label" style="margin-top:4px">sold final sub totalul depus</div>
+          </div>
+        </div>
+
+        <p id="mc-insight" class="insight"></p>
+
+        <div class="line-chart-wrap">
+          <div id="mc-chart"></div>
+          <div class="legend" id="mc-legend"></div>
+        </div>
+
+        <p class="insight">Distanța dintre linia pesimistă și cea optimistă este incertitudinea reală a planului. Cu cât orizontul este mai lung, cu atât plaja se lărgește în valoare absolută — dar probabilitatea de a termina sub suma depusă scade. Acesta este, în esență, argumentul pentru orizonturi lungi.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Trei lucruri de reținut</h2>
+      <ul class="notes-list">
+        <li><strong>Costurile contează enorm.</strong> Un comision anual de 2% în loc de 0,2% poate consuma, pe 30 de ani, un sfert din câștigul final. Verifică întotdeauna comisionul de administrare.</li>
+        <li><strong>Regularitatea bate sincronizarea.</strong> Investind aceeași sumă lunar, cumperi automat mai multe unități când prețurile sunt mici. Încercarea de a „prinde momentul potrivit” eșuează pentru majoritatea investitorilor.</li>
+        <li><strong>Fondul de urgență vine primul.</strong> Investițiile presupun că nu ai nevoie de bani pe termen scurt. Fără o rezervă de 3-6 luni de cheltuieli, riști să vinzi exact în cel mai prost moment.</li>
+      </ul>
+    </div>
+  </main>
+
+  <div id="tooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <p>Datele introduse rămân salvate doar în browserul tău (localStorage) și nu sunt trimise nicăieri.</p>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/finance.js"></script>
+  <script src="js/linechart.js"></script>
+  <script src="js/investitii.js"></script>
+  <script>renderNav("investitii.html");</script>
+</body>
+</html>

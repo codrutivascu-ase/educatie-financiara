@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Educație Financiară">
+  <rect width="512" height="512" rx="96" fill="#2a78d6"/>
+  <!-- Curba de creștere compusă: mesajul central al aplicației. -->
+  <path d="M96 384 C 200 384, 280 320, 416 144"
+        fill="none" stroke="#ffffff" stroke-width="30"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M330 128 L 420 128 L 420 218"
+        fill="none" stroke="#ffffff" stroke-width="30"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="96" cy="384" r="22" fill="#ffffff"/>
+</svg>

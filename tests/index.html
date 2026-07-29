@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teste — Educație Financiară</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    /* Stiluri proprii paginii de teste — nu fac parte din aplicație. */
+    .suite { margin-bottom: 26px; }
+    .suite h2 { margin-bottom: 10px; }
+
+    .test {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 8px;
+      padding: 6px 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    .test .icon { font-weight: 700; text-align: center; }
+    .test .icon.pass { color: var(--good-text); }
+    .test .icon.fail { color: var(--critical-text); }
+    .test.failed .name { color: var(--text-primary); font-weight: 600; }
+
+    .test .reason {
+      grid-column: 2;
+      margin-top: 4px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: var(--surface-sunken);
+      border-left: 3px solid var(--critical-text);
+      font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      font-size: 0.82rem;
+      color: var(--critical-text);
+    }
+
+    .summary {
+      font-size: 1.15rem;
+      font-weight: 700;
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface-sunken);
+    }
+    .summary.pass { color: var(--good-text); border-left: 3px solid var(--good-text); }
+    .summary.fail { color: var(--critical-text); border-left: 3px solid var(--critical-text); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="site-nav">
+      <a class="brand" href="../index.html">Educație Financiară</a>
+      <div class="nav-links">
+        <a class="nav-link active" href="index.html">Teste</a>
+        <a class="nav-link" href="../index.html">Înapoi la aplicație</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <h1>Teste</h1>
+    <p class="subtitle">Verifică formulele din <code>js/finance.js</code> (rate de credit, amortizare, strategii de achitare a datoriilor, salariu brut-net, pensii, inflație, Monte Carlo) și modelul din <code>js/buget-model.js</code> (agregări, migrare, repere). Se rulează în browser, fără instalare.</p>
+
+    <div class="card">
+      <div id="summary" class="summary">Se rulează…</div>
+    </div>
+
+    <div class="card">
+      <div id="results"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Pagină de dezvoltare — nu face parte din aplicația pentru utilizatori.</p>
+  </footer>
+
+  <!-- Ordinea contează: întâi codul testat, apoi rulatorul, apoi testele. -->
+  <script src="../js/finance.js"></script>
+  <script src="../js/buget-model.js"></script>
+  <script src="test-runner.js"></script>
+  <script src="finance.test.js"></script>
+  <script src="buget.test.js"></script>
+  <script>runTests(document.getElementById("results"));</script>
+</body>
+</html>

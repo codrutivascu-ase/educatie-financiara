@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cost de oportunitate — Educație Financiară</title>
+  <meta name="description" content="Vezi ce ar fi devenit o cheltuială dacă ar fi fost investită: costul real al unei achiziții nu este prețul ei." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2a78d6" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Sari la conținut</a>
+  <header class="site-header">
+    <nav class="site-nav" id="site-nav" aria-label="Navigație principală"></nav>
+  </header>
+
+  <main id="main">
+    <h1>Cost de oportunitate</h1>
+    <p class="subtitle">Costul real al unei cheltuieli nu este prețul ei, ci ce ar fi devenit banii dacă rămâneau investiți. Aici vezi diferența.</p>
+
+    <details class="explainer">
+      <summary>Ce este costul de oportunitate și de ce nu e o pledoarie pentru zgârcenie</summary>
+      <p>Fiecare leu cheltuit are două prețuri: cel de pe etichetă și cel al alternativei la care renunți. Al doilea nu apare nicăieri, dar există.</p>
+      <p>Un telefon de 5.000 lei nu costă 5.000 lei dacă alternativa era să rămână investiți 20 de ani la 7% — costă aproximativ 19.300 lei în bani de peste 20 de ani, sau în jur de 8.900 lei în puterea de cumpărare de azi.</p>
+      <p>Scopul nu este să nu cumperi nimic. Este să vezi <em>prețul întreg</em> înainte de a decide. Unele lucruri merită și acel preț; multe altele, întrebate așa, nu mai par la fel de necesare. Diferența dintre cele două categorii este exact ce încearcă să arate pagina asta.</p>
+      <p class="warn">Cheltuielile recurente sunt cazul serios. O achiziție unică se compară cu o sumă; un abonament lunar se compară cu un plan de investiții întreg.</p>
+    </details>
+
+    <div class="card">
+      <h2>Ce cheltuială analizezi</h2>
+
+      <div class="chip-row" role="group" aria-label="Exemple frecvente">
+        <button type="button" class="chip" data-suma="15" data-tip="zilnic">Cafea la birou — 15 lei/zi lucrătoare</button>
+        <button type="button" class="chip" data-suma="30" data-tip="zilnic_calendar">Un pachet de țigări — 30 lei/zi</button>
+        <button type="button" class="chip" data-suma="40" data-tip="lunar">Un abonament — 40 lei/lună</button>
+        <button type="button" class="chip" data-suma="250" data-tip="lunar">Livrări de mâncare — 250 lei/lună</button>
+        <button type="button" class="chip" data-suma="5000" data-tip="unic">Telefon nou — 5.000 lei</button>
+        <button type="button" class="chip" data-suma="15000" data-tip="unic">Vacanță — 15.000 lei</button>
+        <button type="button" class="chip" data-suma="1500" data-tip="lunar">Rată la mașină — 1.500 lei/lună</button>
+      </div>
+
+      <div class="field-grid" style="margin-top:18px">
+        <div class="field">
+          <label for="suma">Sumă (lei)</label>
+          <input type="number" id="suma" min="0" step="10" value="250" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="frecventa">Cât de des</label>
+          <select id="frecventa">
+            <option value="unic">O singură dată</option>
+            <option value="zilnic_calendar">În fiecare zi</option>
+            <option value="zilnic">În fiecare zi lucrătoare</option>
+            <option value="lunar" selected>În fiecare lună</option>
+            <option value="anual">O dată pe an</option>
+          </select>
+          <p class="field-hint">„În fiecare zi” înseamnă 365 de zile pe an; „zi lucrătoare” înseamnă 21 pe lună — potrivit pentru cheltuielile care apar doar la birou.</p>
+        </div>
+        <div class="field">
+          <label for="orizont">Orizont (ani)</label>
+          <input type="number" id="orizont" min="1" max="40" step="1" value="20" />
+        </div>
+        <div class="field">
+          <label for="randament">Randament anual presupus (%)</label>
+          <input type="number" id="randament" min="0" max="20" step="0.5" value="7" />
+          <p class="field-hint">7% este media istorică pe termen lung a piețelor dezvoltate, peste inflație.</p>
+        </div>
+        <div class="field">
+          <label for="inflatie">Inflație anuală (%)</label>
+          <input type="number" id="inflatie" min="0" max="30" step="0.1" value="4" />
+          <p class="field-hint">Folosită ca să exprimăm rezultatul și în puterea de cumpărare de azi.</p>
+        </div>
+      </div>
+
+      <div id="prefill-slot"></div>
+      <div class="button-row">
+        <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Ce ar fi devenit</h2>
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Total cheltuit</div>
+          <div class="value" id="stat-cheltuit">—</div>
+          <div class="label" style="margin-top:4px" id="stat-cheltuit-detaliu"></div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Valoare dacă era investit</div>
+          <div class="value" id="stat-investit">—</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Costul de oportunitate</div>
+          <div class="value critical" id="stat-cost">—</div>
+          <div class="label" style="margin-top:4px">randamentul la care ai renunțat</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">În puterea de cumpărare de azi</div>
+          <div class="value" id="stat-real">—</div>
+        </div>
+      </div>
+
+      <p id="insight" class="insight"></p>
+
+      <div class="view-toggle" role="group" aria-label="Mod de afișare">
+        <button id="btn-view-chart" class="primary" type="button">Grafic</button>
+        <button id="btn-view-table" type="button">Tabel</button>
+        <button id="btn-export-csv" type="button" class="ghost">Descarcă CSV</button>
+      </div>
+
+      <div id="chart-view" class="line-chart-wrap">
+        <div id="chart"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div id="table-view" class="hidden table-scroll">
+        <table class="data-table">
+          <caption class="sr-only">Evoluție an cu an</caption>
+          <thead>
+            <tr><th scope="col">An</th><th scope="col">Total cheltuit</th><th scope="col">Dacă era investit</th><th scope="col">Diferență</th></tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cum se folosește onest acest calcul</h2>
+      <ul class="notes-list">
+        <li><strong>Nu orice cheltuială are un cost de oportunitate real.</strong> Dacă banii oricum nu ar fi fost investiți, ci cheltuiți altfel, comparația este teoretică. Ea contează pentru banii pe care chiar i-ai fi pus deoparte.</li>
+        <li><strong>Cheltuielile recurente domină.</strong> O achiziție unică de 5.000 lei contează mult mai puțin decât 250 lei pe lună timp de 20 de ani. Verifică ambele variante ca să vezi ordinul de mărime.</li>
+        <li><strong>Randamentul presupus nu este garantat.</strong> Cifra finală este un scenariu, nu o promisiune. Vezi în <a href="investitii.html">simulatorul de investiții</a> cum arată același calcul cu randament variabil.</li>
+        <li><strong>Calitatea vieții contează.</strong> O vacanță la 30 de ani nu este echivalentă cu aceeași sumă la 60. Costul de oportunitate este un argument, nu un verdict.</li>
+      </ul>
+    </div>
+  </main>
+
+  <div id="tooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <p>Datele introduse rămân salvate doar în browserul tău (localStorage) și nu sunt trimise nicăieri.</p>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/finance.js"></script>
+  <script src="js/linechart.js"></script>
+  <script src="js/oportunitate.js"></script>
+  <script>renderNav("oportunitate.html");</script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buget lunar — Educație Financiară</title>
+  <meta name="description" content="Buget lunar complet: mai multe venituri, cheltuieli pe categorii cu frecvență, plan față de realitate, evoluție pe luni și regula 50/30/20." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2a78d6" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Sari la conținut</a>
+  <header class="site-header">
+    <nav class="site-nav" id="site-nav" aria-label="Navigație principală"></nav>
+  </header>
+
+  <main id="main">
+    <h1>Buget lunar</h1>
+    <p class="subtitle">Planifică unde merge fiecare leu, notează ce s-a întâmplat de fapt și vezi cum evoluează de la o lună la alta.</p>
+
+    <details class="explainer">
+      <summary>De ce un buget scris funcționează, deși pare birocratic</summary>
+      <p>Majoritatea oamenilor își estimează cheltuielile din memorie și se înșală sistematic într-o singură direcție: în minus. Cheltuielile mici și regulate — cafea, livrări, abonamente — sunt cel mai des subestimate, pentru că fiecare în parte pare nesemnificativă.</p>
+      <p>Un buget scris nu îți spune să nu cheltuiești. Îți arată <em>compromisul</em>: fiecare leu are o singură destinație, iar dacă îl pui într-un loc, nu mai e disponibil în altul.</p>
+      <p>Trei lucruri fac diferența față de o simplă listă de cheltuieli:</p>
+      <ul>
+        <li><strong>Economiile sunt o categorie, nu o rămășiță.</strong> Dacă economisești ce rămâne la final de lună, de obicei nu rămâne nimic. Trece-le ca linie separată, la început.</li>
+        <li><strong>Cheltuielile rare se împart la lună.</strong> O asigurare de 1.200 lei pe an costă 100 lei pe lună, chiar dacă banii pleacă o singură dată. Altfel bugetul pare echilibrat unsprezece luni și se prăbușește în a douăsprezecea.</li>
+        <li><strong>Planul se compară cu realitatea.</strong> Un buget pe care nu îl verifici este o listă de dorințe. Diferența dintre cele două coloane este singura informație care schimbă ceva.</li>
+      </ul>
+    </details>
+
+    <!-- Bara de context: luna activă și acțiunile asupra ei. -->
+    <div class="card month-bar">
+      <div class="month-nav">
+        <button id="btn-luna-prec" type="button" class="ghost" aria-label="Luna anterioară">←</button>
+        <div class="month-current">
+          <label for="select-luna" class="sr-only">Luna afișată</label>
+          <select id="select-luna"></select>
+          <span class="month-meta" id="month-meta"></span>
+        </div>
+        <button id="btn-luna-urm" type="button" class="ghost" aria-label="Luna următoare">→</button>
+      </div>
+      <div class="month-actions">
+        <button id="btn-luna-noua" type="button">+ Lună nouă</button>
+        <button id="btn-sterge-luna" type="button" class="ghost danger">Șterge luna</button>
+      </div>
+    </div>
+
+    <!-- Apare doar când bugetul este gol, ca punct de plecare. -->
+    <div class="card hidden" id="sabloane-card">
+      <h2>Pornește de la un șablon</h2>
+      <p class="field-hint">Alege situația cea mai apropiată de a ta și modifică de acolo. E mai rapid decât să scrii categoriile de la zero, iar sumele îți dau un reper despre ce e obișnuit.</p>
+      <div class="template-grid" id="sabloane"></div>
+    </div>
+
+    <div class="card">
+      <h2>Venituri</h2>
+      <p class="field-hint">Adaugă fiecare sursă separat. Pentru veniturile care variază de la o lună la alta, folosește media ultimelor 3-6 luni și marchează-le ca variabile — bugetul te avertizează dacă depinzi prea mult de ele.</p>
+
+      <div class="income-header">
+        <span>Sursă</span><span>Tip</span><span>Sumă/lună</span><span></span>
+      </div>
+      <div id="income-rows"></div>
+
+      <div class="button-row">
+        <button id="btn-adauga-venit" type="button">+ Adaugă sursă de venit</button>
+        <a class="button-link" href="salariu.html">Nu-ți știi netul? Calculează-l →</a>
+      </div>
+      <p id="venit-variabil-note" class="insight hidden"></p>
+    </div>
+
+    <div class="card">
+      <h2>Cheltuieli și economii</h2>
+      <p class="field-hint">
+        Marchează fiecare linie ca <strong>nevoie</strong> (chirie, mâncare, transport la muncă),
+        <strong>dorință</strong> (ieșiri, abonamente opționale) sau <strong>economii</strong>
+        (fond de urgență, investiții). Coloana <strong>Plan</strong> este cât îți propui;
+        <strong>Real</strong> este cât ai cheltuit efectiv — o completezi pe parcursul lunii.
+      </p>
+
+      <div class="expense-header">
+        <span></span>
+        <span>Categorie</span>
+        <span>Grupă</span>
+        <span>Frecvență</span>
+        <span>Plan</span>
+        <span>Real</span>
+        <span></span>
+      </div>
+      <div id="expense-rows"></div>
+
+      <div class="button-row">
+        <button id="btn-adauga-cheltuiala" type="button">+ Adaugă categorie</button>
+        <button id="btn-copiaza-plan" type="button" class="ghost">Copiază planul în „Real”</button>
+      </div>
+      <p class="field-hint" id="frecventa-note"></p>
+    </div>
+
+    <div class="card">
+      <h2>Rezultat</h2>
+      <div class="view-toggle" role="group" aria-label="Ce se afișează">
+        <button id="btn-camp-plan" class="primary" type="button">Plan</button>
+        <button id="btn-camp-real" type="button">Realizat</button>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Venit total</div>
+          <div class="value" id="stat-venit">0 lei</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Cheltuieli curente</div>
+          <div class="value" id="stat-cheltuieli">0 lei</div>
+          <div class="label" style="margin-top:4px">nevoi + dorințe</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Economii alocate</div>
+          <div class="value" id="stat-economii">0 lei</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Nealocat</div>
+          <div class="value" id="stat-nealocat">0 lei</div>
+          <div class="label" style="margin-top:4px">venit fără destinație</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Rată de economisire</div>
+          <div class="value" id="stat-rata">0%</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Fond de urgență (3 luni)</div>
+          <div class="value" id="stat-fond">—</div>
+          <div class="label" style="margin-top:4px">timp necesar la ritmul actual</div>
+        </div>
+      </div>
+
+      <p id="insight" class="insight"></p>
+
+      <h3>Unde merge fiecare leu</h3>
+      <p class="field-hint">Include și economiile: sunt o destinație a venitului ca oricare alta, iar asta este chiar ideea unui buget — fiecare leu are un singur loc unde se duce.</p>
+      <div class="view-toggle" role="group" aria-label="Mod de afișare">
+        <button id="btn-view-chart" class="primary" type="button">Grafic</button>
+        <button id="btn-view-table" type="button">Tabel</button>
+        <button id="btn-export-csv" type="button" class="ghost">Descarcă CSV</button>
+      </div>
+
+      <div id="chart-view" class="bar-chart-wrap">
+        <div class="stacked-bar" id="stacked-bar"></div>
+        <div class="legend" id="legend"></div>
+        <p class="field-hint" id="altele-note"></p>
+      </div>
+
+      <div id="table-view" class="hidden table-scroll">
+        <table class="data-table">
+          <caption class="sr-only">Repartiția venitului pe categorii</caption>
+          <thead>
+            <tr>
+              <th scope="col">Categorie</th><th scope="col">Grupă</th><th scope="col">Frecvență</th>
+              <th scope="col">Plan/lună</th><th scope="col">Real</th><th scope="col">% din total</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Regula 50/30/20</h2>
+      <p class="field-hint">Un reper de orientare popularizat de Elizabeth Warren: aproximativ 50% din venitul net pentru nevoi, 30% pentru dorințe și 20% pentru economii. Liniuța verticală de pe fiecare bară marchează ținta.</p>
+      <div id="rule-bars"></div>
+      <p class="insight">Este un punct de plecare, nu o regulă strictă. În orașele cu chirii mari, categoria „nevoi” depășește frecvent 50%, iar atunci compromisul se face pe „dorințe”, nu pe economii.</p>
+    </div>
+
+    <div class="card" id="abateri-card">
+      <h2>Plan față de realitate</h2>
+      <p class="field-hint" id="abateri-hint">Categoriile ordonate după cât de mult s-au abătut de la plan. Abaterile mari, în orice direcție, arată unde planul nu corespunde vieții reale.</p>
+      <div id="abateri-lista"></div>
+    </div>
+
+    <div class="card" id="repere-card">
+      <h2>Repere pe categorii</h2>
+      <p class="field-hint">Intervale în care se încadrează de obicei bugetele echilibrate, ca procent din venitul net. Nu sunt norme — depășirea unuia înseamnă doar că altceva trebuie să fie sub reper.</p>
+      <div id="repere-lista"></div>
+    </div>
+
+    <div class="card" id="evolutie-card">
+      <h2>Evoluție pe luni</h2>
+      <p class="field-hint" id="evolutie-hint">Cum s-au mișcat venitul, cheltuielile și economiile de la o lună la alta. Tendința contează mai mult decât orice lună luată separat.</p>
+
+      <div class="stat-row" id="evolutie-stats"></div>
+
+      <div class="view-toggle" role="group" aria-label="Mod de afișare pentru evoluție">
+        <button id="btn-evo-chart" class="primary" type="button">Grafic</button>
+        <button id="btn-evo-table" type="button">Tabel</button>
+      </div>
+
+      <div id="evo-chart-view" class="line-chart-wrap">
+        <div id="evo-chart"></div>
+        <div class="legend" id="evo-legend"></div>
+      </div>
+
+      <div id="evo-table-view" class="hidden table-scroll">
+        <table class="data-table">
+          <caption class="sr-only">Evoluția lunilor</caption>
+          <thead>
+            <tr>
+              <th scope="col">Luna</th><th scope="col">Venit</th><th scope="col">Cheltuieli</th>
+              <th scope="col">Economii</th><th scope="col">Rată economisire</th><th scope="col">Sursă</th>
+            </tr>
+          </thead>
+          <tbody id="evo-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Copie de siguranță</h2>
+      <p class="field-hint">Bugetul se salvează doar în acest browser. Dacă golești datele browserului sau schimbi dispozitivul, se pierde. Exportă din când în când un fișier — îl poți reimporta oricând.</p>
+      <div class="button-row">
+        <button id="btn-export-json" type="button">Exportă bugetul (.json)</button>
+        <button id="btn-import-json" type="button">Importă din fișier</button>
+        <input type="file" id="file-import" accept="application/json,.json" class="hidden" />
+        <button id="btn-reset" type="button" class="ghost danger">Șterge tot bugetul</button>
+      </div>
+      <p id="import-status" class="insight hidden" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="card">
+      <h2>Ce faci cu rezultatul</h2>
+      <ul class="notes-list">
+        <li><strong>Automatizează economiile.</strong> Un transfer programat în ziua salariului economisește mai mult decât orice intenție, pentru că elimină decizia lunară. Vezi <a href="obiective.html">obiectivele de economisire</a> ca să-ți dai o țintă și un termen.</li>
+        <li><strong>Verifică datoriile scumpe înainte de a investi.</strong> Un credit rapid de la IFN cu 24% dobândă anulează orice randament realist. Vezi <a href="datorii.html">calculatorul de datorii</a>.</li>
+        <li><strong>Soldul lunar nu trebuie să stea în cont.</strong> Inflația îl erodează tăcut — vezi <a href="inflatie.html">cât</a>. După fondul de urgență, restul are alt loc: <a href="investitii.html">simulatorul de investiții</a>.</li>
+        <li><strong>Reia în fiecare lună.</strong> Primele două-trei luni de buget sunt estimări; abia de la a patra cifrele devin realiste, pentru că apar cheltuielile pe care le uitaseși.</li>
+      </ul>
+    </div>
+  </main>
+
+  <div id="tooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <p>Datele introduse rămân salvate doar în browserul tău (localStorage) și nu sunt trimise nicăieri.</p>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/linechart.js"></script>
+  <script src="js/buget-model.js"></script>
+  <script src="js/buget.js"></script>
+  <script>renderNav("buget.html");</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Educație Financiară">
+  <!-- Varianta „maskable”: desenul stă în cercul sigur de 80%, ca sistemele
+       care taie colțurile (Android) să nu decupeze din simbol. -->
+  <rect width="512" height="512" fill="#2a78d6"/>
+  <path d="M150 350 C 226 350, 282 302, 372 190"
+        fill="none" stroke="#ffffff" stroke-width="26"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M306 176 L 376 176 L 376 246"
+        fill="none" stroke="#ffffff" stroke-width="26"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="150" cy="350" r="19" fill="#ffffff"/>
+</svg>

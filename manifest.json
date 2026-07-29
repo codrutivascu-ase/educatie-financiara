@@ -1,0 +1,40 @@
+{
+  "name": "Educație Financiară",
+  "short_name": "Ed. Financiară",
+  "description": "Instrumente interactive de educație financiară: buget, investiții, credite, pensii, salariu și lecții cu quiz. Totul se calculează în browser.",
+  "lang": "ro",
+  "dir": "ltr",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f9f9f7",
+  "theme_color": "#2a78d6",
+  "categories": ["education", "finance"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Buget lunar",
+      "short_name": "Buget",
+      "url": "buget.html"
+    },
+    {
+      "name": "Lecții",
+      "short_name": "Lecții",
+      "url": "lectii.html"
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculator de datorii — Educație Financiară</title>
+  <meta name="description" content="Verifică eligibilitatea la credit, vezi graficul de rambursare, efectul plății anticipate și compară metodele avalanșă vs. bulgăre de zăpadă." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2a78d6" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Sari la conținut</a>
+  <header class="site-header">
+    <nav class="site-nav" id="site-nav" aria-label="Navigație principală"></nav>
+  </header>
+
+  <main id="main">
+    <h1>Calculator de datorii</h1>
+    <p class="subtitle">Vezi dacă te-ai încadra la un credit pentru locuință, cum arată graficul de rambursare și cât economisești dacă plătești anticipat.</p>
+
+    <details class="explainer">
+      <summary>Cum se calculează o rată de credit</summary>
+      <p>La un credit cu rate egale (anuitate), rata rămâne constantă, dar <strong>compoziția ei se schimbă</strong>. Dobânda se calculează de fiecare dată la soldul rămas, deci:</p>
+      <ul>
+        <li>La început soldul e mare → aproape toată rata e dobândă.</li>
+        <li>Spre final soldul e mic → aproape toată rata reduce datoria.</li>
+      </ul>
+      <p>De aceea o plată anticipată făcută <em>devreme</em> economisește mult mai mult decât aceeași sumă plătită târziu: fiecare euro care reduce principalul acum elimină toată dobânda pe care ar fi generat-o în anii următori.</p>
+    </details>
+
+    <div class="card">
+      <h2>Datele creditului pentru locuință</h2>
+      <p class="field-hint">Locuințele se negociază în România în euro, deci tot ce ține de credit este calculat aici în euro. Veniturile rămân în lei, pentru că acolo se încasează — conversia se face cu cursul de mai jos.</p>
+      <div class="field-grid">
+        <div class="field">
+          <label for="suma-credit">Sumă credit (€)</label>
+          <input type="number" id="suma-credit" min="0" step="1000" value="70000" />
+          <p class="field-hint">Prețul locuinței minus avansul. Băncile cer de obicei un avans de cel puțin 15%.</p>
+        </div>
+        <div class="field">
+          <label for="dobanda">Dobândă anuală (%)</label>
+          <input type="number" id="dobanda" min="0" step="0.1" value="6.5" />
+          <p class="field-hint">Folosește DAE dacă vrei să incluzi și comisioanele. Creditele în lei au dobânzi de 6-7%, cele în euro de 4-5%.</p>
+        </div>
+        <div class="field">
+          <label for="perioada">Perioadă (ani)</label>
+          <input type="number" id="perioada" min="1" max="35" step="1" value="25" />
+        </div>
+        <div class="field">
+          <label for="curs">Curs euro (lei)</label>
+          <input type="number" id="curs" min="1" max="20" step="0.01" value="5.08" />
+          <p class="field-hint">Folosit doar ca să compare rata cu venitul tău în lei. Calculul presupune un curs constant pe toată durata creditului — în realitate nu este.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Verifică eligibilitatea</h2>
+      <div class="field-grid">
+        <div class="field">
+          <label for="venit-net">Venit net lunar (lei)</label>
+          <input type="number" id="venit-net" min="0" step="100" value="8000" />
+        </div>
+        <div class="field">
+          <label for="alte-rate">Alte rate lunare existente (lei)</label>
+          <input type="number" id="alte-rate" min="0" step="50" value="0" />
+          <p class="field-hint">Inclusiv creditele de nevoi personale, cele de la IFN și cumpărăturile în rate.</p>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Rată lunară estimată</div>
+          <div class="value" id="stat-rata-elig">0 €</div>
+          <div class="label" style="margin-top:4px" id="stat-rata-elig-lei"></div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Grad de îndatorare</div>
+          <div class="value" id="stat-grad">0%</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Rămâne pentru trai</div>
+          <div class="value" id="stat-ramas">0 lei</div>
+        </div>
+      </div>
+
+      <p id="eligibility-msg" class="insight"></p>
+      <p class="insight">Calcul orientativ, bazat pe regula generală de îndatorare maximă de 40% folosită de bănci în România. <strong>Nu este o pre-aprobare</strong> — băncile analizează suplimentar istoricul din Biroul de Credit, vechimea în muncă, tipul veniturilor și stabilitatea angajatorului. Dacă iei creditul în euro dar câștigi în lei, banca aplică un prag de îndatorare mai strict, tocmai din cauza riscului valutar.</p>
+    </div>
+
+    <div class="card">
+      <h2>Costul total al creditului</h2>
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Rată lunară</div>
+          <div class="value" id="stat-rata">0 €</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Total dobândă</div>
+          <div class="value" id="stat-dobanda-totala">0 €</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Total plătit</div>
+          <div class="value" id="stat-total-platit">0 €</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Supracost</div>
+          <div class="value" id="stat-supracost">0%</div>
+          <div class="label" style="margin-top:4px">dobândă raportată la suma împrumutată</div>
+        </div>
+      </div>
+
+      <div class="bar-chart-wrap">
+        <div class="stacked-bar" id="cost-bar"></div>
+        <div class="legend" id="cost-legend"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Grafic de rambursare</h2>
+      <div class="view-toggle" role="group" aria-label="Mod de afișare">
+        <button id="btn-view-chart" class="primary" type="button">Grafic</button>
+        <button id="btn-view-table" type="button">Tabel lunar</button>
+        <button id="btn-export-csv" type="button" class="ghost">Descarcă CSV</button>
+      </div>
+
+      <div id="chart-view" class="line-chart-wrap">
+        <div id="chart"></div>
+        <div class="legend" id="chart-legend"></div>
+      </div>
+
+      <div id="table-view" class="hidden table-scroll table-tall">
+        <table class="data-table">
+          <caption class="sr-only">Graficul lunar de rambursare, în euro</caption>
+          <thead>
+            <tr>
+              <th scope="col">Lună</th><th scope="col">Rată (€)</th><th scope="col">Dobândă (€)</th>
+              <th scope="col">Principal (€)</th><th scope="col">Sold rămas (€)</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Plată anticipată</h2>
+      <div class="field">
+        <label for="extra-lunar">Sumă suplimentară plătită în fiecare lună (€)</label>
+        <input type="number" id="extra-lunar" min="0" step="10" value="50" />
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Fără plată anticipată</div>
+          <div class="value" id="stat-fara-durata">0 luni</div>
+          <div class="label" style="margin-top:4px">dobândă: <span id="stat-fara-dobanda">0 €</span></div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Cu plată anticipată</div>
+          <div class="value" id="stat-cu-durata">0 luni</div>
+          <div class="label" style="margin-top:4px">dobândă: <span id="stat-cu-dobanda">0 €</span></div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Economisești</div>
+          <div class="value good" id="stat-economie">0 €</div>
+          <div class="label" style="margin-top:4px">termini cu <span id="stat-luni-mai-devreme">0 luni</span> mai devreme</div>
+        </div>
+      </div>
+      <p id="prepay-insight" class="insight"></p>
+    </div>
+
+    <div class="card">
+      <h2>Mai multe datorii: avalanșă vs. bulgăre de zăpadă</h2>
+      <p class="field-hint">Dacă ai mai multe datorii simultan, plătești rata la toate și trimiți restul bugetului către una singură. Întrebarea e: către care? Sumele de aici sunt în lei — sunt datorii de consum, contractate în lei. Cele 24% de la creditul rapid sunt o valoare prudentă: la instituțiile financiare nebancare, DAE trece frecvent de 50%.</p>
+
+      <div class="debt-grid">
+        <div class="debt-head">
+          <span>Datorie</span><span>Sold (lei)</span><span>Dobândă (%/an)</span><span>Plată minimă (lei)</span>
+        </div>
+        <div class="debt-row">
+          <span class="debt-name">Credit rapid (IFN)</span>
+          <input type="number" id="d1-sold" min="0" step="100" value="8000" aria-label="Sold credit rapid IFN" />
+          <input type="number" id="d1-rata" min="0" step="0.5" value="24" aria-label="Dobândă credit rapid IFN" />
+          <input type="number" id="d1-min" min="0" step="10" value="250" aria-label="Rată lunară credit rapid IFN" />
+        </div>
+        <div class="debt-row">
+          <span class="debt-name">Nevoi personale</span>
+          <input type="number" id="d2-sold" min="0" step="100" value="20000" aria-label="Sold credit nevoi personale" />
+          <input type="number" id="d2-rata" min="0" step="0.5" value="12" aria-label="Dobândă credit nevoi personale" />
+          <input type="number" id="d2-min" min="0" step="10" value="500" aria-label="Plată minimă credit nevoi personale" />
+        </div>
+        <div class="debt-row">
+          <span class="debt-name">Rate la magazin</span>
+          <input type="number" id="d3-sold" min="0" step="100" value="3000" aria-label="Sold rate magazin" />
+          <input type="number" id="d3-rata" min="0" step="0.5" value="0" aria-label="Dobândă rate magazin" />
+          <input type="number" id="d3-min" min="0" step="10" value="300" aria-label="Plată minimă rate magazin" />
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:14px">
+        <label for="buget-datorii">Buget lunar total pentru datorii (lei)</label>
+        <input type="number" id="buget-datorii" min="0" step="50" value="1500" />
+        <p class="field-hint">Trebuie să acopere cel puțin suma plăților minime.</p>
+      </div>
+
+      <div id="strategy-result"></div>
+
+      <p class="insight"><strong>Avalanșa</strong> este matematic optimă: ataci întâi dobânda cea mai mare, deci plătești cel mai puțin în total. <strong>Bulgărele</strong> atacă întâi soldul cel mai mic, ca să elimini rapid o datorie întreagă — costă ceva mai mult, dar studiile de comportament arată că oamenii duc planul la capăt mai des atunci când văd victorii rapide. Cea mai bună strategie este cea pe care chiar o urmezi.</p>
+      <div class="button-row">
+        <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="tooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <p>Datele introduse rămân salvate doar în browserul tău (localStorage) și nu sunt trimise nicăieri.</p>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/finance.js"></script>
+  <script src="js/linechart.js"></script>
+  <script src="js/datorii.js"></script>
+  <script>renderNav("datorii.html");</script>
+</body>
+</html>

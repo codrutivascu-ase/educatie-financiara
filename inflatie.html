@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inflație — Educație Financiară</title>
+  <meta name="description" content="Vezi cât valorează astăzi banii de acum câțiva ani și cât pierde o sumă ținută într-un cont fără dobândă." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2a78d6" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Sari la conținut</a>
+  <header class="site-header">
+    <nav class="site-nav" id="site-nav" aria-label="Navigație principală"></nav>
+  </header>
+
+  <main id="main">
+    <h1>Calculator de inflație</h1>
+    <p class="subtitle">Inflația nu îți ia bani din cont — suma rămâne aceeași. Se schimbă doar cât poți cumpăra cu ea. Aici vezi mărimea efectului.</p>
+
+    <details class="explainer">
+      <summary>De ce pierderea din inflație este atât de greu de observat</summary>
+      <p>Orice altă pierdere financiară produce o urmă: un comision reținut, o tranzacție, un minus în extras. Inflația nu produce niciuna. Soldul de 10.000 lei rămâne 10.000 lei și anul viitor, și peste zece ani.</p>
+      <p>Ce se schimbă este ce poți face cu ei. La o inflație medie de 5% pe an, după zece ani aceiași 10.000 lei cumpără cât cumpărau aproximativ 6.100 lei la început. Ai pierdut 39% fără să vezi vreodată o cifră negativă.</p>
+      <p>Consecința practică: <strong>ceea ce contează nu este randamentul nominal, ci cel real</strong> — randamentul minus inflația. Un depozit cu 6% dobândă într-un an cu 8% inflație pierde putere de cumpărare, deși soldul crește.</p>
+    </details>
+
+    <div class="card">
+      <h2>Cât valorează azi banii de atunci</h2>
+      <p class="field-hint">Alege o sumă și un an de referință ca să vezi echivalentul în puterea de cumpărare de astăzi.</p>
+      <div class="field-grid">
+        <div class="field">
+          <label for="suma-trecut">Sumă (lei)</label>
+          <input type="number" id="suma-trecut" min="0" step="100" value="1000" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="ani-trecut">Acum câți ani</label>
+          <input type="number" id="ani-trecut" min="1" max="40" step="1" value="10" />
+        </div>
+        <div class="field">
+          <label for="inflatie-trecut">Inflație medie anuală (%)</label>
+          <input type="number" id="inflatie-trecut" min="0" max="50" step="0.1" value="6" />
+          <p class="field-hint">În România, media ultimilor 10 ani a fost aproximativ 6%/an, cu vârfuri mult peste în 2022-2023.</p>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Ar valora astăzi</div>
+          <div class="value" id="stat-echivalent">—</div>
+          <div class="label" style="margin-top:4px">pentru aceeași putere de cumpărare</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Creștere cumulată a prețurilor</div>
+          <div class="value" id="stat-crestere">—</div>
+        </div>
+      </div>
+      <p id="insight-trecut" class="insight"></p>
+    </div>
+
+    <div class="card">
+      <h2>Cât pierde o sumă care stă</h2>
+      <p class="field-hint">Aceeași sumă, ținută într-un cont cu o anumită dobândă, comparată cu ce ar trebui să valoreze ca să țină pasul cu prețurile.</p>
+      <div class="field-grid">
+        <div class="field">
+          <label for="suma-viitor">Sumă păstrată (lei)</label>
+          <input type="number" id="suma-viitor" min="0" step="1000" value="20000" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="ani-viitor">Orizont (ani)</label>
+          <input type="number" id="ani-viitor" min="1" max="40" step="1" value="10" />
+        </div>
+        <div class="field">
+          <label for="dobanda-cont">Dobânda contului (%/an)</label>
+          <input type="number" id="dobanda-cont" min="0" max="30" step="0.1" value="0" />
+          <p class="field-hint">0 pentru un cont curent obișnuit.</p>
+        </div>
+        <div class="field">
+          <label for="inflatie-viitor">Inflație estimată (%/an)</label>
+          <input type="number" id="inflatie-viitor" min="0" max="50" step="0.1" value="5" />
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Sold nominal la final</div>
+          <div class="value" id="stat-nominal">—</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Putere de cumpărare reală</div>
+          <div class="value" id="stat-real">—</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Randament real anual</div>
+          <div class="value" id="stat-real-anual">—</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Pierdere de putere de cumpărare</div>
+          <div class="value" id="stat-pierdere">—</div>
+        </div>
+      </div>
+
+      <p id="insight-viitor" class="insight"></p>
+
+      <div class="view-toggle" role="group" aria-label="Mod de afișare">
+        <button id="btn-view-chart" class="primary" type="button">Grafic</button>
+        <button id="btn-view-table" type="button">Tabel</button>
+        <button id="btn-export-csv" type="button" class="ghost">Descarcă CSV</button>
+      </div>
+
+      <div id="chart-view" class="line-chart-wrap">
+        <div id="chart"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div id="table-view" class="hidden table-scroll">
+        <table class="data-table">
+          <caption class="sr-only">Evoluția nominală și reală, an cu an</caption>
+          <thead>
+            <tr><th scope="col">An</th><th scope="col">Sold nominal</th><th scope="col">Putere de cumpărare</th><th scope="col">Pierdere</th></tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+
+      <div class="button-row">
+        <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Ce înseamnă practic</h2>
+      <ul class="notes-list">
+        <li><strong>Fondul de urgență merită costul.</strong> Plătești erodarea ca preț pentru disponibilitate imediată. Este un cost conștient, nu o greșeală.</li>
+        <li><strong>Sumele peste fondul de urgență au un cost de oportunitate.</strong> Banii care stau din inerție, nu dintr-o decizie, pierd în tăcere. Vezi <a href="oportunitate.html">costul de oportunitate</a>.</li>
+        <li><strong>Salariul nominal nu este salariul real.</strong> O creștere de 5% într-un an cu 7% inflație este o scădere. Verifică-ți creșterile în termeni reali.</li>
+        <li><strong>Inflația ajută debitorii.</strong> Dacă ai un credit cu dobândă fixă, inflația erodează și valoarea reală a datoriei tale. Este singurul caz în care lucrează în favoarea ta.</li>
+      </ul>
+    </div>
+  </main>
+
+  <div id="tooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <p>Datele introduse rămân salvate doar în browserul tău (localStorage) și nu sunt trimise nicăieri.</p>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/finance.js"></script>
+  <script src="js/linechart.js"></script>
+  <script src="js/inflatie.js"></script>
+  <script>renderNav("inflatie.html");</script>
+</body>
+</html>

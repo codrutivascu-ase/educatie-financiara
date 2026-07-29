@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Salariu brut → net — Educație Financiară</title>
+  <meta name="description" content="Calculator de salariu: vezi ce se reține din brut, cât costă efectiv angajatorul și cât ajunge la tine." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2a78d6" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Sari la conținut</a>
+  <header class="site-header">
+    <nav class="site-nav" id="site-nav" aria-label="Navigație principală"></nav>
+  </header>
+
+  <main id="main">
+    <h1>Salariu brut → net</h1>
+    <p class="subtitle">Ce se întâmplă între cât costă angajatorul și cât primești tu. Între cele două cifre este o diferență de aproximativ 40%.</p>
+
+    <details class="explainer">
+      <summary>Cum se calculează, pas cu pas</summary>
+      <p>Angajatorul plătește <strong>salariul brut plus 2,25%</strong> contribuție asiguratorie pentru muncă (CAM). Aceasta este cifra reală a costului tău pentru firmă.</p>
+      <p>Din brut se rețin, în ordine:</p>
+      <ul>
+        <li><strong>CAS (pensie) — 25%</strong> din brut. O parte, 4,75% din brut, merge în contul tău personal de la Pilonul II; restul finanțează pensiile aflate în plată acum.</li>
+        <li><strong>CASS (sănătate) — 10%</strong> din brut.</li>
+        <li><strong>Impozit pe venit — 10%</strong>, dar aplicat pe ce rămâne după CAS, CASS și deducerea personală, nu pe brut. De aceea impozitul efectiv raportat la brut este aproximativ 6,5%, nu 10%.</li>
+      </ul>
+      <p><strong>Deducerea personală</strong> reduce baza impozabilă pentru salariile mici. Se acordă integral până la nivelul salariului minim, scade treptat peste el și dispare complet la salariul minim plus 2.000 lei. Crește cu numărul de persoane aflate în întreținere.</p>
+      <p class="warn">Calculul acoperă un contract de muncă standard, cu normă întreagă. Nu include facilitățile pentru IT, construcții sau agricultură, deducerile suplimentare pentru tineri sub 26 de ani, tichetele de masă sau alte beneficii extrasalariale. Cotele se modifică prin lege — verifică valorile din secțiunea „Parametri” dacă folosești calculatorul după o schimbare legislativă.</p>
+    </details>
+
+    <div class="card">
+      <h2>Calculează</h2>
+      <div class="view-toggle" role="group" aria-label="Direcția calculului">
+        <button id="btn-mode-brut" class="primary" type="button">Am brutul, vreau netul</button>
+        <button id="btn-mode-net" type="button">Am netul, vreau brutul</button>
+      </div>
+
+      <div class="field-grid" style="margin-top:18px">
+        <div class="field" id="field-brut">
+          <label for="brut">Salariu brut lunar (lei)</label>
+          <input type="number" id="brut" min="0" step="100" value="8000" inputmode="decimal" />
+        </div>
+        <div class="field hidden" id="field-net">
+          <label for="net-dorit">Salariu net dorit (lei)</label>
+          <input type="number" id="net-dorit" min="0" step="100" value="5000" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="persoane">Persoane în întreținere</label>
+          <select id="persoane">
+            <option value="0" selected>Niciuna</option>
+            <option value="1">1 persoană</option>
+            <option value="2">2 persoane</option>
+            <option value="3">3 persoane</option>
+            <option value="4">4 sau mai multe</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pilon3">Contribuție lunară Pilon III (lei)</label>
+          <input type="number" id="pilon3" min="0" step="50" value="0" />
+          <p class="field-hint">Deductibilă la calculul impozitului, în limita a 400 EUR pe an.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Rezultat</h2>
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Cost total angajator</div>
+          <div class="value" id="stat-cost">—</div>
+          <div class="label" style="margin-top:4px">brut + CAM 2,25%</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Salariu brut</div>
+          <div class="value" id="stat-brut">—</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Salariu net</div>
+          <div class="value good" id="stat-net">—</div>
+          <div class="label" style="margin-top:4px">ce îți intră în cont</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Reținut total</div>
+          <div class="value" id="stat-retinut">—</div>
+          <div class="label" style="margin-top:4px" id="stat-retinut-pct"></div>
+        </div>
+      </div>
+
+      <h3>Unde se duce fiecare leu din costul angajatorului</h3>
+      <div class="bar-chart-wrap">
+        <div class="stacked-bar" id="cost-bar"></div>
+        <div class="legend" id="cost-legend"></div>
+      </div>
+
+      <p id="insight" class="insight"></p>
+
+      <div class="view-toggle" role="group" aria-label="Mod de afișare">
+        <button id="btn-view-chart" class="primary" type="button">Detaliu</button>
+        <button id="btn-view-table" type="button">Tabel</button>
+        <button id="btn-export-csv" type="button" class="ghost">Descarcă CSV</button>
+      </div>
+
+      <div id="chart-view">
+        <div id="breakdown"></div>
+      </div>
+
+      <div id="table-view" class="hidden table-scroll">
+        <table class="data-table">
+          <caption class="sr-only">Detalierea calculului</caption>
+          <thead>
+            <tr><th scope="col">Element</th><th scope="col">Bază de calcul</th><th scope="col">Cotă</th><th scope="col">Sumă</th></tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cât înseamnă pe an și în context</h2>
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Net anual (12 luni)</div>
+          <div class="value" id="stat-anual">—</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Merge la Pilonul II</div>
+          <div class="value" id="stat-pilon2">—</div>
+          <div class="label" style="margin-top:4px">în contul tău personal de pensie</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Impozit efectiv din brut</div>
+          <div class="value" id="stat-impozit-efectiv">—</div>
+        </div>
+      </div>
+      <div id="prefill-slot"></div>
+      <p class="insight">Netul de aici este cifra pe care o poți folosi ca „venit lunar net” în <a href="buget.html">bugetul lunar</a>. Contribuția la Pilonul II apare în proiecția din modulul <a href="pensii.html">Pensii</a>.</p>
+      <div class="button-row">
+        <button id="btn-la-buget" type="button" class="primary">Folosește netul în bugetul lunar →</button>
+        <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Parametri folosiți în calcul</h2>
+      <p class="field-hint">Sunt editabili pentru că se modifică prin lege. Valorile implicite corespund anului 2025.</p>
+      <div class="field-grid">
+        <div class="field">
+          <label for="salariu-minim">Salariu minim brut pe economie (lei)</label>
+          <input type="number" id="salariu-minim" min="0" step="50" value="4050" />
+          <p class="field-hint">Determină pragul până la care se acordă deducerea personală.</p>
+        </div>
+      </div>
+      <ul class="notes-list" style="margin-top:14px">
+        <li><strong>CAS (pensie):</strong> 25% din brut, reținut de la salariat.</li>
+        <li><strong>CASS (sănătate):</strong> 10% din brut, reținut de la salariat.</li>
+        <li><strong>Impozit pe venit:</strong> 10% din baza impozabilă.</li>
+        <li><strong>CAM:</strong> 2,25% din brut, plătit de angajator peste salariul brut.</li>
+        <li><strong>Pilon II:</strong> 4,75% din brut, virat din CAS în contul tău personal.</li>
+      </ul>
+    </div>
+  </main>
+
+  <div id="tooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <p>Calcul orientativ, pentru un contract de muncă standard. Datele introduse rămân doar în browserul tău.</p>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/finance.js"></script>
+  <script src="js/salariu.js"></script>
+  <script>renderNav("salariu.html");</script>
+</body>
+</html>

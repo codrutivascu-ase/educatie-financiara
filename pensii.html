@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pensii — Educație Financiară</title>
+  <meta name="description" content="Proiecție pentru cele trei piloane de pensie: cât se acumulează în pilonii II și III, cât ar însemna pensia publică și ce diferență face o contribuție voluntară." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2a78d6" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Sari la conținut</a>
+  <header class="site-header">
+    <nav class="site-nav" id="site-nav" aria-label="Navigație principală"></nav>
+  </header>
+
+  <main id="main">
+    <h1>Pensii: pilonii I, II și III</h1>
+    <p class="subtitle">Contribui deja la pilonii I și II în fiecare lună, fără să faci nimic. Aici vezi cât se adună până la pensionare, cât ar însemna pensia publică și ce schimbă o contribuție voluntară.</p>
+
+    <details class="explainer">
+      <summary>Cele trei piloane, pe scurt</summary>
+      <p><strong>Pilonul I — pensia publică.</strong> Din cei 25% CAS reținuți din salariul tău, cea mai mare parte finanțează pensiile aflate în plată astăzi. Nu se acumulează într-un cont al tău: este un sistem în care generația activă plătește pentru generația pensionată. Ce vei primi depinde de legislația de atunci și de raportul dintre numărul de salariați și cel de pensionari — două lucruri pe care nu le poți controla. Singurul reper disponibil azi este media sistemului: cât din salariul net a rămas ca pensie pentru cei deja pensionați.</p>
+      <p><strong>Pilonul II — pensia privată obligatorie.</strong> 4,75% din salariul brut merge într-un cont pe numele tău, administrat privat și investit. Este obligatoriu pentru cei intrați în câmpul muncii după 2007. Banii sunt ai tăi și se moștenesc.</p>
+      <p><strong>Pilonul III — pensia privată facultativă.</strong> Contribuție voluntară, deductibilă fiscal în limita a 400 EUR pe an. Deducerea înseamnă că statul îți returnează efectiv 10% din suma contribuită, sub forma unui impozit mai mic.</p>
+      <p class="warn">Proiecția de mai jos presupune randament și creștere salarială constante. Pe 30-40 de ani, ambele variază considerabil. Cifra finală este un ordin de mărime, nu o promisiune — iar valoarea ei reală va fi erodată de inflație, motiv pentru care afișăm și echivalentul în puterea de cumpărare de azi.</p>
+    </details>
+
+    <div class="card">
+      <h2>Situația ta</h2>
+      <div class="field-grid">
+        <div class="field">
+          <label for="salariu-brut">Salariu brut lunar (lei)</label>
+          <input type="number" id="salariu-brut" min="0" step="500" value="8000" inputmode="decimal" />
+          <p class="field-hint">Contribuția la Pilonul II este un procent din brut, deci crește odată cu salariul.</p>
+        </div>
+        <div class="field">
+          <label for="varsta">Vârsta actuală</label>
+          <input type="number" id="varsta" min="18" max="70" step="1" value="30" />
+        </div>
+        <div class="field">
+          <label for="varsta-pensie">Vârsta de pensionare</label>
+          <input type="number" id="varsta-pensie" min="45" max="75" step="1" value="65" />
+        </div>
+        <div class="field">
+          <label for="sold-pilon2">Sold actual în Pilonul II (lei)</label>
+          <input type="number" id="sold-pilon2" min="0" step="1000" value="0" />
+          <p class="field-hint">Îl găsești în extrasul anual primit de la administratorul fondului.</p>
+        </div>
+      </div>
+      <div id="prefill-slot"></div>
+    </div>
+
+    <div class="card">
+      <h2>Ipoteze</h2>
+      <div class="field-grid">
+        <div class="field">
+          <label for="crestere-salariu">Creștere anuală a salariului (%)</label>
+          <input type="number" id="crestere-salariu" min="0" max="20" step="0.5" value="5" />
+        </div>
+        <div class="field">
+          <label for="randament-p2">Randament anual Pilon II (%)</label>
+          <input type="number" id="randament-p2" min="0" max="20" step="0.5" value="7" />
+          <p class="field-hint">Fondurile din România au avut randamente medii anuale de aproximativ 8% de la înființare, într-o perioadă favorabilă.</p>
+        </div>
+        <div class="field">
+          <label for="pilon3-lunar">Contribuție lunară Pilon III (lei)</label>
+          <input type="number" id="pilon3-lunar" min="0" step="50" value="200" />
+        </div>
+        <div class="field">
+          <label for="randament-p3">Randament anual Pilon III (%)</label>
+          <input type="number" id="randament-p3" min="0" max="20" step="0.5" value="7" />
+        </div>
+        <div class="field">
+          <label for="inflatie">Inflație anuală estimată (%)</label>
+          <input type="number" id="inflatie" min="0" max="20" step="0.1" value="4" />
+        </div>
+        <div class="field">
+          <label for="rata-inlocuire">Rată de înlocuire Pilon I (%)</label>
+          <input type="number" id="rata-inlocuire" min="0" max="100" step="1" value="55" />
+          <p class="field-hint">Cât din salariul net rămâne ca pensie publică. Valoarea implicită este media actuală a sistemului — detalii mai jos.</p>
+        </div>
+      </div>
+      <div class="button-row">
+        <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>La pensionare</h2>
+      <div class="stat-row">
+        <div class="stat-tile with-id" id="tile-p2">
+          <div class="label">Pilon II (obligatoriu)</div>
+          <div class="value" id="stat-p2">—</div>
+          <div class="label" style="margin-top:4px" id="stat-p2-contrib"></div>
+        </div>
+        <div class="stat-tile with-id" id="tile-p3">
+          <div class="label">Pilon III (facultativ)</div>
+          <div class="value" id="stat-p3">—</div>
+          <div class="label" style="margin-top:4px" id="stat-p3-contrib"></div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Total acumulat</div>
+          <div class="value good" id="stat-total">—</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">În puterea de cumpărare de azi</div>
+          <div class="value" id="stat-real">—</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Venit lunar suplimentar</div>
+          <div class="value" id="stat-lunar">—</div>
+          <div class="label" style="margin-top:4px">timp de 20 de ani de pensie</div>
+        </div>
+      </div>
+
+      <p id="insight" class="insight"></p>
+
+      <div class="view-toggle" role="group" aria-label="Mod de afișare">
+        <button id="btn-view-chart" class="primary" type="button">Grafic</button>
+        <button id="btn-view-table" type="button">Tabel</button>
+        <button id="btn-export-csv" type="button" class="ghost">Descarcă CSV</button>
+      </div>
+
+      <div id="chart-view" class="line-chart-wrap">
+        <div id="chart"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div id="table-view" class="hidden table-scroll table-tall">
+        <table class="data-table">
+          <caption class="sr-only">Acumularea an cu an</caption>
+          <thead>
+            <tr><th scope="col">An</th><th scope="col">Vârstă</th><th scope="col">Pilon II</th><th scope="col">Pilon III</th><th scope="col">Total</th></tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Pilonul I: pensia publică</h2>
+      <p class="field-hint">Pilonul I nu are un sold care crește undeva, deci nu poate fi proiectat ca celelalte două. Ce se poate estima este <strong>rata de înlocuire</strong>: cât din salariul net a rămas ca pensie pentru cei care s-au pensionat până acum. Presupunem că raportul de azi se menține.</p>
+
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Salariu net în ultimul an de muncă</div>
+          <div class="value" id="stat-net-final">—</div>
+          <div class="label" style="margin-top:4px" id="stat-net-final-detaliu"></div>
+        </div>
+        <div class="stat-tile with-id" id="tile-p1">
+          <div class="label">Pensie lunară din Pilon I</div>
+          <div class="value" id="stat-p1">—</div>
+          <div class="label" style="margin-top:4px" id="stat-p1-detaliu"></div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Total venit lunar la pensie</div>
+          <div class="value good" id="stat-venit-total">—</div>
+          <div class="label" style="margin-top:4px">Pilon I plus retragerile din II și III</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Cât din salariul de atunci</div>
+          <div class="value" id="stat-inlocuire-totala">—</div>
+          <div class="label" style="margin-top:4px">toate cele trei piloane la un loc</div>
+        </div>
+      </div>
+
+      <p id="insight-p1" class="insight"></p>
+
+      <p class="insight"><strong>De unde vine valoarea implicită.</strong> <span id="reper-p1"></span> Nu este formula legală de calcul a pensiei — aceea depinde de tot istoricul tău de contribuții și de valoarea punctului de referință de la data pensionării, care nu poate fi cunoscută azi. Este o medie a sistemului, publicată lunar de INS și de Casa Națională de Pensii Publice; dacă vrei o cifră la zi, caută cele două valori și schimbă procentul de mai sus.</p>
+
+      <p class="warn">Rata de înlocuire nu este garantată prin nimic. Raportul dintre salariați și pensionari se deteriorează, iar formula de calcul se schimbă prin lege — istoric, în ambele sensuri. Tratează cifra ca pe un scenariu, nu ca pe un drept.</p>
+    </div>
+
+    <div class="card">
+      <h2>Deducerea de la Pilonul III</h2>
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Contribuție anuală</div>
+          <div class="value" id="stat-p3-anual">—</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Din care deductibilă</div>
+          <div class="value" id="stat-deductibil">—</div>
+          <div class="label" style="margin-top:4px">plafon de 400 EUR pe an</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Impozit economisit anual</div>
+          <div class="value good" id="stat-economie-fiscala">—</div>
+        </div>
+      </div>
+      <p id="insight-deducere" class="insight"></p>
+    </div>
+
+    <div class="card">
+      <h2>Ce merită reținut</h2>
+      <ul class="notes-list">
+        <li><strong>Pilonul II nu costă nimic în plus.</strong> Contribui deja, indiferent dacă știi sau nu. Singura decizie pe care o ai este alegerea administratorului — și ea contează prin comisioane.</li>
+        <li><strong>Comisioanele se aplică și aici.</strong> Un fond de pensii cu comision mai mare cu un punct procentual poate consuma, pe 35 de ani, o parte importantă din acumulare. Vezi <a href="lectii.html#l7-costuri">lecția despre costuri</a>.</li>
+        <li><strong>Pilonul III este un randament garantat de 10% în primul an.</strong> Deducerea fiscală înseamnă că statul îți returnează impozitul pe suma contribuită — un câștig cert, înainte de orice randament al fondului.</li>
+        <li><strong>Nu te baza doar pe pensia publică.</strong> Media actuală înseamnă că pierzi aproape jumătate din venitul net în ziua pensionării, iar raportul dintre salariați și pensionari se deteriorează. Pilonii II și III sunt singurii bani care sunt, juridic, ai tăi.</li>
+        <li><strong>Pensia nu este singura formă de economisire pe termen lung.</strong> Un cont propriu de investiții este mai flexibil, dar nu are avantajul fiscal. Compară cu <a href="investitii.html">simulatorul de investiții</a>.</li>
+      </ul>
+    </div>
+  </main>
+
+  <div id="tooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <p>Proiecție orientativă. Datele introduse rămân doar în browserul tău și nu sunt trimise nicăieri.</p>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/finance.js"></script>
+  <script src="js/linechart.js"></script>
+  <script src="js/pensii.js"></script>
+  <script>renderNav("pensii.html");</script>
+</body>
+</html>

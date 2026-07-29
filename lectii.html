@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lecții și quiz — Educație Financiară</title>
+  <meta name="description" content="Zece lecții scurte de educație financiară, fiecare cu un quiz care explică de ce fiecare variantă este corectă sau greșită." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2a78d6" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Sari la conținut</a>
+  <header class="site-header">
+    <nav class="site-nav" id="site-nav" aria-label="Navigație principală"></nav>
+  </header>
+
+  <main id="main">
+    <!-- Vizualizarea de listă -->
+    <div id="view-list">
+      <h1>Lecții și quiz</h1>
+      <p class="subtitle">Zece lecții de câte 3-4 minute, fiecare urmată de câteva întrebări. La fiecare răspuns primești o explicație — inclusiv pentru variantele greșite, pentru că acolo se învață de fapt.</p>
+
+      <div class="card">
+        <h2>Progresul tău</h2>
+        <div class="stat-row">
+          <div class="stat-tile">
+            <div class="label">Lecții parcurse</div>
+            <div class="value" id="stat-parcurse">0 / 0</div>
+          </div>
+          <div class="stat-tile">
+            <div class="label">Răspunsuri corecte</div>
+            <div class="value" id="stat-corecte">—</div>
+          </div>
+          <div class="stat-tile">
+            <div class="label">Timp total estimat</div>
+            <div class="value" id="stat-timp">—</div>
+          </div>
+        </div>
+        <div class="meter">
+          <div class="meter-header">
+            <span id="progres-label">Nicio lecție începută</span>
+            <span id="progres-pct">0%</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill" id="progres-fill" style="width:0%"></div></div>
+        </div>
+        <div class="button-row">
+          <button id="btn-continua" type="button" class="primary">Începe prima lecție</button>
+          <button id="btn-reset-progres" type="button" class="ghost">Resetează progresul</button>
+        </div>
+      </div>
+
+      <div id="lesson-groups"></div>
+
+      <div class="card">
+        <h2>Cum sunt gândite întrebările</h2>
+        <ul class="notes-list">
+          <li><strong>Nu se testează memorarea cifrelor.</strong> Procentele și pragurile se schimbă; mecanismul din spate nu.</li>
+          <li><strong>Fiecare variantă greșită are o explicație.</strong> A ști de ce o variantă plauzibilă este totuși greșită valorează mai mult decât a nimeri răspunsul corect.</li>
+          <li><strong>Poți relua orice lecție.</strong> Se reține cel mai bun scor, nu ultimul — reluarea nu te penalizează.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Vizualizarea unei lecții -->
+    <div id="view-lesson" class="hidden">
+      <button id="btn-inapoi" type="button" class="ghost back-link">← Toate lecțiile</button>
+
+      <h1 id="lesson-title"></h1>
+      <p class="subtitle" id="lesson-meta"></p>
+
+      <article class="card lesson-body" id="lesson-content"></article>
+
+      <div class="card" id="quiz-card">
+        <h2>Verifică ce ai reținut</h2>
+        <p class="field-hint" id="quiz-progress"></p>
+        <div id="quiz-mount"></div>
+      </div>
+
+      <div class="card hidden" id="quiz-result">
+        <h2>Rezultat</h2>
+        <div class="stat-row">
+          <div class="stat-tile">
+            <div class="label">Scor la această lecție</div>
+            <div class="value" id="result-score">—</div>
+          </div>
+        </div>
+        <p class="insight" id="result-text"></p>
+        <div class="button-row">
+          <button id="btn-reia" type="button" class="ghost">Reia quizul</button>
+          <button id="btn-urmatoarea" type="button" class="primary">Lecția următoare →</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Progresul rămâne salvat doar în browserul tău (localStorage) și nu este trimis nicăieri.</p>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/lectii-data.js"></script>
+  <script src="js/lectii.js"></script>
+  <script>renderNav("lectii.html");</script>
+</body>
+</html>

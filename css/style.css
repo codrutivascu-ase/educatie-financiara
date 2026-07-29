@@ -1,0 +1,1291 @@
+/* =====================================================================
+   Educație Financiară — foaie de stil unică
+   Organizare: 1. tokens  2. bază  3. layout  4. componente  5. responsive
+   ===================================================================== */
+
+/* --- 1. Tokens de culoare ------------------------------------------ */
+/* Paleta categorică are 8 culori alese să rămână distincte inclusiv
+   pentru daltonism; ordinea slot-urilor nu trebuie schimbată.          */
+
+:root {
+  color-scheme: light;
+  --surface-page:   #f9f9f7;
+  --surface-card:   #fcfcfb;
+  --surface-sunken: #f2f2ee;
+  --text-primary:   #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted:     #898781;
+  --gridline:       #e1e0d9;
+  --baseline:       #c3c2b7;
+  --border:         rgba(11, 11, 11, 0.10);
+  --good-text:      #006300;
+  --critical-text:  #a02f2f;
+  --warn-text:      #8a5a00;
+
+  --series-1: #2a78d6; /* albastru */
+  --series-2: #eb6834; /* portocaliu */
+  --series-3: #1baf7a; /* turcoaz */
+  --series-4: #eda100; /* galben */
+  --series-5: #e87ba4; /* magenta */
+  --series-6: #008300; /* verde */
+  --series-7: #4a3aa7; /* violet */
+  --series-8: #e34948; /* roșu */
+
+  --accent: var(--series-1);
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(11, 11, 11, 0.04);
+}
+
+/* Tema întunecată: aceleași opt nuanțe, reașezate pentru fundal închis.
+   Se aplică fie din setarea sistemului, fie din butonul de comutare.    */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --surface-page:   #0d0d0d;
+    --surface-card:   #1a1a19;
+    --surface-sunken: #232322;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #a3a199;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255, 255, 255, 0.12);
+    --good-text:      #0ca30c;
+    --critical-text:  #e66767;
+    --warn-text:      #fab219;
+
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-6: #008300;
+    --series-7: #9085e9;
+    --series-8: #e66767;
+    --shadow: none;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-page:   #0d0d0d;
+  --surface-card:   #1a1a19;
+  --surface-sunken: #232322;
+  --text-primary:   #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted:     #a3a199;
+  --gridline:       #2c2c2a;
+  --baseline:       #383835;
+  --border:         rgba(255, 255, 255, 0.12);
+  --good-text:      #0ca30c;
+  --critical-text:  #e66767;
+  --warn-text:      #fab219;
+
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+  --shadow: none;
+}
+
+/* --- 2. Bază -------------------------------------------------------- */
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+}
+
+body {
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); }
+
+h1 { font-size: 1.75rem; margin: 0 0 6px; line-height: 1.25; }
+h2 { font-size: 1.2rem; margin: 0 0 14px; }
+h3 { font-size: 1rem; margin: 24px 0 10px; color: var(--text-secondary); }
+
+.subtitle {
+  color: var(--text-secondary);
+  margin: 0 0 22px;
+  max-width: 65ch;
+}
+
+/* Focus vizibil pentru navigarea cu tastatura. */
+:where(a, button, input, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Link de salt, vizibil doar la focalizare cu Tab. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 16px;
+  z-index: 100;
+  border-radius: 0 0 var(--radius) 0;
+}
+.skip-link:focus { left: 0; }
+
+/* Text disponibil doar pentru cititoarele de ecran. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- 3. Layout ------------------------------------------------------ */
+
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-card);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.site-nav {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.site-nav .brand {
+  font-weight: 700;
+  font-size: 1.02rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  padding: 5px 1px;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+.nav-link:hover { color: var(--text-primary); }
+.nav-link.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+.nav-burger {
+  display: none;
+  margin-left: auto;
+  font-size: 1.1rem;
+  padding: 5px 10px;
+}
+
+.theme-toggle {
+  font-size: 1rem;
+  line-height: 1;
+  padding: 7px 10px;
+  flex: none;
+}
+
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+/* --- 4. Componente -------------------------------------------------- */
+
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow);
+}
+
+/* Blocul pliabil cu explicații educaționale. */
+.explainer {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 4px 20px;
+  margin-bottom: 22px;
+}
+.explainer summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 12px 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.explainer summary::-webkit-details-marker { display: none; }
+.explainer summary::before {
+  content: "▸";
+  color: var(--accent);
+  transition: transform 0.15s ease;
+}
+.explainer[open] summary::before { transform: rotate(90deg); }
+.explainer p, .explainer ul { color: var(--text-secondary); font-size: 0.92rem; max-width: 70ch; }
+.explainer p.warn { color: var(--warn-text); }
+.explainer ul { padding-left: 20px; }
+.explainer li { margin-bottom: 6px; }
+
+/* --- Pagina principală ---------------------------------------------- */
+
+/* Titlu de secțiune între grupurile de module. */
+.section-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin: 30px 0 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--gridline);
+}
+
+.hero-card { border-left: 3px solid var(--accent); }
+
+.hero-main {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.hero-text { flex: 1; min-width: 260px; }
+.hero-text h2 { margin-bottom: 6px; }
+.hero-lead { margin: 0; color: var(--text-secondary); font-size: 0.94rem; max-width: 62ch; }
+
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: none;
+}
+
+.hero-btn {
+  display: block;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  text-align: center;
+  white-space: nowrap;
+  transition: border-color 0.15s ease;
+}
+.hero-btn:hover { border-color: var(--accent); }
+.hero-btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 500;
+}
+
+.hero-progress { margin-top: 18px; }
+.hero-progress-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+/* Carduri de pe pagina principală. */
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.module-card {
+  display: block;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+  box-shadow: var(--shadow);
+}
+.module-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.module-card h3 { margin: 0 0 6px; font-size: 1.05rem; color: var(--text-primary); }
+.module-card p { margin: 0; color: var(--text-secondary); font-size: 0.9rem; }
+.module-card .status {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* Formulare. */
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+}
+
+.field { min-width: 0; }
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.field-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 5px 0 0;
+  max-width: 60ch;
+}
+
+/* Avertisment legat de un câmp anume, fără să blocheze calculul. */
+.field-hint.warn-inline {
+  color: var(--warn-text);
+  border-left: 2px solid var(--warn-text);
+  padding-left: 8px;
+}
+
+input[type="number"], input[type="text"], select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+input:hover, select:hover { border-color: var(--baseline); }
+
+button {
+  font-family: inherit;
+  font-size: 0.88rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  padding: 8px 13px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 500;
+}
+button.ghost { background: transparent; color: var(--text-secondary); }
+button.ghost:hover { color: var(--text-primary); }
+
+.button-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+/* --- Modulul de buget ------------------------------------------------ */
+
+/* Bara cu luna activă și acțiunile ei. */
+.month-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+}
+
+.month-nav { display: flex; align-items: center; gap: 10px; }
+.month-nav button { padding: 6px 12px; font-size: 1rem; line-height: 1; }
+
+.month-current { display: flex; flex-direction: column; gap: 2px; min-width: 170px; }
+.month-current select { font-size: 0.98rem; font-weight: 600; }
+.month-meta { font-size: 0.76rem; color: var(--text-muted); }
+
+.month-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Șabloanele de pornire. */
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.template-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+  padding: 15px 16px;
+  background: var(--surface-sunken);
+  border-radius: var(--radius);
+}
+.template-card strong { font-size: 0.96rem; }
+.template-card span { font-size: 0.85rem; color: var(--text-secondary); }
+.template-card .template-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 3px; }
+
+/* Rândurile de venit. */
+.income-header, .income-row {
+  display: grid;
+  grid-template-columns: 1fr 120px 130px 36px;
+  gap: 10px;
+  align-items: center;
+}
+.income-row { margin-bottom: 8px; }
+
+/* Rândurile de cheltuieli: culoare, nume, grupă, frecvență, plan, real, ștergere. */
+.expense-header, .expense-row {
+  display: grid;
+  grid-template-columns: 16px 1fr 110px 120px 120px 110px 36px;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Categoriile fără slot de culoare intră în „Altele” pe grafic. */
+.expense-row .swatch.swatch-altele {
+  background: repeating-linear-gradient(
+    45deg, var(--gridline), var(--gridline) 3px, var(--surface-card) 3px, var(--surface-card) 6px
+  );
+  border: 1px solid var(--baseline);
+}
+
+/* Echivalentul lunar al unei cheltuieli rare, sub câmpul de sumă. */
+.exp-plan-wrap { min-width: 0; }
+.exp-equiv {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+  white-space: nowrap;
+}
+
+/* Un link care arată ca un buton, în rândurile de acțiuni. */
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 13px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.button-link:hover { color: var(--text-primary); border-color: var(--accent); }
+
+/* Plan față de realitate. */
+.variance-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px 16px;
+  align-items: baseline;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gridline);
+}
+.variance-row:last-of-type { border-bottom: none; }
+.variance-name { font-size: 0.92rem; overflow-wrap: anywhere; }
+.variance-numbers {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Starea se citește din simbol și text, nu doar din culoare. */
+.variance-badge {
+  font-size: 0.83rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-width: 96px;
+  text-align: right;
+}
+.variance-badge.critical { color: var(--critical-text); }
+.variance-badge.good { color: var(--good-text); }
+.variance-badge.neutral { color: var(--text-muted); }
+
+/* Repere pe categorii. */
+.benchmark-row { padding: 12px 0; border-bottom: 1px solid var(--gridline); }
+.benchmark-row:last-child { border-bottom: none; }
+.benchmark-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+.benchmark-name { font-weight: 600; }
+.benchmark-value { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.benchmark-note {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  max-width: 72ch;
+}
+
+/* Mesajul de la import. */
+.import-error { border-left: 3px solid var(--critical-text); color: var(--critical-text); }
+
+.expense-header {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--gridline);
+}
+
+.expense-row { margin-bottom: 8px; }
+
+.expense-row .swatch { width: 14px; height: 14px; border-radius: 3px; }
+
+.expense-row button.remove {
+  color: var(--critical-text);
+  padding: 5px 8px;
+  background: transparent;
+  border-color: transparent;
+}
+.expense-row button.remove:hover { border-color: var(--critical-text); }
+
+/* Datoriile multiple. */
+.debt-head, .debt-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+}
+.debt-head {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--gridline);
+}
+.debt-row { margin-bottom: 8px; }
+.debt-name { font-size: 0.9rem; }
+
+/* Cartonașe cu indicatori. */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.stat-tile {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-sunken);
+  min-width: 0;
+}
+
+.stat-tile.with-id { border-left: 3px solid var(--accent-id, var(--accent)); }
+
+.stat-tile .label { font-size: 0.8rem; color: var(--text-secondary); }
+.stat-tile .value {
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin-top: 2px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.stat-tile .value.good { color: var(--good-text); }
+.stat-tile .value.critical { color: var(--critical-text); }
+
+/* Bara stivuită de distribuție. */
+.bar-chart-wrap { margin-top: 18px; }
+
+.stacked-bar {
+  display: flex;
+  height: 34px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--gridline);
+  gap: 2px; /* separarea se face prin spațiu, nu prin contur */
+}
+
+.stacked-bar .segment { min-width: 2px; position: relative; }
+.stacked-bar .segment.labelled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+/* Legendă. */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 14px;
+  font-size: 0.85rem;
+}
+.legend .item { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+.legend .swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.legend .swatch.line { width: 16px; height: 3px; border-radius: 2px; }
+/* Seriile de referință (banii depuși) apar punctate și în grafic, și în legendă. */
+.legend .swatch.line.dashed {
+  height: 3px;
+  border-radius: 0;
+  background: none !important;
+  border-top: 3px dashed currentColor;
+}
+.legend .amount { color: var(--text-primary); font-variant-numeric: tabular-nums; font-weight: 500; }
+
+/* Scenariile de randament. */
+.scenario-row {
+  display: grid;
+  grid-template-columns: 16px 1fr 110px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.scenario-row .swatch { width: 14px; height: 14px; border-radius: 3px; }
+.scenario-row .name { font-size: 0.92rem; color: var(--text-primary); margin: 0; font-weight: 400; }
+
+/* Bara de progres a obiectivului. */
+.meter { margin-top: 18px; }
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.meter-track {
+  height: 14px;
+  border-radius: 7px;
+  background: var(--gridline);
+  overflow: hidden;
+}
+.meter-fill {
+  height: 100%;
+  border-radius: 7px;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+.meter-fill.good { background: var(--good-text); }
+
+/* Barele regulii 50/30/20. */
+.rule-row { margin-bottom: 16px; }
+.rule-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.87rem;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+}
+.rule-target { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.rule-track {
+  position: relative;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--gridline);
+  overflow: hidden;
+}
+.rule-fill { height: 100%; border-radius: 6px; transition: width 0.2s ease; }
+/* Reperul țintei recomandate. */
+.rule-marker {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--text-primary);
+  opacity: 0.55;
+}
+
+/* Comutator grafic/tabel. */
+.view-toggle {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+/* Tabele. */
+.table-scroll { overflow-x: auto; margin-top: 4px; }
+.table-tall { max-height: 460px; overflow-y: auto; }
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 0.88rem;
+}
+table.data-table th, table.data-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--gridline);
+  white-space: nowrap;
+}
+table.data-table th {
+  color: var(--text-secondary);
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  background: var(--surface-card);
+}
+table.data-table td:not(:first-child),
+table.data-table th:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+table.data-table tbody tr:hover { background: var(--surface-sunken); }
+
+/* Blocuri de concluzii și note. */
+.insight {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-sunken);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  max-width: 75ch;
+}
+
+.notes-list {
+  padding-left: 22px;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  max-width: 72ch;
+}
+.notes-list li { margin-bottom: 10px; }
+.notes-list strong { color: var(--text-primary); }
+
+/* Tooltip pentru grafice. */
+.chart-tooltip {
+  position: fixed;
+  pointer-events: none;
+  background: var(--text-primary);
+  color: var(--surface-card);
+  font-size: 0.8rem;
+  padding: 7px 10px;
+  border-radius: 6px;
+  opacity: 0;
+  transform: translate(-50%, -100%);
+  transition: opacity 0.08s ease;
+  white-space: nowrap;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  max-width: 90vw;
+}
+.chart-tooltip.visible { opacity: 1; }
+/* Stare intermediară folosită doar pentru a măsura dimensiunea. */
+.chart-tooltip.measuring { opacity: 0; display: block; }
+.chart-tooltip .tt-head { color: var(--surface-card); opacity: 0.75; margin-bottom: 3px; }
+.chart-tooltip .tt-row { display: flex; align-items: center; gap: 6px; }
+.chart-tooltip .tt-key { display: inline-block; width: 10px; height: 2px; border-radius: 1px; flex: none; }
+
+.line-chart-wrap { margin-top: 18px; position: relative; }
+
+/* --- Submeniuri de navigație ---------------------------------------- */
+
+.nav-group { position: relative; }
+
+.nav-trigger {
+  background: none;
+  border: none;
+  padding: 5px 1px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+/* Săgeata care indică prezența unui submeniu. */
+.nav-trigger::after {
+  content: "▾";
+  margin-left: 5px;
+  font-size: 0.7em;
+  opacity: 0.7;
+}
+.nav-group.open .nav-trigger::after { opacity: 1; }
+
+.nav-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 220px;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  z-index: 30;
+}
+.nav-group.open .nav-panel { display: block; }
+
+.nav-sublink {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+.nav-sublink:hover { background: var(--surface-sunken); color: var(--text-primary); }
+.nav-sublink.active { color: var(--text-primary); font-weight: 600; background: var(--surface-sunken); }
+
+/* --- Sugestia de preluare a unei valori din alt modul ---------------- */
+
+.prefill-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: 1px dashed var(--accent);
+  background: var(--surface-sunken);
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+.prefill-note .prefill-apply { margin-left: auto; }
+.prefill-note .prefill-dismiss {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-muted);
+  padding: 6px 8px;
+}
+
+button.danger { color: var(--critical-text); }
+button.danger:hover:not(:disabled) { border-color: var(--critical-text); }
+
+/* --- Lecții ---------------------------------------------------------- */
+
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 14px;
+}
+
+.lesson-card {
+  display: block;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 15px 17px;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.lesson-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.lesson-card.done { border-left: 3px solid var(--good-text); }
+
+.lesson-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.lesson-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--gridline);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  flex: none;
+}
+.lesson-card.done .lesson-badge { background: var(--good-text); color: #fff; }
+.lesson-time { font-size: 0.78rem; color: var(--text-muted); }
+
+.lesson-card h3 { margin: 0 0 5px; font-size: 0.98rem; color: var(--text-primary); }
+.lesson-card p { margin: 0; font-size: 0.86rem; color: var(--text-secondary); }
+.lesson-card .status { display: block; margin-top: 9px; font-size: 0.78rem; color: var(--text-muted); }
+
+.back-link { margin-bottom: 14px; padding-left: 0; }
+
+.lesson-body { max-width: 72ch; }
+.lesson-body p { color: var(--text-secondary); font-size: 0.96rem; line-height: 1.65; }
+.lesson-body h3 { margin-top: 22px; color: var(--text-primary); font-size: 1.02rem; }
+.lesson-insight {
+  border-left: 3px solid var(--accent);
+  color: var(--text-primary);
+  font-size: 0.93rem;
+}
+
+/* --- Quiz ------------------------------------------------------------ */
+
+.quiz-question { border: none; padding: 0; margin: 0 0 6px; }
+.quiz-question legend {
+  padding: 0;
+  margin-bottom: 14px;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.quiz-option {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  margin-bottom: 9px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.quiz-option:hover:not(:disabled) { border-color: var(--accent); }
+/* Variantele rămân lizibile după răspuns — sunt materialul de învățare. */
+.quiz-option:disabled { opacity: 1; cursor: default; }
+
+.quiz-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--gridline);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  flex: none;
+}
+.quiz-label { align-self: center; }
+
+.quiz-option.correct { border-color: var(--good-text); background: var(--surface-sunken); }
+.quiz-option.correct .quiz-marker { background: var(--good-text); color: #fff; }
+.quiz-option.wrong { border-color: var(--critical-text); }
+.quiz-option.wrong .quiz-marker { background: var(--critical-text); color: #fff; }
+
+.quiz-why {
+  grid-column: 2;
+  display: block;
+  margin-top: 7px;
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* --- Chips (exemple rapide, filtre) ---------------------------------- */
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+.chip {
+  padding: 7px 13px;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  background: var(--surface-sunken);
+  color: var(--text-secondary);
+}
+.chip:hover:not(:disabled) { color: var(--text-primary); }
+.chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 500;
+}
+
+/* --- Detalierea salariului ------------------------------------------- */
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gridline);
+}
+.breakdown-row:last-child { border-bottom: none; }
+/* Subtotalurile și totalurile se desprind vizual de pașii intermediari. */
+.breakdown-row.subtotal { border-top: 1px solid var(--baseline); font-weight: 600; }
+.breakdown-row.total {
+  border-top: 2px solid var(--baseline);
+  font-weight: 700;
+  font-size: 1.02rem;
+}
+
+.breakdown-label { display: block; font-size: 0.92rem; }
+.breakdown-note { display: block; font-size: 0.79rem; color: var(--text-muted); margin-top: 2px; }
+.breakdown-value { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.breakdown-value.negative { color: var(--critical-text); }
+
+/* --- Glosar ---------------------------------------------------------- */
+
+.glosar-entry {
+  border-bottom: 1px solid var(--gridline);
+  padding: 4px 0;
+}
+.glosar-entry:last-child { border-bottom: none; }
+
+.glosar-entry summary {
+  cursor: pointer;
+  padding: 11px 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+.glosar-entry summary::-webkit-details-marker { display: none; }
+.glosar-entry summary::before {
+  content: "▸";
+  color: var(--accent);
+  margin-right: 6px;
+  transition: transform 0.15s ease;
+}
+.glosar-entry[open] summary::before { transform: rotate(90deg); }
+.glosar-entry summary strong { font-size: 0.98rem; }
+.glosar-scurt { color: var(--text-secondary); font-size: 0.88rem; flex: 1; min-width: 200px; }
+
+.glosar-lung {
+  margin: 2px 0 10px 20px;
+  color: var(--text-secondary);
+  font-size: 0.91rem;
+  max-width: 72ch;
+  line-height: 1.6;
+}
+.glosar-vezi { margin: 0 0 12px 20px; font-size: 0.84rem; color: var(--text-muted); }
+.glosar-vezi a { margin-right: 2px; }
+
+.hidden { display: none !important; }
+
+footer.site-footer {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  padding: 24px 20px;
+  border-top: 1px solid var(--border);
+}
+footer.site-footer p { margin: 0; }
+
+/* --- 5. Responsive -------------------------------------------------- */
+
+@media (max-width: 860px) {
+  .nav-burger { display: block; }
+  .theme-toggle { margin-left: 0; }
+
+  .nav-links {
+    display: none;
+    width: 100%;
+    order: 10;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    margin: 8px 0 4px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .nav-links.open { display: flex; }
+  .nav-link { padding: 8px 0; width: 100%; border-bottom: none; }
+  .nav-link.active { border-left: 3px solid var(--accent); padding-left: 10px; }
+
+  .site-nav { flex-wrap: wrap; }
+
+  /* Pe ecrane înguste submeniurile devin secțiuni în listă, nu panouri
+     plutitoare: nu există spațiu lateral pentru un dropdown. */
+  .nav-group { width: 100%; }
+  .nav-trigger {
+    width: 100%;
+    text-align: left;
+    color: var(--text-muted);
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 12px 0 4px;
+    cursor: default;
+  }
+  .nav-trigger::after { display: none; }
+  .nav-trigger.active { color: var(--text-muted); }
+
+  .nav-panel {
+    display: block;
+    position: static;
+    min-width: 0;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    background: none;
+  }
+  .nav-sublink { padding: 8px 0 8px 12px; border-radius: 0; }
+  .nav-sublink.active { background: none; border-left: 3px solid var(--accent); padding-left: 10px; }
+}
+
+/* Pe tablete, rândul de cheltuieli are prea multe coloane pentru lățime:
+   frecvența trece pe al doilea rând, sub nume. */
+@media (max-width: 860px) and (min-width: 621px) {
+  .expense-header {
+    grid-template-columns: 16px 1fr 110px 110px 100px 36px;
+  }
+  .expense-header span:nth-child(4) { display: none; }
+
+  .expense-row {
+    grid-template-columns: 16px 1fr 110px 110px 100px 36px;
+    grid-template-areas:
+      "swatch name  group plan real remove"
+      ".      freq  freq  .    .    .";
+    row-gap: 6px;
+  }
+  .expense-row .swatch { grid-area: swatch; }
+  .expense-row .exp-name { grid-area: name; }
+  .expense-row .exp-group { grid-area: group; }
+  .expense-row .exp-freq { grid-area: freq; }
+  .expense-row .exp-plan-wrap { grid-area: plan; }
+  .expense-row .exp-real { grid-area: real; }
+  .expense-row .remove { grid-area: remove; }
+}
+
+@media (max-width: 620px) {
+  main { padding: 20px 14px 48px; }
+  .card { padding: 16px 15px; }
+  h1 { font-size: 1.45rem; }
+
+  /* Rândurile de cheltuieli devin blocuri, ca să încapă pe telefon.
+     Plan și Real rămân alăturate: comparația dintre ele este scopul. */
+  .expense-header { display: none; }
+  .expense-row {
+    grid-template-columns: 16px 1fr 1fr 36px;
+    grid-template-areas:
+      "swatch name  name  remove"
+      ".      group group group"
+      ".      freq  freq  freq"
+      ".      plan  real  real";
+    row-gap: 6px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--gridline);
+  }
+  .expense-row .swatch { grid-area: swatch; }
+  .expense-row .exp-name { grid-area: name; }
+  .expense-row .exp-group { grid-area: group; }
+  .expense-row .exp-freq { grid-area: freq; }
+  .expense-row .exp-plan-wrap { grid-area: plan; }
+  .expense-row .exp-real { grid-area: real; }
+  .expense-row .remove { grid-area: remove; }
+
+  /* Pe telefon lipsește antetul de tabel, deci câmpurile se auto-explică. */
+  .expense-row .exp-plan { text-align: right; }
+  .expense-row .exp-real { text-align: right; }
+
+  .income-header { display: none; }
+  .income-row {
+    grid-template-columns: 1fr 1fr 36px;
+    grid-template-areas:
+      "name  name   remove"
+      "type  amount amount";
+    row-gap: 6px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--gridline);
+  }
+  .income-row .inc-name { grid-area: name; }
+  .income-row .inc-type { grid-area: type; }
+  .income-row .inc-amount { grid-area: amount; }
+  .income-row .remove { grid-area: remove; }
+
+  .month-bar { flex-direction: column; align-items: stretch; }
+  .month-nav { justify-content: space-between; }
+  .month-actions button { flex: 1; }
+
+  .variance-row { grid-template-columns: 1fr auto; }
+  .variance-numbers { grid-column: 1; }
+  .variance-badge { grid-row: 1 / 3; grid-column: 2; align-self: center; }
+
+  .debt-head { display: none; }
+  .debt-row {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 6px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--gridline);
+  }
+  .debt-name { grid-column: 1 / -1; font-weight: 600; }
+
+  .stat-tile .value { font-size: 1.25rem; }
+
+  .score-main { gap: 16px; }
+  .score-verdict { font-size: 1.4rem; }
+
+  /* Butoanele trec pe toată lățimea, sub text. */
+  .hero-actions { width: 100%; }
+  .hero-btn { width: 100%; }
+
+  /* Explicația trece sub marcaj, ca să nu rămână o coloană de 3 cuvinte. */
+  .quiz-option { grid-template-columns: 24px 1fr; padding: 11px 12px; }
+  .quiz-why { grid-column: 1 / -1; }
+
+  .breakdown-row { gap: 10px; }
+  .glosar-lung, .glosar-vezi { margin-left: 0; }
+}
+
+/* --- Tipărire ------------------------------------------------------- */
+
+@media print {
+  .site-header, .view-toggle, .button-row, .skip-link, .chart-tooltip,
+  .chip-row, .prefill-note, .back-link { display: none !important; }
+  .glosar-entry .glosar-lung { display: block; }
+  .dim-row, .lesson-card, .breakdown-row { break-inside: avoid; }
+  body { background: #fff; }
+  .card { break-inside: avoid; border-color: #ccc; box-shadow: none; }
+  .explainer[open] summary::before { content: ""; }
+  .table-tall { max-height: none; overflow: visible; }
+  a { text-decoration: none; color: inherit; }
+}

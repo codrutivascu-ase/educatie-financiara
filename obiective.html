@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Obiective de economisire — Educație Financiară</title>
+  <meta name="description" content="Stabilește o sumă țintă și un termen și află cât trebuie să pui deoparte lunar ca să o atingi." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2a78d6" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Sari la conținut</a>
+  <header class="site-header">
+    <nav class="site-nav" id="site-nav" aria-label="Navigație principală"></nav>
+  </header>
+
+  <main id="main">
+    <h1>Obiective de economisire</h1>
+    <p class="subtitle">Stabilește o țintă și un termen, și află cât trebuie să pui deoparte în fiecare lună.</p>
+
+    <details class="explainer">
+      <summary>De ce un obiectiv cu termen funcționează mai bine</summary>
+      <p>„Vreau să economisesc mai mult” nu se întâmplă aproape niciodată. „Vreau 5.000 lei până în august, deci 625 lei pe lună” se întâmplă mult mai des, pentru că devine o sumă concretă pe care o poți compara cu bugetul tău.</p>
+      <p>Practic funcționează cel mai bine dacă transferi suma <strong>imediat după ce primești salariul</strong>, nu la finalul lunii din ce a rămas. Ideal, printr-un transfer automat într-un cont separat — ceea ce rămâne la vedere în contul curent tinde să fie cheltuit.</p>
+    </details>
+
+    <div class="card">
+      <h2>Obiectivul tău</h2>
+      <div class="field-grid">
+        <div class="field">
+          <label for="tinta">Sumă țintă (lei)</label>
+          <input type="number" id="tinta" min="0" step="100" value="5000" />
+        </div>
+        <div class="field">
+          <label for="termen">Termen (luni)</label>
+          <input type="number" id="termen" min="1" max="240" step="1" value="8" />
+        </div>
+        <div class="field">
+          <label for="deja-economisit">Sumă deja economisită (lei)</label>
+          <input type="number" id="deja-economisit" min="0" step="50" value="0" />
+        </div>
+        <div class="field">
+          <label for="dobanda-cont">Dobândă cont economii (%/an)</label>
+          <input type="number" id="dobanda-cont" min="0" max="20" step="0.1" value="0" />
+          <p class="field-hint">Lasă 0 dacă banii stau într-un cont curent, fără dobândă.</p>
+        </div>
+      </div>
+      <div class="button-row">
+        <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Rezultat</h2>
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="label">Sumă necesară lunar</div>
+          <div class="value" id="stat-lunar">0 lei</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Durată</div>
+          <div class="value" id="stat-luni">0 luni</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Procent atins</div>
+          <div class="value" id="stat-procent">0%</div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">Aport din dobândă</div>
+          <div class="value" id="stat-dobanda-aport">—</div>
+          <div class="label" style="margin-top:4px">cât adaugă banca în locul tău</div>
+        </div>
+      </div>
+
+      <div class="meter">
+        <div class="meter-header">
+          <span id="meter-label-left">0 lei economisiți</span>
+          <span id="meter-label-right">Țintă: 0 lei</span>
+        </div>
+        <div class="meter-track" id="meter-track"><div class="meter-fill" id="meter-fill" style="width:0%"></div></div>
+      </div>
+
+      <p id="insight" class="insight"></p>
+
+      <div class="view-toggle" role="group" aria-label="Mod de afișare">
+        <button id="btn-view-chart" class="primary" type="button">Grafic</button>
+        <button id="btn-view-table" type="button">Tabel</button>
+        <button id="btn-export-csv" type="button" class="ghost">Descarcă CSV</button>
+      </div>
+
+      <div id="chart-view" class="line-chart-wrap">
+        <div id="chart"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div id="table-view" class="hidden table-scroll">
+        <table class="data-table">
+          <caption class="sr-only">Progresul lună cu lună</caption>
+          <thead><tr><th scope="col">Lună</th><th scope="col">Sumă acumulată</th><th scope="col">% din țintă</th></tr></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>În ce ordine merită să economisești</h2>
+      <ol class="notes-list">
+        <li><strong>Un mic tampon</strong> (1.000-2.000 lei) pentru situații neprevăzute mărunte — evită să iei un credit rapid pentru o anvelopă spartă.</li>
+        <li><strong>Datoriile scumpe</strong> — dacă ai un credit rapid de la IFN cu dobândă de 20-25%, achitarea lui este cea mai sigură „investiție” disponibilă.</li>
+        <li><strong>Fondul de urgență complet</strong> — 3-6 luni de cheltuieli, ținute lichid, într-un cont separat.</li>
+        <li><strong>Obiectivele pe termen mediu</strong> — vacanță, mașină, avans la locuință.</li>
+        <li><strong>Investiții pe termen lung</strong> — abia după ce primele patru sunt acoperite.</li>
+      </ol>
+    </div>
+  </main>
+
+  <div id="tooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <p>Datele introduse rămân salvate doar în browserul tău (localStorage) și nu sunt trimise nicăieri.</p>
+  </footer>
+
+  <script src="js/common.js"></script>
+  <script src="js/linechart.js"></script>
+  <script src="js/obiective.js"></script>
+  <script>renderNav("obiective.html");</script>
+</body>
+</html>
