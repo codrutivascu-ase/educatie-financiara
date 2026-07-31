@@ -159,7 +159,7 @@ function simulateDebtPayoff(debts, monthlyBudget, strategy) {
  * Folosim un generator cu sămânță fixă, nu Math.random(), pentru ca
  * aceleași date introduse să producă mereu același grafic. Altfel
  * simularea s-ar schimba la fiecare redesenare (redimensionare, schimbare
- * de temă), iar utilizatorul ar crede că cifrele sunt arbitrare.
+ * de temă), iar utilizatorul ar crede că valorile sunt arbitrare.
  *
  * @param {number} seed
  * @returns {() => number} funcție care întoarce numere în [0, 1)
@@ -384,6 +384,270 @@ function brutDinNet(targetNet, opts = {}) {
 }
 
 /* ==================================================================== */
+/* Forme de organizare a venitului: CIM, PFA, SRL cu impozit pe micro   */
+/* ==================================================================== */
+
+/**
+ * Parametrii fiscali folosiți la compararea celor trei forme.
+ *
+ * Sunt strânși într-un singur obiect pentru că aproape toți se schimbă
+ * anual prin lege, iar pagina îi expune ca inputuri editabile. Pragurile
+ * sunt exprimate în număr de salarii minime, nu în lei, pentru că așa
+ * sunt scrise și în Codul fiscal — se actualizează singure când se
+ * modifică salariul minim.
+ */
+const FISCAL_FORME = {
+  an: 2026,
+  salariuMinim: 4050,
+  pfa: {
+    cas: 25,
+    cass: 10,
+    impozit: 10,
+    // CAS se datorează în trepte: sub 12 salarii minime nu se datorează
+    // deloc, între 12 și 24 se calculează la 12, peste 24 se calculează la 24.
+    pragCasInferior: 12,
+    pragCasSuperior: 24,
+    // CASS se calculează pe venitul net efectiv, dar închis între aceste limite.
+    cassMin: 6,
+    cassMax: 60,
+  },
+  srl: {
+    micro: 1, // 1% pentru venituri sub 60.000 EUR, 3% peste sau la anumite coduri CAEN
+    dividende: 16,
+    cass: 10,
+    // Pentru dividende, CASS nu se calculează pe venitul realizat, ci pe
+    // treapta în care acesta se încadrează — de aici saltul brusc la prag.
+    trepteCass: [6, 12, 24],
+  },
+};
+
+/**
+ * Contract individual de muncă, pornind de la costul total al angajatorului.
+ *
+ * Comparația dintre forme are sens doar dacă toate pleacă de la aceeași
+ * sumă plătită de cel care cumpără munca. La un salariat, acea sumă nu
+ * este brutul, ci brutul plus CAM — de aceea calculul pornește invers,
+ * din cost către brut.
+ *
+ * Calculul lunar nu poate fi înlocuit cu unul anual împărțit la 12,
+ * pentru că deducerea personală se aplică lunar și în trepte.
+ *
+ * @param {object} opts
+ * @param {number} opts.costAnual suma anuală plătită de angajator
+ * @param {number} [opts.salariuMinim]
+ * @param {number} [opts.dependents] persoane în întreținere
+ * @returns {{costAnual:number, brutLunar:number, brutAnual:number,
+ *            cam:number, cas:number, cass:number, impozit:number,
+ *            netLunar:number, netAnual:number, cheltuieli:number,
+ *            contributii:number, impozite:number, rataEfectiva:number}}
+ */
+function venitCIM({ costAnual, salariuMinim = FISCAL_FORME.salariuMinim, dependents = 0 }) {
+  const costLunar = Math.max(0, costAnual) / 12;
+  const brutLunar = costLunar / (1 + CONTRIBUTII.cam);
+  const r = salariuNet(brutLunar, { minWage: salariuMinim, dependents });
+
+  const contributii = (r.cas + r.cass + r.cam) * 12;
+  const impozite = r.impozit * 12;
+  const netAnual = r.net * 12;
+
+  return {
+    costAnual: Math.max(0, costAnual),
+    brutLunar,
+    brutAnual: brutLunar * 12,
+    cam: r.cam * 12,
+    cas: r.cas * 12,
+    cass: r.cass * 12,
+    impozit: impozite,
+    netLunar: r.net,
+    netAnual,
+    cheltuieli: 0,
+    contributii,
+    impozite,
+    rataEfectiva: costAnual > 0 ? (costAnual - netAnual) / costAnual : 0,
+  };
+}
+
+/**
+ * PFA în sistem real: venit net = încasări − cheltuieli deductibile.
+ *
+ * Ordinea contează și nu este intuitivă: CAS și CASS se calculează pe
+ * venitul net, iar impozitul de 10% se aplică pe ce rămâne *după* ele.
+ * De aceea un PFA nu plătește 45% din venit, cum ar sugera adunarea
+ * cotelor, ci vizibil mai puțin.
+ *
+ * Pragurile produc discontinuități reale: la un leu peste 12 salarii
+ * minime apare dintr-odată CAS pe un an întreg. Modelul le păstrează
+ * exact pentru că tocmai ele sunt lecția.
+ *
+ * @param {object} opts
+ * @param {number} opts.venituri încasările anuale, fără TVA
+ * @param {number} [opts.cheltuieli] cheltuieli deductibile anuale
+ * @param {number} [opts.salariuMinim]
+ * @param {boolean} [opts.areSalariu] dacă persoana are și un contract de
+ *        muncă — atunci baza minimă de 6 salarii minime la CASS nu se aplică,
+ *        pentru că CASS este deja plătită pe salariu
+ * @param {object} [opts.cote] suprascrie cotele implicite
+ */
+function venitPFA({
+  venituri,
+  cheltuieli = 0,
+  salariuMinim = FISCAL_FORME.salariuMinim,
+  areSalariu = false,
+  cote = {},
+}) {
+  const c = { ...FISCAL_FORME.pfa, ...cote };
+  const incasari = Math.max(0, venituri);
+  const costuri = Math.max(0, cheltuieli);
+  const venitNet = Math.max(0, incasari - costuri);
+
+  /* --- CAS: în trepte, pe praguri exprimate în salarii minime --------- */
+  const pragJos = c.pragCasInferior * salariuMinim;
+  const pragSus = c.pragCasSuperior * salariuMinim;
+  let bazaCas = 0;
+  if (venitNet >= pragSus) bazaCas = pragSus;
+  else if (venitNet >= pragJos) bazaCas = pragJos;
+  const cas = bazaCas * (c.cas / 100);
+
+  /* --- CASS: pe venitul net, dar închis între o limită de jos și una de sus */
+  let bazaCass = 0;
+  if (incasari > 0) {
+    const plafonJos = areSalariu ? 0 : c.cassMin * salariuMinim;
+    const plafonSus = c.cassMax * salariuMinim;
+    bazaCass = Math.min(Math.max(venitNet, plafonJos), plafonSus);
+  }
+  const cass = bazaCass * (c.cass / 100);
+
+  /* --- Impozitul, pe ce rămâne după contribuții ----------------------- */
+  const bazaImpozabila = Math.max(0, venitNet - cas - cass);
+  const impozit = bazaImpozabila * (c.impozit / 100);
+
+  const netAnual = venitNet - cas - cass - impozit;
+
+  return {
+    venituri: incasari,
+    cheltuieli: costuri,
+    venitNet,
+    bazaCas,
+    cas,
+    bazaCass,
+    cass,
+    bazaImpozabila,
+    impozit,
+    netAnual,
+    contributii: cas + cass,
+    impozite: impozit,
+    rataEfectiva: incasari > 0 ? (incasari - netAnual) / incasari : 0,
+  };
+}
+
+/**
+ * SRL plătitor de impozit pe veniturile microîntreprinderilor, cu banii
+ * scoși ca dividende.
+ *
+ * Două lucruri sunt ușor de ratat aici:
+ *
+ *   1. impozitul micro se aplică pe *venituri*, nu pe profit — cheltuielile
+ *      nu îl reduc, spre deosebire de impozitul pe profit;
+ *   2. banii ajung la asociat abia după al doilea impozit, cel pe dividende,
+ *      plus CASS pe treaptă. Suma vizibilă în contul firmei nu este suma
+ *      pe care o poți folosi.
+ *
+ * Modelul presupune că întreg profitul se distribuie ca dividende în același
+ * an. Un asociat care lasă banii în firmă amână al doilea impozit.
+ *
+ * @param {object} opts
+ * @param {number} opts.venituri încasările anuale ale firmei
+ * @param {number} [opts.cheltuieli] cheltuielile anuale de funcționare
+ *        (contabilitate, salariatul obligatoriu, comisioane bancare)
+ * @param {number} [opts.salariuMinim]
+ * @param {object} [opts.cote] suprascrie cotele implicite
+ */
+function venitSRLMicro({
+  venituri,
+  cheltuieli = 0,
+  salariuMinim = FISCAL_FORME.salariuMinim,
+  cote = {},
+}) {
+  const c = { ...FISCAL_FORME.srl, ...cote };
+  const incasari = Math.max(0, venituri);
+  const costuri = Math.max(0, cheltuieli);
+
+  const impozitMicro = incasari * (c.micro / 100);
+  // Impozitul micro este el însuși o cheltuială a firmei, deci reduce
+  // profitul care poate fi distribuit.
+  const profitDistribuibil = Math.max(0, incasari - costuri - impozitMicro);
+
+  const impozitDividende = profitDistribuibil * (c.dividende / 100);
+
+  /* --- CASS pe dividende: în trepte, pe dividendul brut ---------------- */
+  let bazaCass = 0;
+  for (const trepte of c.trepteCass) {
+    if (profitDistribuibil >= trepte * salariuMinim) bazaCass = trepte * salariuMinim;
+  }
+  const cass = bazaCass * (c.cass / 100);
+
+  const netAnual = Math.max(0, profitDistribuibil - impozitDividende - cass);
+
+  return {
+    venituri: incasari,
+    cheltuieli: costuri,
+    impozitMicro,
+    profitDistribuibil,
+    impozitDividende,
+    bazaCass,
+    cass,
+    netAnual,
+    contributii: cass,
+    impozite: impozitMicro + impozitDividende,
+    rataEfectiva: incasari > 0 ? (incasari - netAnual) / incasari : 0,
+  };
+}
+
+/**
+ * Rulează aceeași sumă anuală prin toate cele trei forme.
+ *
+ * Baza comună este suma pe care o plătește cel care cumpără munca: costul
+ * total al angajatorului la un contract de muncă, respectiv factura emisă
+ * de PFA sau SRL. Orice altă bază (brutul, de exemplu) ar avantaja artificial
+ * salariul, pentru că ar ascunde CAM.
+ *
+ * @returns {{cim:object, pfa:object, srl:object, castigator:string}}
+ */
+function compareFormeVenit({
+  sumaAnuala,
+  cheltuieliPfa = 0,
+  cheltuieliSrl = 0,
+  salariuMinim = FISCAL_FORME.salariuMinim,
+  dependents = 0,
+  areSalariu = false,
+  cotePfa = {},
+  coteSrl = {},
+}) {
+  const cim = venitCIM({ costAnual: sumaAnuala, salariuMinim, dependents });
+  const pfa = venitPFA({
+    venituri: sumaAnuala,
+    cheltuieli: cheltuieliPfa,
+    salariuMinim,
+    areSalariu,
+    cote: cotePfa,
+  });
+  const srl = venitSRLMicro({
+    venituri: sumaAnuala,
+    cheltuieli: cheltuieliSrl,
+    salariuMinim,
+    cote: coteSrl,
+  });
+
+  const clasament = [
+    { cheie: "cim", net: cim.netAnual },
+    { cheie: "pfa", net: pfa.netAnual },
+    { cheie: "srl", net: srl.netAnual },
+  ].sort((a, b) => b.net - a.net);
+
+  return { cim, pfa, srl, castigator: clasament[0].cheie, clasament };
+}
+
+/* ==================================================================== */
 /* Pensii                                                               */
 /* ==================================================================== */
 
@@ -393,7 +657,7 @@ function brutDinNet(targetNet, opts = {}) {
  *
  * Pilonul I nu este un cont care se acumulează, deci nu poate fi proiectat
  * ca pilonii II și III. Singura estimare onestă este să presupunem că
- * raportul de astăzi dintre pensii și salarii se menține — de aceea cifrele
+ * raportul de astăzi dintre pensii și salarii se menține — de aceea valorile
  * de mai jos sunt expuse explicit și pot fi modificate din interfață.
  *
  * Sursa: câștigul salarial mediu net (INS) și pensia medie de asigurări
@@ -409,6 +673,26 @@ const REPER_PILON1 = {
 /** Rata de înlocuire care rezultă din reperele de mai sus (~55%). */
 const RATA_INLOCUIRE_PILON1 =
   (REPER_PILON1.pensieMedie / REPER_PILON1.salariuNetMediu) * 100;
+
+/**
+ * Oprește creșterea salariului la un plafon.
+ *
+ * O creștere procentuală constantă aplicată timp de treizeci și ceva de ani
+ * duce la salarii care nu există: 5% pe an transformă 8.000 de lei în peste
+ * 44.000. Contribuțiile proiectate de acolo sunt la fel de nerealiste, iar
+ * rezultatul final pare mult mai bun decât ar fi.
+ *
+ * Plafonul nu poate coborî sub salariul de pornire: dacă cineva câștigă deja
+ * peste el, proiecția îi păstrează salariul constant în loc să i-l taie.
+ *
+ * @param {number} salary salariul rezultat din creștere
+ * @param {number} startSalary salariul de la care s-a pornit
+ * @param {number} [cap] plafonul; fără el, salariul crește neîngrădit
+ */
+function capSalary(salary, startSalary, cap = Infinity) {
+  if (!isFinite(cap) || cap <= 0) return salary;
+  return Math.min(salary, Math.max(cap, startSalary));
+}
 
 /**
  * Estimează pensia din Pilonul I aplicând o rată de înlocuire salariului
@@ -427,6 +711,7 @@ const RATA_INLOCUIRE_PILON1 =
  * @param {number} opts.wageGrowthPct creșterea anuală a salariului, %
  * @param {number} opts.replacementRatePct rata de înlocuire presupusă, %
  * @param {number} [opts.minWage] salariul minim brut, pentru deducere
+ * @param {number} [opts.salaryCap] plafonul peste care salariul nu mai crește
  * @returns {{yearsToRetire:number, grossAtRetirement:number,
  *            netAtRetirement:number, monthlyPension:number}}
  */
@@ -437,9 +722,14 @@ function estimatePillar1({
   wageGrowthPct,
   replacementRatePct,
   minWage = 4050,
+  salaryCap = Infinity,
 }) {
   const yearsToRetire = Math.max(0, Math.round(retirementAge - currentAge));
-  const grossAtRetirement = grossSalary * Math.pow(1 + wageGrowthPct / 100, yearsToRetire);
+  const grossAtRetirement = capSalary(
+    grossSalary * Math.pow(1 + wageGrowthPct / 100, yearsToRetire),
+    grossSalary,
+    salaryCap
+  );
   const netAtRetirement = salariuNet(grossAtRetirement, { minWage }).net;
 
   return {
@@ -467,6 +757,7 @@ function estimatePillar1({
  * @param {number} opts.pillar3Monthly contribuția lunară la Pilon III
  * @param {number} opts.pillar3ReturnPct randamentul anual al Pilonului III, %
  * @param {number} [opts.existingPillar2] sold deja acumulat în Pilon II
+ * @param {number} [opts.salaryCap] plafonul peste care salariul nu mai crește
  * @returns {{years:number[], pillar2:number[], pillar3:number[],
  *            contributed2:number, contributed3:number,
  *            final2:number, final3:number, total:number}}
@@ -480,6 +771,7 @@ function projectPension({
   pillar3Monthly,
   pillar3ReturnPct,
   existingPillar2 = 0,
+  salaryCap = Infinity,
 }) {
   const yearsToRetire = Math.max(0, Math.round(retirementAge - currentAge));
   const r2 = Math.pow(1 + pillar2ReturnPct / 100, 1 / 12) - 1;
@@ -503,7 +795,9 @@ function projectPension({
       contributed2 += monthly2;
       contributed3 += pillar3Monthly;
     }
-    salary *= 1 + wageGrowthPct / 100;
+    // Salariul crește până la plafon, apoi rămâne acolo — la fel și
+    // contribuția la Pilonul II, care este un procent din el.
+    salary = capSalary(salary * (1 + wageGrowthPct / 100), grossSalary, salaryCap);
 
     years.push(y);
     pillar2.push(balance2);

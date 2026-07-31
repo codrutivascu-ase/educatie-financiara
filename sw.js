@@ -10,7 +10,7 @@
  * în localStorage, care nu trece prin service worker.
  */
 
-const CACHE_NAME = "educatie-financiara-v2";
+const CACHE_NAME = "educatie-financiara-v3";
 
 /** Tot ce trebuie disponibil offline de la prima vizită. */
 const PRECACHE = [
@@ -27,6 +27,7 @@ const PRECACHE = [
   "pensii.html",
   "datorii.html",
   "comparator.html",
+  "forme-venit.html",
   "css/style.css",
   "js/common.js",
   "js/store.js",
@@ -46,6 +47,7 @@ const PRECACHE = [
   "js/inflatie.js",
   "js/oportunitate.js",
   "js/salariu.js",
+  "js/forme-venit.js",
   "js/pensii.js",
   "manifest.json",
   "icon.svg",

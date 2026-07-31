@@ -16,7 +16,7 @@ const tooltip = document.getElementById("tooltip");
 /* ------------------------------------------------------------------ */
 
 function recalcTrecut() {
-  const suma = readNumber("suma-trecut", { min: 0, max: 1e9 });
+  const suma = readNumber("suma-trecut", { min: 0, max: 100000000 });
   const ani = readNumber("ani-trecut", { min: 1, max: 40, fallback: 10, integer: true });
   const inflatie = readNumber("inflatie-trecut", { min: 0, max: 50, fallback: 6 });
 
@@ -41,7 +41,7 @@ function recalcTrecut() {
 /* ------------------------------------------------------------------ */
 
 function recalcViitor() {
-  const suma = readNumber("suma-viitor", { min: 0, max: 1e9 });
+  const suma = readNumber("suma-viitor", { min: 0, max: 100000000 });
   const ani = readNumber("ani-viitor", { min: 1, max: 40, fallback: 10, integer: true });
   const dobanda = readNumber("dobanda-cont", { min: 0, max: 30 });
   const inflatie = readNumber("inflatie-viitor", { min: 0, max: 50, fallback: 5 });

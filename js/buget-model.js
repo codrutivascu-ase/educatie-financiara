@@ -424,7 +424,7 @@ function areDateReale(luna) {
 /**
  * Evoluția lunilor, în ordine cronologică.
  *
- * Folosește cifrele reale acolo unde există și pe cele planificate în
+ * Folosește valorile reale acolo unde există și pe cele planificate în
  * rest, ca graficul să nu aibă goluri. Fiecare punct spune care variantă
  * a fost folosită, ca interfața să poată marca diferența.
  */

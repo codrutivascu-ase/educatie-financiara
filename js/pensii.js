@@ -13,13 +13,16 @@ const tooltip = document.getElementById("tooltip");
 const ANI_DE_PENSIE = 20;
 
 function recalc() {
-  const brut = readNumber("salariu-brut", { min: 0, max: 1e7 });
+  const brut = readNumber("salariu-brut", { min: 0, max: 200000 });
   const varsta = readNumber("varsta", { min: 18, max: 70, fallback: 30, integer: true });
   const varstaPensie = readNumber("varsta-pensie", { min: 45, max: 75, fallback: 65, integer: true });
-  const soldExistent = readNumber("sold-pilon2", { min: 0, max: 1e8 });
+  const soldExistent = readNumber("sold-pilon2", { min: 0, max: 5000000 });
   const crestereSalariu = readNumber("crestere-salariu", { min: 0, max: 20, fallback: 5 });
+  // Zero înseamnă „fără plafon”, ca utilizatorul să poată vedea și proiecția
+  // necenzurată dacă vrea.
+  const plafonSalariu = readNumber("plafon-salariu", { min: 0, max: 200000, fallback: 30000 }) || Infinity;
   const randamentP2 = readNumber("randament-p2", { min: 0, max: 20, fallback: 7 });
-  const pilon3Lunar = readNumber("pilon3-lunar", { min: 0, max: 100000 });
+  const pilon3Lunar = readNumber("pilon3-lunar", { min: 0, max: 20000 });
   const randamentP3 = readNumber("randament-p3", { min: 0, max: 20, fallback: 7 });
   const inflatie = readNumber("inflatie", { min: 0, max: 20, fallback: 4 });
   const rataInlocuire = readNumber("rata-inlocuire", {
@@ -39,6 +42,7 @@ function recalc() {
     pillar3Monthly: pilon3Lunar,
     pillar3ReturnPct: randamentP3,
     existingPillar2: soldExistent,
+    salaryCap: plafonSalariu,
   });
 
   const real = r.total / Math.pow(1 + inflatie / 100, aniRamasi);
@@ -84,7 +88,7 @@ function recalc() {
       `În ${aniRamasi} ani până la pensionare acumulezi aproximativ ${formatRON(r.total)}. ` +
       `Din această sumă, ${formatPercent(proportie)} nu vine din contribuții, ci din randamentul acumulat. ` +
       `În puterea de cumpărare de astăzi, echivalentul este ${formatRON(real)} — ` +
-      `diferența față de cifra nominală este exact efectul inflației pe ${aniRamasi} ani.` +
+      `diferența față de valoarea nominală este exact efectul inflației pe ${aniRamasi} ani.` +
       comparatieP3;
   }
 
@@ -95,9 +99,10 @@ function recalc() {
     retirementAge: varstaPensie,
     wageGrowthPct: crestereSalariu,
     replacementRatePct: rataInlocuire,
+    salaryCap: plafonSalariu,
   });
 
-  // Toate cifrele de aici sunt nominale, la data pensionării. Le raportăm
+  // Toate valorile de aici sunt nominale, la data pensionării. Le raportăm
   // la salariul de atunci, nu la cel de azi — altfel procentul n-ar avea sens.
   const venitTotalLunar = p1.monthlyPension + venitLunar;
   const inlocuireTotala = p1.netAtRetirement > 0 ? venitTotalLunar / p1.netAtRetirement : 0;

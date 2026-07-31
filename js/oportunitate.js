@@ -59,7 +59,7 @@ function proiecteaza(suma, frecventa, ani, randamentPct) {
 }
 
 function recalc() {
-  const suma = readNumber("suma", { min: 0, max: 1e8 });
+  const suma = readNumber("suma", { min: 0, max: 1000000 });
   const frecventa = document.getElementById("frecventa").value;
   const ani = readNumber("orizont", { min: 1, max: 40, fallback: 20, integer: true });
   const randament = readNumber("randament", { min: 0, max: 20, fallback: 7 });
@@ -92,7 +92,7 @@ function recalc() {
       `O cheltuială unică de ${formatRON(suma)} ar fi devenit ${formatRON(totalInvestit)} în ${ani} ani ` +
       `la un randament de ${randament}% — de ${multiplu.toFixed(1)} ori mai mult. ` +
       `În puterea de cumpărare de astăzi, asta înseamnă aproximativ ${formatRON(real)}, ` +
-      `deci prețul real al achiziției este mai aproape de această cifră decât de cea de pe etichetă.`;
+      `deci prețul real al achiziției este mai aproape de această valoare decât de cea de pe etichetă.`;
   } else {
     const proportieCastig = totalInvestit > 0 ? cost / totalInvestit : 0;
     insight.textContent =

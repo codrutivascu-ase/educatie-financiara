@@ -88,7 +88,7 @@ function readBuget() {
 
   const { venit, nevoi, dorinte, economiiAlocate, categorii } = luna;
 
-  // Fără nicio cifră introdusă, profilul nu spune nimic.
+  // Fără nicio valoare introdusă, profilul nu spune nimic.
   if (venit <= 0 && nevoi + dorinte + economiiAlocate <= 0) return null;
 
   // Cheltuielile curente sunt nevoi + dorințe. Economiile nu intră:

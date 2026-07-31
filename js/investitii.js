@@ -76,8 +76,8 @@ function projectBalances(initial, monthly, years, annualRatePct) {
 }
 
 function recalc() {
-  const initial = readNumber("suma-initiala", { min: 0, max: 100000000 });
-  const monthly = readNumber("contributie-lunara", { min: 0, max: 1000000 });
+  const initial = readNumber("suma-initiala", { min: 0, max: 10000000 });
+  const monthly = readNumber("contributie-lunara", { min: 0, max: 200000 });
   const years = readNumber("orizont", { min: 1, max: 40, fallback: 10, integer: true });
   const inflatie = readNumber("inflatie", { min: 0, max: 20 });
 
@@ -132,16 +132,23 @@ function recalc() {
     value.textContent = formatRON(finalValue);
     tile.appendChild(value);
 
+    // Cele două note stau într-un singur element: cartonașele se aliniază
+    // pe trei benzi (nume / valoare / note), iar un al patrulea copil ar
+    // ieși din banda rezervată.
+    const note = document.createElement("div");
+    note.style.marginTop = "4px";
+
     const gain = document.createElement("div");
     gain.className = "label";
-    gain.style.marginTop = "4px";
     gain.textContent = `din care câștig: ${formatRON(Math.max(0, castig))}`;
-    tile.appendChild(gain);
+    note.appendChild(gain);
 
     const real = document.createElement("div");
     real.className = "label";
     real.textContent = `în puterea de azi: ${formatRON(realValue)}`;
-    tile.appendChild(real);
+    note.appendChild(real);
+
+    tile.appendChild(note);
 
     statsEl.appendChild(tile);
   });
@@ -230,8 +237,8 @@ function renderLegend(legend, series) {
 let monteCarloPornit = false;
 
 function ruleazaMonteCarlo() {
-  const initial = readNumber("suma-initiala", { min: 0, max: 100000000 });
-  const monthly = readNumber("contributie-lunara", { min: 0, max: 1000000 });
+  const initial = readNumber("suma-initiala", { min: 0, max: 10000000 });
+  const monthly = readNumber("contributie-lunara", { min: 0, max: 200000 });
   const years = readNumber("orizont", { min: 1, max: 40, fallback: 10, integer: true });
   const meanReturnPct = readNumber("mc-randament", { min: -5, max: 20, fallback: 7 });
   const volatilityPct = readNumber("mc-volatilitate", { min: 0, max: 50, fallback: 16 });

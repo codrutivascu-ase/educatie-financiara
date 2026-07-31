@@ -105,12 +105,12 @@ function renderStrategies() {
 
   // Trei datorii tipice, cu dobânzi foarte diferite.
   const debts = [
-    { name: "Credit rapid (IFN)", balance: readNumber("d1-sold", { min: 0 }), rate: readNumber("d1-rata", { min: 0, max: 100 }), minPayment: readNumber("d1-min", { min: 0 }) },
-    { name: "Credit de nevoi personale", balance: readNumber("d2-sold", { min: 0 }), rate: readNumber("d2-rata", { min: 0, max: 100 }), minPayment: readNumber("d2-min", { min: 0 }) },
-    { name: "Rate la magazin", balance: readNumber("d3-sold", { min: 0 }), rate: readNumber("d3-rata", { min: 0, max: 100 }), minPayment: readNumber("d3-min", { min: 0 }) },
+    { name: "Credit rapid (IFN)", balance: readNumber("d1-sold", { min: 0, max: 1000000 }), rate: readNumber("d1-rata", { min: 0, max: 100 }), minPayment: readNumber("d1-min", { min: 0, max: 100000 }) },
+    { name: "Credit de nevoi personale", balance: readNumber("d2-sold", { min: 0, max: 1000000 }), rate: readNumber("d2-rata", { min: 0, max: 100 }), minPayment: readNumber("d2-min", { min: 0, max: 100000 }) },
+    { name: "Rate la magazin", balance: readNumber("d3-sold", { min: 0, max: 1000000 }), rate: readNumber("d3-rata", { min: 0, max: 100 }), minPayment: readNumber("d3-min", { min: 0, max: 100000 }) },
   ].filter((d) => d.balance > 0);
 
-  const buget = readNumber("buget-datorii", { min: 0 });
+  const buget = readNumber("buget-datorii", { min: 0, max: 200000 });
 
   if (debts.length === 0) {
     box.appendChild(makeNote("Introdu cel puțin o datorie ca să compari strategiile."));
@@ -151,11 +151,15 @@ function renderStrategies() {
     value.textContent = formatMonths(s.sim.months);
     tile.appendChild(value);
 
+    // Notele stau grupate: cartonașele se aliniază pe trei benzi
+    // (etichetă / valoare / note), iar un al patrulea copil ar ieși din ele.
+    const note = document.createElement("div");
+    note.style.marginTop = "4px";
+
     const sub = document.createElement("div");
     sub.className = "label";
-    sub.style.marginTop = "4px";
     sub.textContent = `dobândă totală: ${formatRON(s.sim.totalInterest)}`;
-    tile.appendChild(sub);
+    note.appendChild(sub);
 
     // Ordinea în care dispar datoriile — argumentul principal al metodei bulgăre.
     if (s.sim.payoffOrder.length) {
@@ -164,8 +168,10 @@ function renderStrategies() {
       order.style.marginTop = "4px";
       order.textContent =
         "ordine: " + s.sim.payoffOrder.map((p) => p.name).join(" → ");
-      tile.appendChild(order);
+      note.appendChild(order);
     }
+
+    tile.appendChild(note);
 
     row.appendChild(tile);
   });
@@ -198,14 +204,14 @@ function makeNote(text) {
 
 function recalc() {
   // Creditul pentru locuință: sume în euro.
-  const principal = readNumber("suma-credit", { min: 0, max: 100000000 });
+  const principal = readNumber("suma-credit", { min: 0, max: 2000000 });
   const rate = readNumber("dobanda", { min: 0, max: 50 });
   const years = readNumber("perioada", { min: 1, max: 35, fallback: 25, integer: true });
   const months = years * 12;
   const curs = readNumber("curs", { min: 1, max: 20, fallback: CURS_EUR_IMPLICIT });
   // Veniturile și celelalte rate: sume în lei, așa cum sunt încasate și plătite.
-  const venit = readNumber("venit-net", { min: 0 });
-  const alteRate = readNumber("alte-rate", { min: 0 });
+  const venit = readNumber("venit-net", { min: 0, max: 200000 });
+  const alteRate = readNumber("alte-rate", { min: 0, max: 100000 });
 
   const base = buildAmortizationSchedule(principal, rate, months, 0);
   const rataLunara = base.monthlyPaymentBase;
@@ -306,7 +312,7 @@ function recalc() {
   });
 
   /* --- Plata anticipată --------------------------------------------- */
-  const extra = readNumber("extra-lunar", { min: 0 });
+  const extra = readNumber("extra-lunar", { min: 0, max: 100000 });
   const withExtra = buildAmortizationSchedule(principal, rate, months, extra);
 
   document.getElementById("stat-fara-durata").textContent = formatMonths(base.monthsUsed);

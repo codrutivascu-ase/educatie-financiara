@@ -13,9 +13,9 @@ let mode = MODES.BRUT;
 /** Parametrii care depind de câmpurile din pagină, nu de o direcție anume. */
 function citesteOptiuni() {
   return {
-    minWage: readNumber("salariu-minim", { min: 0, max: 100000, fallback: 4050 }),
+    minWage: readNumber("salariu-minim", { min: 0, max: 20000, fallback: 4050 }),
     dependents: parseInt(document.getElementById("persoane").value, 10) || 0,
-    pillar3Amount: readNumber("pilon3", { min: 0, max: 100000 }),
+    pillar3Amount: readNumber("pilon3", { min: 0, max: 20000 }),
   };
 }
 
@@ -87,7 +87,7 @@ function renderBreakdown(r, opts) {
   const pasi = [
     { eticheta: "Cost total angajator", suma: r.costTotalAngajator, nota: "brut + CAM", tip: "total" },
     { eticheta: "− CAM (2,25%)", suma: -r.cam, nota: "plătit de angajator peste brut" },
-    { eticheta: "Salariu brut", suma: r.gross, nota: "cifra din contract", tip: "subtotal" },
+    { eticheta: "Salariu brut", suma: r.gross, nota: "valoarea din contract", tip: "subtotal" },
     { eticheta: "− CAS, pensie (25%)", suma: -r.cas, nota: `din care ${formatRON(r.pilon2)} la Pilonul II` },
     { eticheta: "− CASS, sănătate (10%)", suma: -r.cass, nota: "" },
     {
@@ -170,14 +170,14 @@ function recalc() {
   const opts = citesteOptiuni();
 
   // În modul „net → brut” găsim brutul prin căutare binară, apoi
-  // recalculăm normal din el, ca toate cifrele să fie consistente.
+  // recalculăm normal din el, ca toate valorile să fie consistente.
   let brut;
   if (mode === MODES.NET) {
-    const netDorit = readNumber("net-dorit", { min: 0, max: 1e7 });
+    const netDorit = readNumber("net-dorit", { min: 0, max: 200000 });
     brut = brutDinNet(netDorit, opts);
     document.getElementById("brut").value = String(Math.round(brut));
   } else {
-    brut = readNumber("brut", { min: 0, max: 1e7 });
+    brut = readNumber("brut", { min: 0, max: 200000 });
   }
 
   const r = salariuNet(brut, opts);
@@ -240,6 +240,8 @@ function setMode(next) {
 document.getElementById("btn-mode-brut").addEventListener("click", () => setMode(MODES.BRUT));
 document.getElementById("btn-mode-net").addEventListener("click", () => setMode(MODES.NET));
 document.getElementById("persoane").addEventListener("change", recalc);
+// Fără asta, rezultatul rămâne pe valorile de la încărcare cât timp se tastează.
+document.querySelectorAll("main input").forEach((el) => el.addEventListener("input", recalc));
 
 /* ------------------------------------------------------------------ */
 /* Legătura cu bugetul lunar                                           */
@@ -256,7 +258,7 @@ document.getElementById("persoane").addEventListener("change", recalc);
  */
 document.getElementById("btn-la-buget").addEventListener("click", () => {
   const opts = citesteOptiuni();
-  const brut = readNumber("brut", { min: 0, max: 1e7 });
+  const brut = readNumber("brut", { min: 0, max: 200000 });
   const net = Math.round(salariuNet(brut, opts).net);
   if (net <= 0) return;
 

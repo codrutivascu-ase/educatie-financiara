@@ -279,6 +279,17 @@ main {
   border-bottom: 1px solid var(--gridline);
 }
 
+/* Rândul de context de sub titlul de secțiune: spune la ce folosește
+   grupul, ca titlurile scurte ale cartonașelor să nu rămână singurele
+   indicii. */
+.section-lead {
+  margin: 10px 0 0;
+  max-width: 72ch;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
 .hero-card { border-left: 3px solid var(--accent); }
 
 .hero-main {
@@ -356,6 +367,13 @@ main {
   margin-top: 10px;
   font-size: 0.78rem;
   color: var(--text-muted);
+}
+
+/* Subtitlu care împarte un formular lung în grupuri cu sens. */
+.form-group-title {
+  margin: 26px 0 2px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
 }
 
 /* Formulare. */
@@ -645,6 +663,44 @@ button.ghost:hover { color: var(--text-primary); }
 .stat-tile .value.good { color: var(--good-text); }
 .stat-tile .value.critical { color: var(--critical-text); }
 
+/* --- Alinierea pe rânduri a widget-urilor ----------------------------
+   Într-un rând de câmpuri sau de cartonașe, unele etichete încap pe un
+   rând și altele pe două, iar unele au explicație dedesubt și altele nu.
+   Fără o legătură între ele, casetele de input și cifrele mari ajung la
+   înălțimi diferite și rândul pare strâmb.
+
+   `subgrid` leagă cele trei benzi interne (etichetă / conținut / notă) de
+   rândurile părintelui, deci toate elementele de pe același rând le împart.
+   Gutiera internă se anulează: distanțele dintre etichetă, control și notă
+   vin din marginile lor, nu din `gap`-ul grilei — altfel s-ar dubla.
+
+   Rezervarea este de trei benzi, deci un element cu un al patrulea copil
+   ar da pe dinafară și ar scrie peste ce urmează. De aceea fiecare grilă se
+   verifică întâi cu `:has()`: dacă vreun element din ea are mai mult de trei
+   copii, grila întreagă revine la comportamentul dinainte. Mai bine
+   nealiniat decât suprapus, iar regula se autoprotejează la conținut viitor.
+
+   Browserele fără subgrid sau fără `:has()` ignoră blocul și păstrează
+   aranjarea de dinainte, deci nimic nu se strică; doar nu se aliniază. */
+@supports (grid-template-rows: subgrid) and selector(:has(*)) {
+  .field-grid:not(:has(> .field > :nth-child(4))) > .field,
+  .stat-row:not(:has(> .stat-tile > :nth-child(4))) > .stat-tile,
+  .module-grid:not(:has(> .module-card > :nth-child(4))) > .module-card {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+    row-gap: 0;
+  }
+
+  /* Ultima bandă preia spațiul rămas, ca notele scurte să stea lipite de
+     conținutul lor, nu suspendate la mijloc. */
+  .field-grid:not(:has(> .field > :nth-child(4))) > .field > :last-child,
+  .stat-row:not(:has(> .stat-tile > :nth-child(4))) > .stat-tile > :last-child,
+  .module-grid:not(:has(> .module-card > :nth-child(4))) > .module-card > :last-child {
+    align-self: start;
+  }
+}
+
 /* Bara stivuită de distribuție. */
 .bar-chart-wrap { margin-top: 18px; }
 
@@ -686,6 +742,49 @@ button.ghost:hover { color: var(--text-primary); }
   border-top: 3px dashed currentColor;
 }
 .legend .amount { color: var(--text-primary); font-variant-numeric: tabular-nums; font-weight: 500; }
+
+/* --- Comparația formelor de venit ------------------------------------
+   Trei bare cu același total, ca diferența să se citească în compoziție,
+   nu în lungime. */
+
+.forma-row { margin-bottom: 18px; }
+.forma-row:last-child { margin-bottom: 0; }
+
+.forma-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.forma-nume { font-size: 0.92rem; font-weight: 600; color: var(--text-primary); }
+.forma-valoare {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Marcajul formei cu cel mai mare net — o etichetă, nu o recomandare. */
+.forma-marca {
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  color: var(--good-text);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.forma-titlu {
+  margin: 22px 0 4px;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+#breakdown .forma-titlu:first-child { margin-top: 8px; }
 
 /* Scenariile de randament. */
 .scenario-row {
@@ -862,27 +961,50 @@ table.data-table tbody tr:hover { background: var(--surface-sunken); }
   position: absolute;
   top: calc(100% + 10px);
   left: 0;
-  min-width: 220px;
+  width: max-content;
+  min-width: 260px;
+  max-width: min(360px, calc(100vw - 32px));
   background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 6px;
+  padding: 8px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
   z-index: 30;
 }
 .nav-group.open .nav-panel { display: block; }
 
+/* Ultimul grup este lipit de marginea dreaptă a antetului: dacă panoul
+   ar porni tot din stânga, ar ieși din ecran. */
+.nav-links > .nav-group:last-child .nav-panel { left: auto; right: 0; }
+
+.nav-panel-desc {
+  margin: 4px 10px 10px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
 .nav-sublink {
   display: block;
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-radius: 6px;
   text-decoration: none;
   color: var(--text-secondary);
   font-size: 0.9rem;
-  white-space: nowrap;
+  white-space: normal;
 }
 .nav-sublink:hover { background: var(--surface-sunken); color: var(--text-primary); }
 .nav-sublink.active { color: var(--text-primary); font-weight: 600; background: var(--surface-sunken); }
+
+.nav-sublink-label { display: block; }
+.nav-sublink-desc {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+.nav-sublink:hover .nav-sublink-desc { color: var(--text-secondary); }
 
 /* --- Sugestia de preluare a unei valori din alt modul ---------------- */
 
@@ -1167,6 +1289,16 @@ footer.site-footer p { margin: 0; }
   }
   .nav-sublink { padding: 8px 0 8px 12px; border-radius: 0; }
   .nav-sublink.active { background: none; border-left: 3px solid var(--accent); padding-left: 10px; }
+
+  /* Într-un meniu deschis peste toată pagina, descrierile ar face lista de
+     douăsprezece pagini de trei ori mai lungă decât ecranul. Titlul grupului
+     rămâne singurul context necesar. */
+  .nav-panel-desc, .nav-sublink-desc { display: none; }
+
+  /* Pe lățimi mici, numele formei și suma nu mai încap pe același rând
+     decât la unele forme. Le trecem pe rânduri separate la toate, ca
+     barele să înceapă de la aceeași înălțime. */
+  .forma-head { flex-direction: column; align-items: flex-start; gap: 2px; }
 }
 
 /* Pe tablete, rândul de cheltuieli are prea multe coloane pentru lățime:

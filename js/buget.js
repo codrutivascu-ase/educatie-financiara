@@ -457,7 +457,7 @@ function randeazaEchivalent(wrap, chelt) {
   wrap.appendChild(nota);
 }
 
-/** Explică, cu cifrele utilizatorului, cât rezervă lunar pentru cheltuieli rare. */
+/** Explică, cu valorile utilizatorului, cât rezervă lunar pentru cheltuieli rare. */
 function randeazaNotaFrecventa() {
   const luna = lunaActiva();
   const nota = document.getElementById("frecventa-note");
@@ -803,10 +803,10 @@ function randeazaAbateri(luna) {
     nume.textContent = a.nume.trim() || "Fără nume";
     rand.appendChild(nume);
 
-    const cifre = document.createElement("span");
-    cifre.className = "variance-numbers";
-    cifre.textContent = `${formatRON(a.real)} din ${formatRON(a.planificat)}`;
-    rand.appendChild(cifre);
+    const valori = document.createElement("span");
+    valori.className = "variance-numbers";
+    valori.textContent = `${formatRON(a.real)} din ${formatRON(a.planificat)}`;
+    rand.appendChild(valori);
 
     // Starea se transmite prin simbol + text, nu doar prin culoare.
     const stare = document.createElement("span");
@@ -896,10 +896,10 @@ function randeazaRepere(luna) {
     nume.className = "benchmark-name";
     nume.textContent = d.nume.trim() || d.eticheta;
     cap.appendChild(nume);
-    const cifre = document.createElement("span");
-    cifre.className = "benchmark-value";
-    cifre.textContent = `${formatPercent(d.cota)} din venit · reper ${formatPercent(d.maxim)}`;
-    cap.appendChild(cifre);
+    const valori = document.createElement("span");
+    valori.className = "benchmark-value";
+    valori.textContent = `${formatPercent(d.cota)} din venit · reper ${formatPercent(d.maxim)}`;
+    cap.appendChild(valori);
     rand.appendChild(cap);
 
     const pista = document.createElement("div");
@@ -1059,7 +1059,7 @@ function randeazaEvolutie() {
       formatRON(d.cheltuieli),
       formatRON(d.economii),
       formatPercent(d.rataEconomisire),
-      d.dinDateReale ? "cifre reale" : "plan",
+      d.dinDateReale ? "valori reale" : "plan",
     ].forEach((text) => {
       const td = document.createElement("td");
       td.textContent = text;

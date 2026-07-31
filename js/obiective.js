@@ -29,9 +29,9 @@ function requiredMonthlyPayment(target, current, months, annualRatePct) {
 }
 
 function recalc() {
-  const tinta = readNumber("tinta", { min: 0, max: 100000000 });
+  const tinta = readNumber("tinta", { min: 0, max: 10000000 });
   const luni = readNumber("termen", { min: 1, max: 240, fallback: 8, integer: true });
-  const deja = readNumber("deja-economisit", { min: 0, max: 100000000 });
+  const deja = readNumber("deja-economisit", { min: 0, max: 10000000 });
   const dobanda = readNumber("dobanda-cont", { min: 0, max: 20 });
 
   const atinsDeja = tinta > 0 && deja >= tinta;

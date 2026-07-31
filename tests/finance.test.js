@@ -419,3 +419,194 @@ describe("seededRandom — generatorul cu sămânță", () => {
     expect(sum / n).toBeCloseTo(0.5, 0.02);
   });
 });
+
+describe("venitPFA — impozitarea unei persoane fizice autorizate", () => {
+  const sm = 4050;
+
+  it("nu datorează CAS sub pragul de 12 salarii minime", () => {
+    // Venit net de 40.000 lei, sub 12 × 4.050 = 48.600.
+    const r = venitPFA({ venituri: 40000, cheltuieli: 0, salariuMinim: sm });
+    expect(r.cas).toBe(0);
+    expect(r.bazaCas).toBe(0);
+  });
+
+  it("calculează CAS pe plafon, nu pe venitul real", () => {
+    // Peste 12 salarii minime, dar sub 24: baza rămâne 12 × salariul minim.
+    const r = venitPFA({ venituri: 60000, cheltuieli: 0, salariuMinim: sm });
+    expect(r.bazaCas).toBeCloseTo(12 * sm, 0.01);
+    expect(r.cas).toBeCloseTo(12 * sm * 0.25, 0.01);
+
+    // Peste 24 de salarii minime, baza urcă o singură dată și se oprește.
+    const mare = venitPFA({ venituri: 500000, cheltuieli: 0, salariuMinim: sm });
+    expect(mare.bazaCas).toBeCloseTo(24 * sm, 0.01);
+  });
+
+  it("aplică baza minimă de CASS unui venit mic", () => {
+    const r = venitPFA({ venituri: 10000, cheltuieli: 0, salariuMinim: sm });
+    expect(r.bazaCass).toBeCloseTo(6 * sm, 0.01);
+  });
+
+  it("renunță la baza minimă de CASS dacă persoana are și salariu", () => {
+    const r = venitPFA({ venituri: 10000, cheltuieli: 0, salariuMinim: sm, areSalariu: true });
+    expect(r.bazaCass).toBeCloseTo(10000, 0.01);
+    expect(r.cass).toBeCloseTo(1000, 0.01);
+  });
+
+  it("plafonează CASS la limita superioară", () => {
+    const r = venitPFA({ venituri: 2000000, cheltuieli: 0, salariuMinim: sm });
+    expect(r.bazaCass).toBeCloseTo(60 * sm, 0.01);
+  });
+
+  it("aplică impozitul după contribuții, nu pe venitul net brut", () => {
+    const r = venitPFA({ venituri: 100000, cheltuieli: 20000, salariuMinim: sm });
+    expect(r.venitNet).toBeCloseTo(80000, 0.01);
+    expect(r.bazaImpozabila).toBeCloseTo(80000 - r.cas - r.cass, 0.01);
+    expect(r.impozit).toBeCloseTo(r.bazaImpozabila * 0.1, 0.01);
+  });
+
+  it("închide bilanțul: încasările se regăsesc integral în componente", () => {
+    const r = venitPFA({ venituri: 150000, cheltuieli: 12000, salariuMinim: sm });
+    expect(r.cheltuieli + r.cas + r.cass + r.impozit + r.netAnual).toBeCloseTo(r.venituri, 0.5);
+  });
+
+  it("trecerea peste pragul de CAS scade netul, deși venitul a crescut", () => {
+    const sub = venitPFA({ venituri: 12 * sm - 100, salariuMinim: sm });
+    const peste = venitPFA({ venituri: 12 * sm + 100, salariuMinim: sm });
+    expect(peste.netAnual).toBeLessThan(sub.netAnual);
+  });
+});
+
+describe("venitSRLMicro — SRL cu impozit pe veniturile microîntreprinderii", () => {
+  const sm = 4050;
+
+  it("aplică impozitul micro pe venituri, nu pe profit", () => {
+    const r = venitSRLMicro({ venituri: 200000, cheltuieli: 150000, salariuMinim: sm });
+    expect(r.impozitMicro).toBeCloseTo(2000, 0.01);
+  });
+
+  it("impozitează dividendele după impozitul firmei", () => {
+    const r = venitSRLMicro({ venituri: 100000, cheltuieli: 0, salariuMinim: sm });
+    expect(r.profitDistribuibil).toBeCloseTo(99000, 0.01);
+    expect(r.impozitDividende).toBeCloseTo(99000 * 0.16, 0.01);
+  });
+
+  it("calculează CASS pe treaptă, nu pe dividendul real", () => {
+    // Dividend peste 6 salarii minime, dar sub 12: baza rămâne treapta de 6.
+    const r = venitSRLMicro({ venituri: 30000, cheltuieli: 0, salariuMinim: sm });
+    expect(r.bazaCass).toBeCloseTo(6 * sm, 0.01);
+  });
+
+  it("nu datorează CASS sub prima treaptă", () => {
+    const r = venitSRLMicro({ venituri: 20000, cheltuieli: 0, salariuMinim: sm });
+    expect(r.cass).toBe(0);
+  });
+
+  it("închide bilanțul: veniturile se regăsesc integral în componente", () => {
+    const r = venitSRLMicro({ venituri: 300000, cheltuieli: 60000, salariuMinim: sm });
+    const suma = r.cheltuieli + r.impozitMicro + r.impozitDividende + r.cass + r.netAnual;
+    expect(suma).toBeCloseTo(r.venituri, 0.5);
+  });
+
+  it("nu produce dividende negative când cheltuielile depășesc veniturile", () => {
+    const r = venitSRLMicro({ venituri: 30000, cheltuieli: 80000, salariuMinim: sm });
+    expect(r.profitDistribuibil).toBe(0);
+    expect(r.netAnual).toBe(0);
+  });
+});
+
+describe("venitCIM — contract de muncă, pornind de la costul angajatorului", () => {
+  it("recuperează brutul din costul total", () => {
+    const r = venitCIM({ costAnual: 122700, salariuMinim: 4050 });
+    // Costul lunar de 10.225 lei corespunde unui brut de 10.000.
+    expect(r.brutLunar).toBeCloseTo(10000, 1);
+  });
+
+  it("închide bilanțul: costul se regăsește integral în componente", () => {
+    const r = venitCIM({ costAnual: 150000, salariuMinim: 4050 });
+    expect(r.contributii + r.impozite + r.netAnual).toBeCloseTo(r.costAnual, 0.5);
+  });
+
+  it("persoanele în întreținere cresc netul, prin deducere", () => {
+    const fara = venitCIM({ costAnual: 55000, salariuMinim: 4050, dependents: 0 });
+    const cu = venitCIM({ costAnual: 55000, salariuMinim: 4050, dependents: 2 });
+    expect(cu.netAnual).toBeGreaterThan(fara.netAnual);
+  });
+});
+
+describe("compareFormeVenit — cele trei forme pe aceeași bază", () => {
+  it("pornește toate formele de la aceeași sumă", () => {
+    const r = compareFormeVenit({ sumaAnuala: 120000 });
+    expect(r.cim.costAnual).toBe(120000);
+    expect(r.pfa.venituri).toBe(120000);
+    expect(r.srl.venituri).toBe(120000);
+  });
+
+  it("desemnează drept câștigătoare forma cu netul cel mai mare", () => {
+    const r = compareFormeVenit({ sumaAnuala: 250000, cheltuieliPfa: 5000, cheltuieliSrl: 60000 });
+    const nete = { cim: r.cim.netAnual, pfa: r.pfa.netAnual, srl: r.srl.netAnual };
+    const maxim = Math.max(nete.cim, nete.pfa, nete.srl);
+    expect(nete[r.castigator]).toBe(maxim);
+  });
+
+  it("costul salariatului obligatoriu poate anula avantajul SRL-ului", () => {
+    const fara = compareFormeVenit({ sumaAnuala: 120000, cheltuieliSrl: 6000 });
+    const cu = compareFormeVenit({ sumaAnuala: 120000, cheltuieliSrl: 6000 + 49700 });
+    expect(cu.srl.netAnual).toBeLessThan(fara.srl.netAnual);
+  });
+
+  it("întoarce zerouri pentru o sumă nulă, fără să arunce", () => {
+    const r = compareFormeVenit({ sumaAnuala: 0 });
+    expect(r.cim.netAnual).toBe(0);
+    expect(r.pfa.netAnual).toBe(0);
+    expect(r.srl.netAnual).toBe(0);
+  });
+});
+
+describe("capSalary — plafonul de creștere salarială", () => {
+  it("oprește salariul la plafon", () => {
+    expect(capSalary(50000, 8000, 30000)).toBe(30000);
+  });
+
+  it("lasă neatins un salariu sub plafon", () => {
+    expect(capSalary(12000, 8000, 30000)).toBe(12000);
+  });
+
+  it("nu taie un salariu de pornire deja peste plafon", () => {
+    // Cine câștigă 40.000 azi nu trebuie să vadă o proiecție care îi scade venitul.
+    expect(capSalary(60000, 40000, 30000)).toBe(40000);
+  });
+
+  it("fără plafon, salariul rămâne cum a venit", () => {
+    expect(capSalary(999999, 8000)).toBe(999999);
+    expect(capSalary(999999, 8000, 0)).toBe(999999);
+  });
+});
+
+describe("projectPension — plafonul aplicat proiecției", () => {
+  const base = {
+    grossSalary: 8000, currentAge: 30, retirementAge: 65,
+    wageGrowthPct: 5, pillar2ReturnPct: 7,
+    pillar3Monthly: 0, pillar3ReturnPct: 7,
+  };
+
+  it("plafonul reduce contribuțiile acumulate", () => {
+    const fara = projectPension(base);
+    const cu = projectPension({ ...base, salaryCap: 30000 });
+    expect(cu.contributed2).toBeLessThan(fara.contributed2);
+    expect(cu.final2).toBeLessThan(fara.final2);
+  });
+
+  it("un plafon peste orice salariu proiectat nu schimbă nimic", () => {
+    const fara = projectPension(base);
+    const cu = projectPension({ ...base, salaryCap: 10000000 });
+    expect(cu.final2).toBeCloseTo(fara.final2, 0.01);
+  });
+
+  it("plafonul limitează și salariul de la pensionare în Pilonul I", () => {
+    const p1 = estimatePillar1({
+      grossSalary: 8000, currentAge: 30, retirementAge: 65,
+      wageGrowthPct: 5, replacementRatePct: 55, salaryCap: 30000,
+    });
+    expect(p1.grossAtRetirement).toBe(30000);
+  });
+});

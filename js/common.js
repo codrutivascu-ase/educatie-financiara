@@ -8,41 +8,106 @@
 /**
  * Meniul site-ului. Intrările cu `items` devin submeniuri.
  *
- * Gruparea urmează întrebarea utilizatorului, nu tipul instrumentului:
- * „ce vreau să fac” (învăț, planific, investesc, mă împrumut), pentru că
- * o listă plată de unsprezece pagini nu mai poate fi parcursă din ochi.
+ * Gruparea urmează temele mari ale educației financiare — bugetul personal,
+ * investițiile, creditele, antreprenoriatul — nu tipul instrumentului, pentru
+ * că un vizitator caută un subiect, nu un calculator.
+ *
+ * Fiecare grup și fiecare pagină au o descriere de un rând, afișată în
+ * submeniu. O listă de titluri scurte („Comparator”, „Oportunitate”) nu spune
+ * nimic cuiva care intră prima dată; descrierea transformă meniul în cuprins.
  */
 const MODULES = [
   { href: "index.html", label: "Acasă" },
   {
-    label: "Planifică",
+    // Veniturile stau înaintea bugetului pentru că bugetul pornește de la
+    // ele: nu poți împărți o sumă pe care nu ai calculat-o încă.
+    label: "Venituri",
+    desc: "De unde vin banii și cât ajunge efectiv la tine.",
     items: [
-      { href: "buget.html", label: "Buget lunar" },
-      { href: "salariu.html", label: "Salariu brut → net" },
-      { href: "obiective.html", label: "Obiective de economisire" },
+      {
+        href: "salariu.html",
+        label: "Salariu brut → net",
+        desc: "Ce se reține din brut și cât plătește de fapt angajatorul.",
+      },
+      {
+        href: "forme-venit.html",
+        label: "Angajat, PFA sau SRL",
+        desc: "Din aceeași sumă încasată, ce net îți rămâne în fiecare formă.",
+      },
     ],
   },
   {
-    label: "Investește",
+    label: "Buget personal",
+    desc: "Cât iese, pe ce, și cât rămâne la sfârșitul lunii.",
     items: [
-      { href: "investitii.html", label: "Dobândă compusă" },
-      { href: "inflatie.html", label: "Inflație" },
-      { href: "oportunitate.html", label: "Cost de oportunitate" },
-      { href: "pensii.html", label: "Pensii" },
+      {
+        href: "buget.html",
+        label: "Buget lunar",
+        desc: "Venituri și cheltuieli pe categorii, comparate cu reperul 50/30/20.",
+      },
+      {
+        href: "obiective.html",
+        label: "Obiective de economisire",
+        desc: "Cât pui deoparte lunar ca să atingi o țintă până la un termen.",
+      },
     ],
   },
   {
-    label: "Împrumută",
+    label: "Investiții",
+    desc: "Cum se multiplică banii și ce le mănâncă valoarea în timp.",
     items: [
-      { href: "datorii.html", label: "Calculator de datorii" },
-      { href: "comparator.html", label: "Chirie vs. cumpărare" },
+      {
+        href: "investitii.html",
+        label: "Dobândă compusă",
+        desc: "Cât crește o sumă investită lunar, cu randament constant sau variabil.",
+      },
+      {
+        href: "inflatie.html",
+        label: "Inflație",
+        desc: "Cât pierd, an după an, banii ținuți pe loc.",
+      },
+      {
+        href: "oportunitate.html",
+        label: "Cost de oportunitate",
+        desc: "Ce ar fi devenit banii dacă rămâneau investiți.",
+      },
+      {
+        href: "pensii.html",
+        label: "Pensii",
+        desc: "Pilonii I, II și III, proiectați până la vârsta de pensionare.",
+      },
+    ],
+  },
+  {
+    label: "Credite",
+    desc: "Cât costă banii împrumutați și cum scapi mai repede de ei.",
+    items: [
+      {
+        href: "datorii.html",
+        label: "Calculator de datorii",
+        desc: "Eligibilitate, grafic de rambursare, plată anticipată, avalanșă vs. bulgăre.",
+      },
+      {
+        href: "comparator.html",
+        label: "Chirie vs. cumpărare",
+        desc: "Comparație pe averea netă în timp, nu pe rata lunară.",
+      },
     ],
   },
   {
     label: "Învață",
+    desc: "Mecanismele din spatele instrumentelor, explicate în cuvinte.",
     items: [
-      { href: "lectii.html", label: "Lecții și quiz" },
-      { href: "glosar.html", label: "Glosar" },
+      {
+        href: "lectii.html",
+        label: "Lecții și quiz",
+        desc: "Zece lecții de 3-4 minute, cu întrebări care explică și variantele greșite.",
+      },
+      {
+        href: "glosar.html",
+        label: "Glosar",
+        desc: "Termenii din aplicație, explicați pentru decizii, nu pentru examen.",
+      },
     ],
   },
 ];
@@ -155,12 +220,32 @@ function renderNav(activeHref) {
   links.className = "nav-links";
   links.id = "nav-links";
 
-  /** Un link simplu de meniu, marcat dacă este pagina curentă. */
+  /**
+   * Un link de meniu, marcat dacă este pagina curentă.
+   *
+   * În submeniuri, descrierea intră în același <a> ca titlul: rămâne o
+   * singură țintă de clic și un singur element pentru cititoarele de ecran,
+   * care citesc astfel titlul urmat de explicație.
+   */
   function makeLink(item, className = "nav-link") {
     const a = document.createElement("a");
     a.className = item.href === activeHref ? `${className} active` : className;
     a.href = item.href;
-    a.textContent = item.label;
+
+    if (item.desc) {
+      const label = document.createElement("span");
+      label.className = "nav-sublink-label";
+      label.textContent = item.label;
+      a.appendChild(label);
+
+      const desc = document.createElement("span");
+      desc.className = "nav-sublink-desc";
+      desc.textContent = item.desc;
+      a.appendChild(desc);
+    } else {
+      a.textContent = item.label;
+    }
+
     if (item.href === activeHref) a.setAttribute("aria-current", "page");
     return a;
   }
@@ -188,6 +273,12 @@ function renderNav(activeHref) {
 
     const panel = document.createElement("div");
     panel.className = "nav-panel";
+    if (m.desc) {
+      const groupDesc = document.createElement("p");
+      groupDesc.className = "nav-panel-desc";
+      groupDesc.textContent = m.desc;
+      panel.appendChild(groupDesc);
+    }
     m.items.forEach((it) => panel.appendChild(makeLink(it, "nav-sublink")));
     group.appendChild(panel);
 
@@ -415,6 +506,46 @@ function persistInputs(pageKey, onRestore) {
     });
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Enter confirmă valoarea introdusă                                   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Face ca tasta Enter să reîmprospăteze rezultatele.
+ *
+ * Modulele recalculează la evenimentul `input`, deci în mod normal rezultatele
+ * se actualizează în timp ce tastezi. Există însă două situații în care
+ * Enter este gestul așteptat și nu se întâmplă nimic: câmpurile pe care
+ * browserul le completează automat și tastarea la numpad, unde Enter este
+ * tasta cu care termini de introdus un număr. În plus, paginile nu au
+ * `<form>`, deci Enter nu are niciun comportament implicit.
+ *
+ * Retrimitem `input` și `change` pe câmpul curent — aceleași evenimente pe
+ * care le ascultă modulele —, fără să mutăm focalizarea: cine tastează
+ * într-un tabel de cheltuieli vrea să rămână acolo.
+ *
+ * Ascultătorul stă pe document, ca să prindă și câmpurile create ulterior
+ * de JavaScript (rândurile de buget, scenariile de investiții).
+ */
+function setupEnterToRefresh() {
+  document.addEventListener("keydown", (evt) => {
+    if (evt.key !== "Enter") return;
+
+    const el = evt.target;
+    if (!el || el.tagName !== "INPUT") return;
+    // Butoanele și bifele au deja un comportament propriu la Enter.
+    if (["button", "submit", "checkbox", "radio", "reset"].includes(el.type)) return;
+
+    // Fără <form> nu există submit, dar prevenim orice comportament
+    // implicit ca să nu se închidă tastatura pe telefon.
+    evt.preventDefault();
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+
+setupEnterToRefresh();
 
 /* ------------------------------------------------------------------ */
 /* Export CSV                                                          */

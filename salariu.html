@@ -17,11 +17,11 @@
 
   <main id="main">
     <h1>Salariu brut → net</h1>
-    <p class="subtitle">Ce se întâmplă între cât costă angajatorul și cât primești tu. Între cele două cifre este o diferență de aproximativ 40%.</p>
+    <p class="subtitle">Ce se întâmplă între cât costă angajatorul și cât primești tu. Între cele două valori este o diferență de aproximativ 40%.</p>
 
     <details class="explainer">
       <summary>Cum se calculează, pas cu pas</summary>
-      <p>Angajatorul plătește <strong>salariul brut plus 2,25%</strong> contribuție asiguratorie pentru muncă (CAM). Aceasta este cifra reală a costului tău pentru firmă.</p>
+      <p>Angajatorul plătește <strong>salariul brut plus 2,25%</strong> contribuție asiguratorie pentru muncă (CAM). Aceasta este valoarea reală a costului tău pentru firmă.</p>
       <p>Din brut se rețin, în ordine:</p>
       <ul>
         <li><strong>CAS (pensie) — 25%</strong> din brut. O parte, 4,75% din brut, merge în contul tău personal de la Pilonul II; restul finanțează pensiile aflate în plată acum.</li>
@@ -42,11 +42,11 @@
       <div class="field-grid" style="margin-top:18px">
         <div class="field" id="field-brut">
           <label for="brut">Salariu brut lunar (lei)</label>
-          <input type="number" id="brut" min="0" step="100" value="8000" inputmode="decimal" />
+          <input type="number" id="brut" min="0" max="200000" step="100" value="8000" inputmode="decimal" />
         </div>
         <div class="field hidden" id="field-net">
           <label for="net-dorit">Salariu net dorit (lei)</label>
-          <input type="number" id="net-dorit" min="0" step="100" value="5000" inputmode="decimal" />
+          <input type="number" id="net-dorit" min="0" max="200000" step="100" value="5000" inputmode="decimal" />
         </div>
         <div class="field">
           <label for="persoane">Persoane în întreținere</label>
@@ -60,7 +60,7 @@
         </div>
         <div class="field">
           <label for="pilon3">Contribuție lunară Pilon III (lei)</label>
-          <input type="number" id="pilon3" min="0" step="50" value="0" />
+          <input type="number" id="pilon3" min="0" max="20000" step="50" value="0" />
           <p class="field-hint">Deductibilă la calculul impozitului, în limita a 400 EUR pe an.</p>
         </div>
       </div>
@@ -137,7 +137,7 @@
         </div>
       </div>
       <div id="prefill-slot"></div>
-      <p class="insight">Netul de aici este cifra pe care o poți folosi ca „venit lunar net” în <a href="buget.html">bugetul lunar</a>. Contribuția la Pilonul II apare în proiecția din modulul <a href="pensii.html">Pensii</a>.</p>
+      <p class="insight">Netul de aici este valoarea pe care o poți folosi ca „venit lunar net” în <a href="buget.html">bugetul lunar</a>. Contribuția la Pilonul II apare în proiecția din modulul <a href="pensii.html">Pensii</a>. Dacă lucrezi pe cont propriu sau ai de ales între angajare și facturare, compară cele trei forme în <a href="forme-venit.html">Angajat, PFA sau SRL</a>.</p>
       <div class="button-row">
         <button id="btn-la-buget" type="button" class="primary">Folosește netul în bugetul lunar →</button>
         <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
@@ -150,7 +150,7 @@
       <div class="field-grid">
         <div class="field">
           <label for="salariu-minim">Salariu minim brut pe economie (lei)</label>
-          <input type="number" id="salariu-minim" min="0" step="50" value="4050" />
+          <input type="number" id="salariu-minim" min="0" max="20000" step="50" value="4050" />
           <p class="field-hint">Determină pragul până la care se acordă deducerea personală.</p>
         </div>
       </div>

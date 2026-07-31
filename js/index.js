@@ -41,15 +41,15 @@ function personalizeaza() {
   } else if (!lectii.urmatoarea) {
     title.textContent = "Ai parcurs toate lecțiile";
     text.textContent =
-      "Partea de teorie e acoperită. De aici, valoarea vine din a-ți ține cifrele la zi: " +
+      "Partea de teorie e acoperită. De aici, valoarea vine din a-ți ține valorile la zi: " +
       "bugetul lunii curente este cel de la care pornesc toate celelalte module.";
     cta.textContent = "Actualizează bugetul";
     cta.href = "buget.html";
   } else if (module > 0) {
-    title.textContent = "Ai deja câteva cifre introduse";
+    title.textContent = "Ai deja câteva valori introduse";
     text.textContent =
       `Ai completat ${module} ${module === 1 ? "modul" : "module"}. ` +
-      `Lecțiile explică mecanismele din spatele cifrelor — de ce dobânda compusă are nevoie de ani, ` +
+      `Lecțiile explică mecanismele din spatele valorilor — de ce dobânda compusă are nevoie de ani, ` +
       `de ce datoriile scumpe se plătesc înaintea oricărei investiții.`;
     cta.textContent = "Începe cu prima lecție";
     cta.href = "lectii.html";

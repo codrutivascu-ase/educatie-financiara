@@ -7,6 +7,11 @@
  *   Cumpărătorul  — dă avansul pe casă, plătește rata + întreținerea.
  *   Chiriașul     — investește avansul la bursă, plătește chiria.
  *
+ * Toate sumele sunt în euro, pentru că în euro se negociază prețurile
+ * locuințelor și chiriile comparabile în România — la fel ca în modulul
+ * de credite. O comparație pe 25 de ani în lei ar amesteca, în plus, două
+ * monede cu inflații diferite.
+ *
  * În fiecare lună, cel care are cheltuiala mai mică investește diferența.
  * Fără această regulă comparația ar fi părtinitoare: ar arăta doar cine
  * plătește mai puțin, nu ce se întâmplă cu banii economisiți.
@@ -98,14 +103,14 @@ function simulate(params) {
 
 function recalc() {
   /* --- Citirea și validarea câmpurilor ----------------------------- */
-  const pret = readNumber("pret", { min: 0, max: 100000000 });
+  const pret = readNumber("pret", { min: 0, max: 2000000 });
   const avans = readNumber("avans", { min: 0, max: pret });
-  const dobandaCredit = readNumber("dobanda-credit", { min: 0, max: 50 });
+  const dobandaCredit = readNumber("dobanda-credit", { min: 0, max: 25 });
   const perioadaCredit = readNumber("perioada-credit", { min: 1, max: 35, fallback: 25, integer: true });
   const cresterePretAnual = readNumber("crestere-imobil", { min: -10, max: 20 });
   const intretinerePct = readNumber("intretinere", { min: 0, max: 10 });
   const costAchizitiePct = readNumber("cost-achizitie", { min: 0, max: 15 });
-  const chirieInitiala = readNumber("chirie", { min: 0, max: 1000000 });
+  const chirieInitiala = readNumber("chirie", { min: 0, max: 20000 });
   const cresterChirieAnual = readNumber("crestere-chirie", { min: -10, max: 20 });
   const randamentAnual = readNumber("randament-bursa", { min: -10, max: 20 });
   const orizontAni = readNumber("orizont", { min: 1, max: 40, fallback: 25, integer: true });
@@ -130,7 +135,7 @@ function recalc() {
   if (pret > 0 && procentAvans < 0.15) {
     avertisment.textContent =
       `Avansul reprezintă ${formatPercent(procentAvans)} din preț. Băncile din România cer de obicei ` +
-      `minimum 15%, adică ${formatRON(pret * 0.15)}. Simularea continuă, dar creditul ar fi greu de obținut ` +
+      `minimum 15%, adică ${formatEUR(pret * 0.15)}. Simularea continuă, dar creditul ar fi greu de obținut ` +
       `în aceste condiții.`;
     avertisment.classList.remove("hidden");
   } else {
@@ -138,13 +143,13 @@ function recalc() {
   }
 
   /* --- Indicatori --------------------------------------------------- */
-  document.getElementById("stat-rata-lunara").textContent = formatRON(sim.rataLunara);
-  document.getElementById("stat-credit").textContent = formatRON(sim.principalCredit);
-  document.getElementById("stat-avere-cumparare").textContent = formatRON(buyerFinal);
-  document.getElementById("stat-avere-chirie").textContent = formatRON(renterFinal);
+  document.getElementById("stat-rata-lunara").textContent = formatEUR(sim.rataLunara);
+  document.getElementById("stat-credit").textContent = formatEUR(sim.principalCredit);
+  document.getElementById("stat-avere-cumparare").textContent = formatEUR(buyerFinal);
+  document.getElementById("stat-avere-chirie").textContent = formatEUR(renterFinal);
 
   const difEl = document.getElementById("stat-diferenta");
-  difEl.textContent = formatRON(Math.abs(diferenta));
+  difEl.textContent = formatEUR(Math.abs(diferenta));
   difEl.classList.remove("good", "critical");
 
   const castigator = document.getElementById("stat-castigator");
@@ -168,9 +173,9 @@ function recalc() {
   if (Math.abs(diferenta) < 1) {
     parts.push(`Pe ${orizontAni} de ani, cele două variante ajung la o avere netă practic identică.`);
   } else if (diferenta > 0) {
-    parts.push(`Pe ${orizontAni} de ani, cumpărarea ar genera o avere netă mai mare cu ${formatRON(diferenta)}.`);
+    parts.push(`Pe ${orizontAni} de ani, cumpărarea ar genera o avere netă mai mare cu ${formatEUR(diferenta)}.`);
   } else {
-    parts.push(`Pe ${orizontAni} de ani, „chirie + investiții la bursă” ar genera o avere netă mai mare cu ${formatRON(-diferenta)}.`);
+    parts.push(`Pe ${orizontAni} de ani, „chirie + investiții la bursă” ar genera o avere netă mai mare cu ${formatEUR(-diferenta)}.`);
   }
   // Menționăm pragul doar dacă a existat efectiv o perioadă în care
   // chiria era în avantaj; altfel mesajul ar fi derutant.
@@ -188,8 +193,8 @@ function recalc() {
   renderLineChart(document.getElementById("chart"), tooltip, {
     xValues: sim.years,
     xFormat: (v) => `an ${v}`,
-    yFormat: (v) => formatRON(v),
-    yAxisFormat: (v) => formatRONShort(v),
+    yFormat: (v) => formatEUR(v),
+    yAxisFormat: (v) => formatEURShort(v),
     series: [
       { name: "Cumpărare", color: colorCumparare, values: sim.buyerNetWorth },
       { name: "Chirie + bursă", color: colorChirie, values: sim.renterNetWorth },
@@ -211,7 +216,7 @@ function recalc() {
     item.appendChild(document.createTextNode(s.name + " "));
     const amount = document.createElement("span");
     amount.className = "amount";
-    amount.textContent = formatRON(s.value);
+    amount.textContent = formatEUR(s.value);
     item.appendChild(amount);
     legend.appendChild(item);
   });
@@ -223,11 +228,11 @@ function recalc() {
     const tr = document.createElement("tr");
     [
       String(year),
-      formatRON(sim.homeValues[i]),
-      formatRON(sim.mortgageBalances[i]),
-      formatRON(sim.buyerPortfolios[i]),
-      formatRON(sim.buyerNetWorth[i]),
-      formatRON(sim.renterNetWorth[i]),
+      formatEUR(sim.homeValues[i]),
+      formatEUR(sim.mortgageBalances[i]),
+      formatEUR(sim.buyerPortfolios[i]),
+      formatEUR(sim.buyerNetWorth[i]),
+      formatEUR(sim.renterNetWorth[i]),
     ].forEach((text) => {
       const td = document.createElement("td");
       td.textContent = text;

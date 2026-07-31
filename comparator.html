@@ -27,6 +27,7 @@
         <li><strong>Cumpărătorul</strong> dă avansul pe casă și plătește rata plus întreținerea.</li>
         <li><strong>Chiriașul</strong> investește avansul la bursă și plătește chiria.</li>
       </ul>
+      <p>Toate sumele sunt în euro, ca în modulul de <a href="datorii.html">credite</a>: în euro se negociază prețurile locuințelor și chiriile comparabile în România. Rata se plătește în lei, dar comparația pe douăzeci și ceva de ani are sens doar într-o singură monedă.</p>
       <p>În fiecare lună, cel care plătește mai puțin investește diferența. Fără această regulă, comparația ar arăta doar cine are cheltuiala lunară mai mică — nu ce se întâmplă cu banii economisiți, care este chiar întrebarea importantă.</p>
     </details>
 
@@ -34,18 +35,22 @@
       <h2>Cumpărare</h2>
       <div class="field-grid">
         <div class="field">
-          <label for="pret">Preț locuință (lei)</label>
-          <input type="number" id="pret" min="0" step="5000" value="400000" />
+          <label for="pret">Preț locuință (€)</label>
+          <input type="number" id="pret" min="0" max="2000000" step="1000" value="85000" />
         </div>
         <div class="field">
-          <label for="avans">Avans disponibil (lei)</label>
-          <input type="number" id="avans" min="0" step="5000" value="80000" aria-describedby="avans-avertisment" />
-          <p class="field-hint">Băncile cer de obicei minimum 15%.</p>
-          <p class="field-hint warn-inline hidden" id="avans-avertisment" role="status"></p>
+          <label for="avans">Avans disponibil (€)</label>
+          <input type="number" id="avans" min="0" max="2000000" step="1000" value="17000" aria-describedby="avans-avertisment" />
+          <!-- Ambele note stau într-un singur element, ca să ocupe o
+               singură bandă și să nu decaleze restul rândului. -->
+          <div>
+            <p class="field-hint">Băncile cer de obicei minimum 15%.</p>
+            <p class="field-hint warn-inline hidden" id="avans-avertisment" role="status"></p>
+          </div>
         </div>
         <div class="field">
           <label for="dobanda-credit">Dobândă credit (%/an)</label>
-          <input type="number" id="dobanda-credit" min="0" step="0.1" value="6.5" />
+          <input type="number" id="dobanda-credit" min="0" max="25" step="0.1" value="6.5" />
         </div>
         <div class="field">
           <label for="perioada-credit">Perioadă credit (ani)</label>
@@ -73,8 +78,8 @@
       <h2>Chirie și investiții</h2>
       <div class="field-grid">
         <div class="field">
-          <label for="chirie">Chirie lunară curentă (lei)</label>
-          <input type="number" id="chirie" min="0" step="50" value="1800" />
+          <label for="chirie">Chirie lunară curentă (€)</label>
+          <input type="number" id="chirie" min="0" max="20000" step="10" value="400" />
           <p class="field-hint">Pentru o locuință comparabilă cu cea cumpărată.</p>
         </div>
         <div class="field">
@@ -101,23 +106,23 @@
       <div class="stat-row">
         <div class="stat-tile">
           <div class="label">Credit necesar</div>
-          <div class="value" id="stat-credit">0 lei</div>
+          <div class="value" id="stat-credit">0 €</div>
         </div>
         <div class="stat-tile">
           <div class="label">Rată lunară</div>
-          <div class="value" id="stat-rata-lunara">0 lei</div>
+          <div class="value" id="stat-rata-lunara">0 €</div>
         </div>
         <div class="stat-tile with-id" id="tile-cumparare">
           <div class="label">Avere netă — Cumpărare</div>
-          <div class="value" id="stat-avere-cumparare">0 lei</div>
+          <div class="value" id="stat-avere-cumparare">0 €</div>
         </div>
         <div class="stat-tile with-id" id="tile-chirie">
           <div class="label">Avere netă — Chirie + bursă</div>
-          <div class="value" id="stat-avere-chirie">0 lei</div>
+          <div class="value" id="stat-avere-chirie">0 €</div>
         </div>
         <div class="stat-tile">
           <div class="label">Diferență</div>
-          <div class="value" id="stat-diferenta">0 lei</div>
+          <div class="value" id="stat-diferenta">0 €</div>
           <div class="label" style="margin-top:4px">în favoarea: <span id="stat-castigator">—</span></div>
         </div>
       </div>
@@ -137,15 +142,15 @@
 
       <div id="table-view" class="hidden table-scroll">
         <table class="data-table">
-          <caption class="sr-only">Evoluție an cu an</caption>
+          <caption class="sr-only">Evoluție an cu an, în euro</caption>
           <thead>
             <tr>
               <th scope="col">An</th>
-              <th scope="col">Valoare imobil</th>
-              <th scope="col">Sold credit</th>
-              <th scope="col">Investiții cumpărător</th>
-              <th scope="col">Avere netă cumpărare</th>
-              <th scope="col">Avere netă chirie+bursă</th>
+              <th scope="col">Valoare imobil (€)</th>
+              <th scope="col">Sold credit (€)</th>
+              <th scope="col">Investiții cumpărător (€)</th>
+              <th scope="col">Avere netă cumpărare (€)</th>
+              <th scope="col">Avere netă chirie+bursă (€)</th>
             </tr>
           </thead>
           <tbody id="table-body"></tbody>

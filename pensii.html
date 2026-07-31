@@ -24,7 +24,7 @@
       <p><strong>Pilonul I — pensia publică.</strong> Din cei 25% CAS reținuți din salariul tău, cea mai mare parte finanțează pensiile aflate în plată astăzi. Nu se acumulează într-un cont al tău: este un sistem în care generația activă plătește pentru generația pensionată. Ce vei primi depinde de legislația de atunci și de raportul dintre numărul de salariați și cel de pensionari — două lucruri pe care nu le poți controla. Singurul reper disponibil azi este media sistemului: cât din salariul net a rămas ca pensie pentru cei deja pensionați.</p>
       <p><strong>Pilonul II — pensia privată obligatorie.</strong> 4,75% din salariul brut merge într-un cont pe numele tău, administrat privat și investit. Este obligatoriu pentru cei intrați în câmpul muncii după 2007. Banii sunt ai tăi și se moștenesc.</p>
       <p><strong>Pilonul III — pensia privată facultativă.</strong> Contribuție voluntară, deductibilă fiscal în limita a 400 EUR pe an. Deducerea înseamnă că statul îți returnează efectiv 10% din suma contribuită, sub forma unui impozit mai mic.</p>
-      <p class="warn">Proiecția de mai jos presupune randament și creștere salarială constante. Pe 30-40 de ani, ambele variază considerabil. Cifra finală este un ordin de mărime, nu o promisiune — iar valoarea ei reală va fi erodată de inflație, motiv pentru care afișăm și echivalentul în puterea de cumpărare de azi.</p>
+      <p class="warn">Proiecția de mai jos presupune randament și creștere salarială constante. Pe 30-40 de ani, ambele variază considerabil. Valoarea finală este un ordin de mărime, nu o promisiune — iar valoarea ei reală va fi erodată de inflație, motiv pentru care afișăm și echivalentul în puterea de cumpărare de azi.</p>
     </details>
 
     <div class="card">
@@ -32,7 +32,7 @@
       <div class="field-grid">
         <div class="field">
           <label for="salariu-brut">Salariu brut lunar (lei)</label>
-          <input type="number" id="salariu-brut" min="0" step="500" value="8000" inputmode="decimal" />
+          <input type="number" id="salariu-brut" min="0" max="200000" step="500" value="8000" inputmode="decimal" />
           <p class="field-hint">Contribuția la Pilonul II este un procent din brut, deci crește odată cu salariul.</p>
         </div>
         <div class="field">
@@ -45,7 +45,7 @@
         </div>
         <div class="field">
           <label for="sold-pilon2">Sold actual în Pilonul II (lei)</label>
-          <input type="number" id="sold-pilon2" min="0" step="1000" value="0" />
+          <input type="number" id="sold-pilon2" min="0" max="5000000" step="1000" value="0" />
           <p class="field-hint">Îl găsești în extrasul anual primit de la administratorul fondului.</p>
         </div>
       </div>
@@ -60,13 +60,18 @@
           <input type="number" id="crestere-salariu" min="0" max="20" step="0.5" value="5" />
         </div>
         <div class="field">
+          <label for="plafon-salariu">Plafon salarial (lei brut/lună)</label>
+          <input type="number" id="plafon-salariu" min="0" max="200000" step="1000" value="30000" />
+          <p class="field-hint">Peste acest nivel salariul nu mai crește în proiecție. Fără el, 5% pe an compus timp de 35 de ani duce la salarii pe care nu le are nimeni, iar contribuțiile ies nerealist de mari. Pune 0 dacă vrei proiecția fără plafon.</p>
+        </div>
+        <div class="field">
           <label for="randament-p2">Randament anual Pilon II (%)</label>
           <input type="number" id="randament-p2" min="0" max="20" step="0.5" value="7" />
           <p class="field-hint">Fondurile din România au avut randamente medii anuale de aproximativ 8% de la înființare, într-o perioadă favorabilă.</p>
         </div>
         <div class="field">
           <label for="pilon3-lunar">Contribuție lunară Pilon III (lei)</label>
-          <input type="number" id="pilon3-lunar" min="0" step="50" value="200" />
+          <input type="number" id="pilon3-lunar" min="0" max="20000" step="50" value="200" />
         </div>
         <div class="field">
           <label for="randament-p3">Randament anual Pilon III (%)</label>
@@ -168,9 +173,9 @@
 
       <p id="insight-p1" class="insight"></p>
 
-      <p class="insight"><strong>De unde vine valoarea implicită.</strong> <span id="reper-p1"></span> Nu este formula legală de calcul a pensiei — aceea depinde de tot istoricul tău de contribuții și de valoarea punctului de referință de la data pensionării, care nu poate fi cunoscută azi. Este o medie a sistemului, publicată lunar de INS și de Casa Națională de Pensii Publice; dacă vrei o cifră la zi, caută cele două valori și schimbă procentul de mai sus.</p>
+      <p class="insight"><strong>De unde vine valoarea implicită.</strong> <span id="reper-p1"></span> Nu este formula legală de calcul a pensiei — aceea depinde de tot istoricul tău de contribuții și de valoarea punctului de referință de la data pensionării, care nu poate fi cunoscută azi. Este o medie a sistemului, publicată lunar de INS și de Casa Națională de Pensii Publice; dacă vrei o valoare la zi, caută cele două valori și schimbă procentul de mai sus.</p>
 
-      <p class="warn">Rata de înlocuire nu este garantată prin nimic. Raportul dintre salariați și pensionari se deteriorează, iar formula de calcul se schimbă prin lege — istoric, în ambele sensuri. Tratează cifra ca pe un scenariu, nu ca pe un drept.</p>
+      <p class="warn">Rata de înlocuire nu este garantată prin nimic. Raportul dintre salariați și pensionari se deteriorează, iar formula de calcul se schimbă prin lege — istoric, în ambele sensuri. Tratează valoarea ca pe un scenariu, nu ca pe un drept.</p>
     </div>
 
     <div class="card">

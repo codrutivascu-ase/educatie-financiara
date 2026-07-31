@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Educație Financiară</title>
-  <meta name="description" content="Aplicație de educație financiară: lecții cu quiz, glosar și unsprezece instrumente interactive — buget, salariu, investiții, credite, pensii, inflație. Fără cont, fără costuri, totul în browser." />
+  <meta name="description" content="Aplicație de educație financiară: lecții cu quiz, glosar și douăsprezece instrumente interactive — buget, salariu, PFA vs. SRL, investiții, credite, pensii, inflație. Fără cont, fără costuri, totul în browser." />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#2a78d6" />
@@ -17,7 +17,7 @@
 
   <main id="main">
     <h1>Învață să-ți gestionezi banii</h1>
-    <p class="subtitle">Zece lecții scurte și unsprezece instrumente care transformă deciziile financiare obișnuite în cifre concrete. Fără jargon, fără cont, fără costuri.</p>
+    <p class="subtitle">Zece lecții scurte și douăsprezece instrumente care transformă deciziile financiare obișnuite în valori concrete. Fără jargon, fără cont, fără costuri.</p>
 
     <!-- Punctul de intrare recomandat: se personalizează dacă există date. -->
     <div class="card hero-card">
@@ -34,17 +34,28 @@
       <div id="hero-progress" class="hero-progress hidden"></div>
     </div>
 
-    <h2 class="section-title">Planifică</h2>
+    <h2 class="section-title">Venituri</h2>
+    <p class="section-lead">De unde vin banii și cât ajunge efectiv la tine. Este prima valoare de care are nevoie orice buget, iar între ce plătește angajatorul și ce îți intră în cont este o diferență de aproape 40%.</p>
+    <div class="module-grid">
+      <a class="module-card" href="salariu.html">
+        <h3>Salariu brut → net</h3>
+        <p>Ce se reține din brut, cât costă efectiv angajatorul și de ce impozitul de 10% înseamnă în realitate 6,5% din brut. Funcționează și invers, pentru negociere.</p>
+        <span class="status">CAS, CASS, impozit, CAM, deducere personală</span>
+      </a>
+      <a class="module-card" href="forme-venit.html">
+        <h3>Angajat, PFA sau SRL</h3>
+        <p>Aceeași sumă încasată, trecută prin cele trei forme de organizare. Vezi ce net îți rămâne din fiecare și la ce prag de venit se schimbă răspunsul.</p>
+        <span class="status">Cu pragurile de CAS, CASS și impozit pe dividende</span>
+      </a>
+    </div>
+
+    <h2 class="section-title">Buget personal</h2>
+    <p class="section-lead">Cât iese, pe ce, și cât rămâne la sfârșitul lunii. Fără valorile de aici, restul modulelor lucrează cu presupuneri.</p>
     <div class="module-grid">
       <a class="module-card" href="buget.html">
         <h3>Buget lunar</h3>
         <p>Introdu venitul și cheltuielile pe categorii și vezi imediat cât îți rămâne, unde se duc banii și cum te încadrezi în regula 50/30/20.</p>
         <span class="status" id="status-buget">Punctul de plecare pentru tot restul</span>
-      </a>
-      <a class="module-card" href="salariu.html">
-        <h3>Salariu brut → net</h3>
-        <p>Ce se reține din brut, cât costă efectiv angajatorul și de ce impozitul de 10% înseamnă în realitate 6,5% din brut. Funcționează și invers, pentru negociere.</p>
-        <span class="status">CAS, CASS, impozit, CAM, deducere personală</span>
       </a>
       <a class="module-card" href="obiective.html">
         <h3>Obiective de economisire</h3>
@@ -53,7 +64,8 @@
       </a>
     </div>
 
-    <h2 class="section-title">Investește</h2>
+    <h2 class="section-title">Investiții</h2>
+    <p class="section-lead">Ce se întâmplă cu banii pe care nu îi cheltuiești: cum cresc, ce îi erodează și de ce timpul contează mai mult decât suma.</p>
     <div class="module-grid">
       <a class="module-card" href="investitii.html">
         <h3>Dobândă compusă</h3>
@@ -77,7 +89,8 @@
       </a>
     </div>
 
-    <h2 class="section-title">Împrumută</h2>
+    <h2 class="section-title">Credite</h2>
+    <p class="section-lead">Cât costă banii împrumutați, cum se citește un grafic de rambursare și în ce ordine se plătesc datoriile.</p>
     <div class="module-grid">
       <a class="module-card" href="datorii.html">
         <h3>Calculator de datorii</h3>
@@ -86,12 +99,13 @@
       </a>
       <a class="module-card" href="comparator.html">
         <h3>Chirie vs. cumpărare</h3>
-        <p>Compară averea netă pe termen lung: cumperi o locuință cu credit sau stai în chirie și investești diferența la bursă.</p>
+        <p>Compară averea netă pe termen lung: cumperi o locuință cu credit sau stai în chirie și investești diferența la bursă. Calculat în euro, ca prețurile.</p>
         <span class="status">Comparație pe avere netă, nu pe rata lunară</span>
       </a>
     </div>
 
     <h2 class="section-title">Învață</h2>
+    <p class="section-lead">Mecanismele din spatele instrumentelor, în cuvinte. Calculatoarele dau valoarea; lecțiile explică de ce arată așa.</p>
     <div class="module-grid">
       <a class="module-card" href="lectii.html">
         <h3>Lecții și quiz</h3>
@@ -101,7 +115,7 @@
       <a class="module-card" href="glosar.html">
         <h3>Glosar</h3>
         <p>DAE, ETF, volatilitate, randament real, piloni de pensie. Nu definiții de dicționar, ci ce trebuie să știi ca să iei o decizie.</p>
-        <span class="status">29 de termeni, cu legături între ei</span>
+        <span class="status">34 de termeni, cu legături între ei</span>
       </a>
     </div>
 
@@ -109,22 +123,22 @@
       <h2>Ordinea care are cel mai mare efect</h2>
       <p class="field-hint">Dacă nu știi de unde să începi, secvența de mai jos are cel mai mare efect cu cel mai mic efort. Fiecare pas îl face pe următorul mai ușor.</p>
       <ol class="notes-list">
-        <li><strong>Află unde stai.</strong> Completează <a href="buget.html">bugetul lunar</a>. Fără cifra reală a cheltuielilor, restul sunt presupuneri. Dacă îți știi doar salariul brut, pornește de la <a href="salariu.html">calculatorul de salariu</a>.</li>
+        <li><strong>Află unde stai.</strong> Completează <a href="buget.html">bugetul lunar</a>. Fără valoarea reală a cheltuielilor, restul sunt presupuneri. Dacă îți știi doar salariul brut, pornește de la <a href="salariu.html">calculatorul de salariu</a>.</li>
         <li><strong>Scapă de datoriile scumpe.</strong> Un credit rapid de la IFN cu 24% dobândă anulează orice randament la care ai putea spera din investiții. Vezi <a href="datorii.html">calculatorul de datorii</a>.</li>
         <li><strong>Construiește un fond de urgență.</strong> 3-6 luni de cheltuieli, ținute lichid. Folosește <a href="obiective.html">obiectivele de economisire</a> ca să-ți dai un termen.</li>
         <li><strong>Abia apoi investește.</strong> Vezi în <a href="investitii.html">simulatorul de dobândă compusă</a> de ce anii contează mai mult decât suma.</li>
-        <li><strong>Revino la cifre din când în când.</strong> Un buget de acum un an nu mai descrie luna asta, iar restul modulelor pornesc de la el.</li>
+        <li><strong>Revino la valori din când în când.</strong> Un buget de acum un an nu mai descrie luna asta, iar restul modulelor pornesc de la el.</li>
       </ol>
     </div>
 
     <div class="card">
       <h2>Cum să citești rezultatele</h2>
       <ul class="notes-list">
-        <li><strong>Majoritatea calculelor sunt simplificate.</strong> Folosesc rate constante, în timp ce realitatea variază de la an la an. Sunt utile pentru a înțelege <em>direcția</em> și <em>ordinul de mărime</em>, nu pentru a prezice o cifră exactă. Excepția este simularea cu randament variabil din modulul de investiții, care arată explicit plaja de incertitudine.</li>
+        <li><strong>Majoritatea calculelor sunt simplificate.</strong> Folosesc rate constante, în timp ce realitatea variază de la an la an. Sunt utile pentru a înțelege <em>direcția</em> și <em>ordinul de mărime</em>, nu pentru a prezice o valoare exactă. Excepția este simularea cu randament variabil din modulul de investiții, care arată explicit plaja de incertitudine.</li>
         <li><strong>Nu sunt consultanță financiară.</strong> Este un proiect educațional; pentru decizii mari (credit ipotecar, investiții semnificative) discută cu un specialist.</li>
         <li><strong>Cotele și plafoanele se schimbă prin lege.</strong> Contribuțiile salariale, deducerile și pragurile fiscale sunt cele valabile în 2025 și pot fi modificate acolo unde contează. Mecanismele din spate nu se schimbă.</li>
         <li><strong>Datele tale rămân la tine.</strong> Totul se calculează în browser și se salvează local. Nu există server care să primească ce introduci. Le poți șterge oricând, cu butonul de la finalul acestei pagini.</li>
-        <li><strong>Fiecare modul are un tabel.</strong> Dacă un grafic e greu de citit, butonul „Tabel” arată aceleași cifre exact, iar „Descarcă CSV” le deschide în Excel.</li>
+        <li><strong>Fiecare modul are un tabel.</strong> Dacă un grafic e greu de citit, butonul „Tabel” arată aceleași valori exact, iar „Descarcă CSV” le deschide în Excel.</li>
         <li><strong>Funcționează și fără internet.</strong> După prima vizită, aplicația se încarcă din memoria browserului.</li>
       </ul>
     </div>

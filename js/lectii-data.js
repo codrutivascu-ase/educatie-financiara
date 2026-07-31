@@ -2,7 +2,7 @@
  * Conținutul lecțiilor, separat de mecanica de afișare.
  *
  * Fiecare lecție are un text scurt (2-4 minute de citit) și 3-4 întrebări.
- * Întrebările nu verifică memorarea unor cifre, ci înțelegerea mecanismului:
+ * Întrebările nu verifică memorarea unor valori, ci înțelegerea mecanismului:
  * la fiecare variantă greșită există o explicație care spune *de ce* este
  * greșită, pentru că acolo se produce învățarea, nu la bifa verde.
  *
@@ -487,7 +487,7 @@ const LECTII = [
         correct: 1,
         explicatii: [
           "Rareori este negociabil pentru investitorii individuali.",
-          "Corect. Randamentul este o estimare; comisionul este o cifră din contract.",
+          "Corect. Randamentul este o estimare; comisionul este o valoare din contract.",
           "Nu este deductibil pentru investitorul individual.",
           "Unele fonduri au praguri, dar nu este o regulă.",
         ],
@@ -506,7 +506,7 @@ const LECTII = [
       { tip: "h", text: "Cele trei rețineri" },
       { tip: "p", text: "CAS — contribuția la pensie — este 25% din brut și merge în sistemul public, din care o parte (4,75%) se virează către Pilonul II, contul tău personal de pensie. CASS — sănătate — este 10% din brut. Impozitul pe venit este 10%, dar se aplică pe ce rămâne după CAS și CASS, nu pe brut." },
       { tip: "p", text: "Ordinea contează: impozitul de 10% aplicat după reținerea a 35% înseamnă efectiv 6,5% din brut, nu 10%." },
-      { tip: "insight", text: "Când negociezi salariul, cifra care contează pentru angajator este costul total, iar cea care contează pentru tine este netul. Între ele este o diferență de aproximativ 40%." },
+      { tip: "insight", text: "Când negociezi salariul, valoarea care contează pentru angajator este costul total, iar cea care contează pentru tine este netul. Între ele este o diferență de aproximativ 40%." },
       { tip: "p", text: "Deducerea personală reduce baza impozabilă pentru salariile mici și dispare complet peste salariul minim plus 2.000 lei. Este singurul element din formulă care depinde de situația ta personală — numărul de persoane în întreținere." },
     ],
     intrebari: [
@@ -570,7 +570,7 @@ const LECTII = [
       { tip: "insight", text: "Partea din rată care construiește avere este doar principalul. Dobânda este chiria plătită băncii pentru bani, în loc de chiria plătită proprietarului pentru spațiu." },
       { tip: "h", text: "Ce nu apare în calcul" },
       { tip: "p", text: "Varianta cu chirie funcționează matematic doar dacă diferența este chiar investită lună de lună. Rata la bancă este o economisire forțată; contul de investiții nu este. În practică, mulți chiriași cheltuiesc diferența — iar atunci comparația se schimbă complet." },
-      { tip: "p", text: "Există și lucruri care nu intră în niciun tabel: flexibilitatea de a te muta pentru un job mai bun, siguranța că nu ești dat afară, faptul că rata nu crește la dobândă fixă. Acestea sunt reale, chiar dacă nu au o cifră." },
+      { tip: "p", text: "Există și lucruri care nu intră în niciun tabel: flexibilitatea de a te muta pentru un job mai bun, siguranța că nu ești dat afară, faptul că rata nu crește la dobândă fixă. Acestea sunt reale, chiar dacă nu au o valoare." },
     ],
     intrebari: [
       {
