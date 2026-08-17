@@ -518,7 +518,7 @@ button.ghost:hover { color: var(--text-primary); }
 }
 
 /* Echivalentul lunar al unei cheltuieli rare, sub câmpul de sumă. */
-.exp-plan-wrap { min-width: 0; }
+.exp-plan-wrap, .exp-real-wrap { min-width: 0; }
 .exp-equiv {
   display: block;
   font-size: 0.72rem;
@@ -526,6 +526,19 @@ button.ghost:hover { color: var(--text-primary); }
   margin-top: 3px;
   white-space: nowrap;
 }
+
+/* Abaterea față de plan, sub câmpul „realizat”. */
+.exp-abatere {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 3px;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.exp-abatere.good { color: var(--good-text); }
+.exp-abatere.critical { color: var(--critical-text); }
 
 /* Un link care arată ca un buton, în rândurile de acțiuni. */
 .button-link {
@@ -1321,7 +1334,7 @@ footer.site-footer p { margin: 0; }
   .expense-row .exp-group { grid-area: group; }
   .expense-row .exp-freq { grid-area: freq; }
   .expense-row .exp-plan-wrap { grid-area: plan; }
-  .expense-row .exp-real { grid-area: real; }
+  .expense-row .exp-real-wrap { grid-area: real; }
   .expense-row .remove { grid-area: remove; }
 }
 
@@ -1330,8 +1343,27 @@ footer.site-footer p { margin: 0; }
   .card { padding: 16px 15px; }
   h1 { font-size: 1.45rem; }
 
+  /* Graficele ies din marginile cardului și ocupă toată lățimea ecranului.
+     Pe un telefon, cei 15px de padding de fiecare parte plus cei 14 ai
+     paginii înseamnă aproape a șasea parte din lățime luată din desen —
+     mult prea mult pentru ceva care se citește tocmai prin întindere.
+     Legenda și restul textului rămân aliniate cu cardul. */
+  .card .line-chart-wrap,
+  .card .bar-chart-wrap {
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+  /* Legenda este text, deci se aliniază înapoi cu restul cardului. */
+  .card .line-chart-wrap > .legend,
+  .card .bar-chart-wrap > .legend {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
   /* Rândurile de cheltuieli devin blocuri, ca să încapă pe telefon.
-     Plan și Real rămân alăturate: comparația dintre ele este scopul. */
+     Plan și Real rămân alăturate, pe coloane de lățimi egale: comparația
+     dintre ele este scopul, iar două casete de mărimi diferite s-ar citi
+     ca și cum una ar conta mai mult. */
   .expense-header { display: none; }
   .expense-row {
     grid-template-columns: 16px 1fr 1fr 36px;
@@ -1339,7 +1371,7 @@ footer.site-footer p { margin: 0; }
       "swatch name  name  remove"
       ".      group group group"
       ".      freq  freq  freq"
-      ".      plan  real  real";
+      ".      plan  real  .";
     row-gap: 6px;
     padding-bottom: 12px;
     margin-bottom: 12px;
@@ -1350,10 +1382,27 @@ footer.site-footer p { margin: 0; }
   .expense-row .exp-group { grid-area: group; }
   .expense-row .exp-freq { grid-area: freq; }
   .expense-row .exp-plan-wrap { grid-area: plan; }
-  .expense-row .exp-real { grid-area: real; }
+  .expense-row .exp-real-wrap { grid-area: real; }
   .expense-row .remove { grid-area: remove; }
 
-  /* Pe telefon lipsește antetul de tabel, deci câmpurile se auto-explică. */
+  /* Antetul de tabel dispare pe telefon, deci fiecare câmp își poartă
+     eticheta deasupra. Fără ea, „Plan” și „Realizat” arată identic: două
+     casete cu cifre, una lângă alta. */
+  .expense-row .exp-plan-wrap::before,
+  .expense-row .exp-real-wrap::before {
+    content: attr(data-eticheta);
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 3px;
+  }
+  /* Rândul este centrat pe verticală, dar învelișul cu abatere este mai
+     înalt decât celălalt — fără asta, cele două etichete ar sta la
+     înălțimi diferite exact acolo unde trebuie comparate. */
+  .expense-row .exp-plan-wrap,
+  .expense-row .exp-real-wrap { align-self: start; }
   .expense-row .exp-plan { text-align: right; }
   .expense-row .exp-real { text-align: right; }
 

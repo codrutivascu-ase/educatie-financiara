@@ -53,7 +53,20 @@ function renderLineChart(root, tooltipEl, opts) {
   const width = measured > 0 ? measured : parseFloat(root.dataset.lastWidth) || 800;
 
   const height = opts.height || 320;
-  const padLeft = 74, padRight = 90, padTop = 18, padBottom = 34;
+
+  /* Marginile din jurul zonei desenate.
+   *
+   * Pe desktop, cei 90 de pixeli din dreapta țin etichetele de la capătul
+   * fiecărei linii, iar cei 74 din stânga țin valorile axei. Pe un telefon
+   * de 360px aceleași margini ar lăsa graficului propriu-zis sub 40% din
+   * lățime — adică exact partea care contează ar fi cea mai îngustă.
+   *
+   * Sub 480px strângem marginile și renunțăm la etichetele din dreapta:
+   * aceleași valori apar oricum în legenda de sub grafic. */
+  const ingust = width < 480;
+  const padLeft = ingust ? 44 : 74;
+  const padRight = ingust ? 12 : 90;
+  const padTop = 18, padBottom = 34;
   const plotW = Math.max(10, width - padLeft - padRight);
   const plotH = Math.max(10, height - padTop - padBottom);
 
@@ -228,8 +241,9 @@ function renderLineChart(root, tooltipEl, opts) {
 
   /* --- Etichete la capăt, doar dacă nu se suprapun ------------------ */
   const sortedByY = [...endpoints].sort((a, b) => a.y - b.y);
-  let labelsFit = true;
-  for (let i = 1; i < sortedByY.length; i++) {
+  // Pe ecran îngust nu există margine în dreapta pentru ele.
+  let labelsFit = !ingust;
+  for (let i = 1; labelsFit && i < sortedByY.length; i++) {
     if (sortedByY[i].y - sortedByY[i - 1].y < 16) {
       labelsFit = false;
       break;

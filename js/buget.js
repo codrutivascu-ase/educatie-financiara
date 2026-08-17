@@ -386,9 +386,15 @@ function randeazaCheltuieli() {
     });
     row.appendChild(frecventa);
 
-    /* Planificat — cu echivalentul lunar dedesubt, dacă diferă. */
+    /* Planificat — cu echivalentul lunar dedesubt, dacă diferă.
+     *
+     * Ambele câmpuri stau în câte un înveliș propriu, cu eticheta în
+     * `data-eticheta`. Pe telefon antetul de tabel dispare, iar fără
+     * etichete ar rămâne două casete cu cifre pe care nimeni nu le poate
+     * deosebi; CSS-ul le afișează din acest atribut. */
     const planWrap = document.createElement("div");
     planWrap.className = "exp-plan-wrap";
+    planWrap.dataset.eticheta = "Plan";
 
     const plan = document.createElement("input");
     plan.type = "number";
@@ -404,11 +410,19 @@ function randeazaCheltuieli() {
     plan.addEventListener("input", (e) => {
       chelt.planificat = Math.max(0, parseFloat(e.target.value) || 0);
       randeazaEchivalent(planWrap, chelt);
+      // Abaterea se măsoară față de plan, deci se schimbă și când se
+      // modifică planul, nu doar realizatul.
+      randeazaAbatere(realWrap, chelt);
       actualizeaza();
     });
     planWrap.appendChild(plan);
     randeazaEchivalent(planWrap, chelt);
     row.appendChild(planWrap);
+
+    /* Realizat — cu abaterea față de plan dedesubt. */
+    const realWrap = document.createElement("div");
+    realWrap.className = "exp-real-wrap";
+    realWrap.dataset.eticheta = "Realizat";
 
     const real = document.createElement("input");
     real.type = "number";
@@ -420,9 +434,12 @@ function randeazaCheltuieli() {
     real.setAttribute("aria-label", `Sumă cheltuită efectiv pentru ${chelt.nume || "categorie"} (lei)`);
     real.addEventListener("input", (e) => {
       chelt.real = Math.max(0, parseFloat(e.target.value) || 0);
+      randeazaAbatere(realWrap, chelt);
       actualizeaza();
     });
-    row.appendChild(real);
+    realWrap.appendChild(real);
+    randeazaAbatere(realWrap, chelt);
+    row.appendChild(realWrap);
 
     const sterge = document.createElement("button");
     sterge.type = "button";
@@ -454,6 +471,37 @@ function randeazaEchivalent(wrap, chelt) {
   const nota = document.createElement("span");
   nota.className = "exp-equiv";
   nota.textContent = `= ${formatRON(lunarEchivalent(chelt))}/lună`;
+  wrap.appendChild(nota);
+}
+
+/**
+ * Sub câmpul „realizat”, cât s-a abătut de la plan.
+ *
+ * Este singura informație pe care rândul nu o dă deja: două sume alăturate
+ * cer o scădere în minte, iar pe telefon, unde câmpurile ajung unul sub
+ * altul, comparația se pierde de tot. Semnul contează mai mult decât
+ * mărimea, așa că îl arătăm colorat: peste plan la cheltuieli este roșu,
+ * sub plan este verde, iar la economii invers — a pune deoparte mai mult
+ * decât ți-ai propus este o veste bună.
+ */
+function randeazaAbatere(wrap, chelt) {
+  const existent = wrap.querySelector(".exp-abatere");
+  if (existent) existent.remove();
+
+  const diferenta = chelt.real - chelt.planificat;
+  // Fără plan sau fără nimic cheltuit încă, nu există abatere de raportat.
+  if (chelt.planificat <= 0 || chelt.real <= 0 || Math.round(diferenta) === 0) return;
+
+  const nota = document.createElement("span");
+  nota.className = "exp-abatere";
+  const pesteplan = diferenta > 0;
+  const bun = chelt.grupa === "economii" ? pesteplan : !pesteplan;
+  nota.classList.add(bun ? "good" : "critical");
+  nota.textContent = `${pesteplan ? "+" : "−"}${formatRON(Math.abs(diferenta))}`;
+
+  const procent = Math.abs(diferenta) / chelt.planificat;
+  nota.title = `${pesteplan ? "Peste" : "Sub"} plan cu ${formatPercent(procent)}`;
+
   wrap.appendChild(nota);
 }
 
