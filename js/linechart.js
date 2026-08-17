@@ -54,27 +54,13 @@ function renderLineChart(root, tooltipEl, opts) {
 
   const height = opts.height || 320;
 
-  /* Marginile din jurul zonei desenate.
-   *
-   * Pe desktop, cei 90 de pixeli din dreapta țin etichetele de la capătul
-   * fiecărei linii, iar cei 74 din stânga țin valorile axei. Pe un telefon
-   * de 360px aceleași margini ar lăsa graficului propriu-zis sub 40% din
-   * lățime — adică exact partea care contează ar fi cea mai îngustă.
-   *
-   * Sub 480px strângem marginile și renunțăm la etichetele din dreapta:
-   * aceleași valori apar oricum în legenda de sub grafic. */
-  const ingust = width < 480;
-  const padLeft = ingust ? 44 : 74;
-  const padRight = ingust ? 12 : 90;
-  const padTop = 18, padBottom = 34;
-  const plotW = Math.max(10, width - padLeft - padRight);
-  const plotH = Math.max(10, height - padTop - padBottom);
-
   const xValues = opts.xValues;
   const yFormat = opts.yFormat;
   const yAxisFormat = opts.yAxisFormat || opts.yFormat;
 
-  /* --- Domeniul axei Y, inclusiv valori negative ------------------- */
+  /* --- Domeniul axei Y, inclusiv valori negative -------------------
+   * Se calculează înaintea marginilor, pentru că marginea din stânga
+   * depinde de cât de late sunt etichetele care vor apărea acolo. */
   const allY = opts.series.flatMap((s) => s.values).filter((v) => isFinite(v));
   if (opts.targetValue != null) allY.push(opts.targetValue);
   const dataMax = allY.length ? Math.max(...allY) : 0;
@@ -87,6 +73,37 @@ function renderLineChart(root, tooltipEl, opts) {
   const niceMax = Math.ceil(rawMax / step) * step || step;
   const niceMin = Math.floor(rawMin / step) * step;
   const span = niceMax - niceMin || step;
+
+  /* Marginile din jurul zonei desenate.
+   *
+   * Pe desktop, cei 90 de pixeli din dreapta țin etichetele de la capătul
+   * fiecărei linii, iar cei 74 din stânga țin valorile axei. Pe un telefon
+   * de 360px aceleași margini ar lăsa graficului propriu-zis sub 40% din
+   * lățime — adică exact partea care contează ar fi cea mai îngustă.
+   *
+   * Sub 480px renunțăm la etichetele din dreapta, pentru că aceleași valori
+   * apar în legenda de sub grafic, și strângem marginea din stânga — dar
+   * numai până unde încap valorile axei. Sub atât ele ies din desen și apar
+   * tăiate de marginea ecranului, ceea ce e mai rău decât un grafic ceva
+   * mai îngust. */
+  const ingust = width < 480;
+  let padLeft = 74;
+  if (ingust) {
+    // Cea mai lată etichetă decide marginea: „1,2 mil.” ocupă vizibil mai
+    // mult decât „20 mii”. La 11px, o cifră are ~6,2px lățime.
+    let maxChars = 0;
+    for (let v = niceMin; v <= niceMax + step / 2; v += step) {
+      const valoare = Math.abs(v) < step / 1000 ? 0 : v;
+      maxChars = Math.max(maxChars, String(yAxisFormat(valoare)).length);
+    }
+    padLeft = Math.min(72, Math.max(34, Math.ceil(maxChars * 6.2) + 14));
+  }
+  // În dreapta rămâne doar cât să încapă jumătate din ultima etichetă de pe
+  // axa X și punctul de la capătul liniei.
+  const padRight = ingust ? 24 : 90;
+  const padTop = 18, padBottom = 34;
+  const plotW = Math.max(10, width - padLeft - padRight);
+  const plotH = Math.max(10, height - padTop - padBottom);
 
   const xAt = (i) =>
     padLeft + (xValues.length === 1 ? plotW / 2 : (i / (xValues.length - 1)) * plotW);
@@ -144,7 +161,8 @@ function renderLineChart(root, tooltipEl, opts) {
     // Linia lui zero e mai vizibilă decât restul gradațiilor.
     const isZero = value === 0 && niceMin < 0;
     addLine(padLeft, y, padLeft + plotW, y, isZero ? baselineColor : gridlineColor, isZero ? 1.5 : 1);
-    addText(padLeft - 10, y + 4, yAxisFormat(value), { anchor: "end" });
+    // Pe ecran îngust marginea e strânsă, deci eticheta stă mai aproape de axă.
+    addText(padLeft - (ingust ? 7 : 10), y + 4, yAxisFormat(value), { anchor: "end" });
   }
 
   /* --- Etichete pe axa X, rărite ca să nu se suprapună -------------- */
