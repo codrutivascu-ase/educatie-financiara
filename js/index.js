@@ -28,8 +28,15 @@ function personalizeaza() {
   const text = document.getElementById("hero-text");
   const cta = document.getElementById("hero-cta");
 
-  /* --- Îndemnul principal ------------------------------------------- */
-  if (lectii.rezolvate === 0 && module === 0) {
+  /* --- Îndemnul principal -------------------------------------------
+   * Blocul de întâmpinare este opțional: pagina principală poate fi
+   * publicată și fără el. Personalizăm doar dacă există în DOM, altfel
+   * un vizitator care are deja progres salvat ar primi o eroare și ar
+   * pierde și etichetele de stare de mai jos.
+   */
+  if (!title || !text || !cta) {
+    // fără bloc de întâmpinare, trecem direct la etichetele de stare
+  } else if (lectii.rezolvate === 0 && module === 0) {
     // Utilizator nou: lăsăm textul implicit din HTML.
   } else if (lectii.urmatoarea && lectii.rezolvate > 0) {
     title.textContent = "Continuă de unde ai rămas";
@@ -56,8 +63,8 @@ function personalizeaza() {
   }
 
   /* --- Bara de progres la lecții ------------------------------------ */
-  if (lectii.rezolvate > 0) {
-    const wrap = document.getElementById("hero-progress");
+  const wrap = document.getElementById("hero-progress");
+  if (wrap && lectii.rezolvate > 0) {
     wrap.classList.remove("hidden");
     wrap.textContent = "";
 
@@ -79,12 +86,12 @@ function personalizeaza() {
 
   /* --- Etichetele de stare de pe cartonașe -------------------------- */
   const statusLectii = document.getElementById("status-lectii");
-  if (lectii.rezolvate > 0) {
+  if (statusLectii && lectii.rezolvate > 0) {
     statusLectii.textContent = `${lectii.rezolvate} din ${lectii.total} lecții parcurse`;
   }
 
   const statusBuget = document.getElementById("status-buget");
-  if (profil.buget) {
+  if (statusBuget && profil.buget) {
     statusBuget.textContent =
       profil.buget.sold >= 0
         ? `Completat · îți rămân ${formatRON(profil.buget.sold)} pe lună`

@@ -380,7 +380,7 @@ function _pctFree(v) {
  */
 
 /** Curs de referință folosit ca valoare implicită acolo unde e nevoie de conversie. */
-const CURS_EUR_IMPLICIT = 5.08;
+const CURS_EUR_IMPLICIT = 5.2;
 
 /** Formatează o sumă în euro, rotunjită la unitate: 1234 → "1.234 €". */
 function formatEUR(value) {
