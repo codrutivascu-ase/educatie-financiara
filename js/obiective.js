@@ -71,7 +71,7 @@ function recalc() {
     const zilnic = lunar / 30;
     insight.textContent =
       `Trebuie să pui deoparte ${formatRON(lunar)} pe lună timp de ${formatMonths(luni)} ` +
-      `ca să ajungi la ${formatRON(tinta)} — aproximativ ${formatRON(zilnic)} pe zi. ` +
+      `ca să ajungi la ${formatRON(tinta)}, adică aproximativ ${formatRON(zilnic)} pe zi. ` +
       (dobanda > 0
         ? `Dobânda de ${formatPercent(dobanda / 100)} pe an contribuie cu ${formatRON(contributieDobanda)} din total, deci depui efectiv mai puțin.`
         : `Dacă ai ține banii într-un cont cu dobândă, ai avea nevoie de o sumă lunară ceva mai mică.`);

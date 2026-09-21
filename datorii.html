@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculator de datorii — Educație Financiară</title>
+  <title>Calculator de datorii · Educație Financiară</title>
   <meta name="description" content="Verifică eligibilitatea la credit, vezi graficul de rambursare, efectul plății anticipate și compară metodele avalanșă vs. bulgăre de zăpadă." />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="manifest" href="manifest.json" />
@@ -31,7 +31,7 @@
 
     <div class="card">
       <h2>Datele creditului pentru locuință</h2>
-      <p class="field-hint">Locuințele se negociază în România în euro, deci tot ce ține de credit este calculat aici în euro. Veniturile rămân în lei, pentru că acolo se încasează — conversia se face cu cursul de mai jos.</p>
+      <p class="field-hint">Locuințele se negociază în România în euro, deci tot ce ține de credit este calculat aici în euro. Veniturile rămân în lei, pentru că acolo se încasează, iar conversia se face cu cursul de mai jos.</p>
       <div class="field-grid">
         <div class="field">
           <label for="suma-credit">Sumă credit (€)</label>
@@ -50,7 +50,7 @@
         <div class="field">
           <label for="curs">Curs euro (lei)</label>
           <input type="number" id="curs" min="1" max="20" step="0.01" value="5.2" />
-          <p class="field-hint">Folosit doar ca să compare rata cu venitul tău în lei. Calculul presupune un curs constant pe toată durata creditului — în realitate nu este.</p>
+          <p class="field-hint">Folosit doar ca să compare rata cu venitul tău în lei. Calculul presupune un curs constant pe toată durata creditului, ceea ce în realitate nu se întâmplă.</p>
         </div>
       </div>
     </div>
@@ -86,7 +86,7 @@
       </div>
 
       <p id="eligibility-msg" class="insight"></p>
-      <p class="insight">Calcul orientativ, bazat pe regula generală de îndatorare maximă de 40% folosită de bănci în România. <strong>Nu este o pre-aprobare</strong> — băncile analizează suplimentar istoricul din Biroul de Credit, vechimea în muncă, tipul veniturilor și stabilitatea angajatorului. Dacă iei creditul în euro dar câștigi în lei, banca aplică un prag de îndatorare mai strict, tocmai din cauza riscului valutar.</p>
+      <p class="insight">Calcul orientativ, bazat pe regula generală de îndatorare maximă de 40% folosită de bănci în România. <strong>Nu este o pre-aprobare:</strong> băncile analizează suplimentar istoricul din Biroul de Credit, vechimea în muncă, tipul veniturilor și stabilitatea angajatorului. Dacă iei creditul în euro dar câștigi în lei, banca aplică un prag de îndatorare mai strict, tocmai din cauza riscului valutar.</p>
     </div>
 
     <div class="card">
@@ -173,7 +173,7 @@
 
     <div class="card">
       <h2>Mai multe datorii: avalanșă vs. bulgăre de zăpadă</h2>
-      <p class="field-hint">Dacă ai mai multe datorii simultan, plătești rata la toate și trimiți restul bugetului către una singură. Întrebarea e: către care? Sumele de aici sunt în lei — sunt datorii de consum, contractate în lei. Cele 24% de la creditul rapid sunt o valoare prudentă: la instituțiile financiare nebancare, DAE trece frecvent de 50%.</p>
+      <p class="field-hint">Dacă ai mai multe datorii simultan, plătești rata la toate și trimiți restul bugetului către una singură. Întrebarea e: către care? Sumele de aici sunt în lei, pentru că sunt datorii de consum, contractate în lei. Cele 24% de la creditul rapid sunt o valoare prudentă: la instituțiile financiare nebancare, DAE trece frecvent de 50%.</p>
 
       <div class="debt-grid">
         <div class="debt-head">
@@ -207,7 +207,7 @@
 
       <div id="strategy-result"></div>
 
-      <p class="insight"><strong>Avalanșa</strong> este matematic optimă: ataci întâi dobânda cea mai mare, deci plătești cel mai puțin în total. <strong>Bulgărele</strong> atacă întâi soldul cel mai mic, ca să elimini rapid o datorie întreagă — costă ceva mai mult, dar studiile de comportament arată că oamenii duc planul la capăt mai des atunci când văd victorii rapide. Cea mai bună strategie este cea pe care chiar o urmezi.</p>
+      <p class="insight"><strong>Avalanșa</strong> este matematic optimă: ataci întâi dobânda cea mai mare, deci plătești cel mai puțin în total. <strong>Bulgărele</strong> atacă întâi soldul cel mai mic, ca să elimini rapid o datorie întreagă. Costă ceva mai mult, dar studiile de comportament arată că oamenii duc planul la capăt mai des atunci când văd victorii rapide. Cea mai bună strategie este cea pe care chiar o urmezi.</p>
       <div class="button-row">
         <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
       </div>

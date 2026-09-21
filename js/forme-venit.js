@@ -17,7 +17,8 @@
 const FORME = [
   { cheie: "cim", nume: "Contract de muncă", fraza: "contractul de muncă" },
   { cheie: "pfa", nume: "PFA în sistem real", fraza: "PFA-ul în sistem real" },
-  { cheie: "srl", nume: "SRL cu impozit pe micro", fraza: "SRL-ul cu impozit pe micro" },
+  { cheie: "srlAngajat", nume: "SRL cu angajat", fraza: "SRL-ul cu angajat" },
+  { cheie: "srlFaraAngajat", nume: "SRL fără angajat", fraza: "SRL-ul fără angajat" },
 ];
 
 /** Cele patru destinații ale unui leu facturat, cu culorile lor. */
@@ -39,11 +40,11 @@ function citesteOptiuni() {
   return {
     sumaAnuala: readNumber("suma", { min: 0, max: 10000000 }),
     cheltuieliPfa: readNumber("chelt-pfa", { min: 0, max: 5000000 }),
-    // Salariatul obligatoriu este tot o cheltuială a firmei, dar îl ținem
-    // separat în interfață pentru că este cel mai des uitat din calcul.
-    cheltuieliSrl:
-      readNumber("chelt-srl", { min: 0, max: 5000000 }) +
-      readNumber("cost-angajat", { min: 0, max: 5000000 }),
+    // Cheltuielile de funcționare se aplică la ambele variante de SRL;
+    // salariatul obligatoriu este o cheltuială suplimentară, doar la
+    // varianta cu angajat — fără el firma nu se mai califică la micro.
+    cheltuieliSrl: readNumber("chelt-srl", { min: 0, max: 5000000 }),
+    costAngajatSrl: readNumber("cost-angajat", { min: 0, max: 5000000 }),
     salariuMinim,
     dependents: parseInt(document.getElementById("persoane").value, 10) || 0,
     areSalariu: document.getElementById("are-salariu").value === "da",
@@ -183,7 +184,7 @@ function pasiPentru(cheie, rez, opts) {
         nota:
           r.bazaCas > 0
             ? `pe plafonul de ${formatRON(r.bazaCas)}, nu pe venitul real`
-            : "sub prag — nu se datorează",
+            : "sub prag, nu se datorează",
       },
       {
         eticheta: "− CASS, sănătate (10%)",
@@ -201,17 +202,55 @@ function pasiPentru(cheie, rez, opts) {
     ];
   }
 
+  if (cheie === "srlAngajat") {
+    return [
+      { eticheta: "Venituri firmă", suma: r.venituri, nota: "facturat, fără TVA", tip: "total" },
+      {
+        eticheta: `− Impozit micro (${opts.coteSrl.micro}%)`,
+        suma: -r.impozitMicro,
+        nota: "pe venituri, nu pe profit, cheltuielile nu îl reduc",
+      },
+      {
+        eticheta: "− Cheltuieli de funcționare",
+        suma: -r.cheltuieli,
+        nota: "contabilitate, comisioane și salariatul obligatoriu",
+      },
+      { eticheta: "Profit distribuibil", suma: r.profitDistribuibil, nota: "banii firmei, încă nu ai tăi", tip: "subtotal" },
+      {
+        eticheta: `− Impozit pe dividende (${opts.coteSrl.dividende}%)`,
+        suma: -r.impozitDividende,
+        nota: "al doilea impozit, la scoaterea banilor",
+      },
+      {
+        eticheta: "− CASS pe dividende (10%)",
+        suma: -r.cass,
+        nota:
+          r.bazaCass > 0
+            ? `pe treapta de ${formatRON(r.bazaCass)}`
+            : "sub prima treaptă, nu se datorează",
+      },
+      {
+        eticheta: "+ Salariul propriu, ca angajat",
+        suma: r.salariuPropriuNet,
+        nota: "te angajezi pe tine cu salariul minim, iar acel net se întoarce tot la tine",
+      },
+      {
+        eticheta: "Net anual",
+        suma: r.netAnual,
+        nota: `${formatRON(r.netAnual / 12)} pe lună, în medie`,
+        tip: "total",
+      },
+    ];
+  }
+
   return [
     { eticheta: "Venituri firmă", suma: r.venituri, nota: "facturat, fără TVA", tip: "total" },
+    { eticheta: "− Cheltuieli de funcționare", suma: -r.cheltuieli, nota: "contabilitate, comisioane" },
+    { eticheta: "Profit brut", suma: r.profitBrut, nota: "venituri minus cheltuieli", tip: "subtotal" },
     {
-      eticheta: `− Impozit micro (${opts.coteSrl.micro}%)`,
-      suma: -r.impozitMicro,
-      nota: "pe venituri, nu pe profit — cheltuielile nu îl reduc",
-    },
-    {
-      eticheta: "− Cheltuieli de funcționare",
-      suma: -r.cheltuieli,
-      nota: "contabilitate, salariatul obligatoriu, comisioane",
+      eticheta: "− Impozit pe profit (16%)",
+      suma: -r.impozitProfit,
+      nota: "firma nu se califică la micro fără niciun angajat",
     },
     { eticheta: "Profit distribuibil", suma: r.profitDistribuibil, nota: "banii firmei, încă nu ai tăi", tip: "subtotal" },
     {
@@ -225,7 +264,7 @@ function pasiPentru(cheie, rez, opts) {
       nota:
         r.bazaCass > 0
           ? `pe treapta de ${formatRON(r.bazaCass)}`
-          : "sub prima treaptă — nu se datorează",
+          : "sub prima treaptă, nu se datorează",
     },
     {
       eticheta: "Net anual",
@@ -279,19 +318,20 @@ function renderTable(rez) {
   const body = document.getElementById("table-body");
   body.textContent = "";
 
-  const { cim, pfa, srl } = rez;
+  const { cim, pfa, srlAngajat, srlFaraAngajat } = rez;
   const randuri = [
-    ["Sumă plătită de client / angajator", cim.costAnual, pfa.venituri, srl.venituri],
-    ["Cheltuieli de funcționare", 0, pfa.cheltuieli, srl.cheltuieli],
-    ["Contribuții sociale", cim.contributii, pfa.contributii, srl.contributii],
-    ["  din care CAS (pensie)", cim.cas, pfa.cas, 0],
-    ["  din care CASS (sănătate)", cim.cass, pfa.cass, srl.cass],
-    ["  din care CAM (angajator)", cim.cam, 0, 0],
-    ["Impozite", cim.impozite, pfa.impozite, srl.impozite],
-    ["  din care impozit pe venit / micro", cim.impozit, pfa.impozit, srl.impozitMicro],
-    ["  din care impozit pe dividende", 0, 0, srl.impozitDividende],
-    ["Net anual", cim.netAnual, pfa.netAnual, srl.netAnual],
-    ["Net lunar (medie)", cim.netAnual / 12, pfa.netAnual / 12, srl.netAnual / 12],
+    ["Sumă plătită de client / angajator", cim.costAnual, pfa.venituri, srlAngajat.venituri, srlFaraAngajat.venituri],
+    ["Cheltuieli de funcționare", 0, pfa.cheltuieli, srlAngajat.cheltuieli, srlFaraAngajat.cheltuieli],
+    ["Contribuții sociale", cim.contributii, pfa.contributii, srlAngajat.contributii, srlFaraAngajat.contributii],
+    ["  din care CAS (pensie)", cim.cas, pfa.cas, 0, 0],
+    ["  din care CASS (sănătate)", cim.cass, pfa.cass, srlAngajat.cass, srlFaraAngajat.cass],
+    ["  din care CAM (angajator)", cim.cam, 0, 0, 0],
+    ["Impozite", cim.impozite, pfa.impozite, srlAngajat.impozite, srlFaraAngajat.impozite],
+    ["  din care impozit pe venit / micro / profit", cim.impozit, pfa.impozit, srlAngajat.impozitMicro, srlFaraAngajat.impozitProfit],
+    ["  din care impozit pe dividende", 0, 0, srlAngajat.impozitDividende, srlFaraAngajat.impozitDividende],
+    ["  din care salariul propriu, ca angajat", 0, 0, srlAngajat.salariuPropriuNet, 0],
+    ["Net anual", cim.netAnual, pfa.netAnual, srlAngajat.netAnual, srlFaraAngajat.netAnual],
+    ["Net lunar (medie)", cim.netAnual / 12, pfa.netAnual / 12, srlAngajat.netAnual / 12, srlFaraAngajat.netAnual / 12],
   ];
 
   randuri.forEach((cells) => {
@@ -306,13 +346,17 @@ function renderTable(rez) {
 
   // Ultimul rând, cota efectivă, se citește mai bine în procente.
   const tr = document.createElement("tr");
-  ["Cât se duce în taxe și costuri", cim.rataEfectiva, pfa.rataEfectiva, srl.rataEfectiva].forEach(
-    (cell, i) => {
-      const td = document.createElement("td");
-      td.textContent = i === 0 ? String(cell) : formatPercent(cell);
-      tr.appendChild(td);
-    }
-  );
+  [
+    "Cât se duce în taxe și costuri",
+    cim.rataEfectiva,
+    pfa.rataEfectiva,
+    srlAngajat.rataEfectiva,
+    srlFaraAngajat.rataEfectiva,
+  ].forEach((cell, i) => {
+    const td = document.createElement("td");
+    td.textContent = i === 0 ? String(cell) : formatPercent(cell);
+    tr.appendChild(td);
+  });
   body.appendChild(tr);
 }
 
@@ -332,7 +376,7 @@ function renderPraguri(rez, opts) {
 
   const sm = opts.salariuMinim;
   const venitNetPfa = rez.pfa.venitNet;
-  const dividende = rez.srl.profitDistribuibil;
+  const dividende = rez.srlAngajat.profitDistribuibil;
 
   const praguri = [
     {
@@ -349,7 +393,7 @@ function renderPraguri(rez, opts) {
       valoare: opts.cotePfa.pragCasSuperior * sm,
       curent: venitNetPfa,
       referinta: "venitul net al PFA",
-      efect: "Peste acest nivel CAS nu mai crește deloc — cota efectivă începe să scadă.",
+      efect: "Peste acest nivel CAS nu mai crește deloc, iar cota efectivă începe să scadă.",
     },
     {
       // Singurul prag care funcționează invers: baza minimă contează
@@ -361,10 +405,10 @@ function renderPraguri(rez, opts) {
       activ: !opts.areSalariu && venitNetPfa < opts.cotePfa.cassMin * sm,
       efect: opts.areSalariu
         ? "Nu se aplică în cazul tău: ai și un contract de muncă, deci CASS se calculează pe venitul real."
-        : "Sub acest venit net, CASS se datorează oricum la această bază — cota efectivă devine foarte mare.",
+        : "Sub acest venit net, CASS se datorează oricum la această bază, deci cota efectivă devine foarte mare.",
     },
     {
-      nume: `Prima treaptă CASS pe dividende (${FISCAL_FORME.srl.trepteCass[0]} salarii minime)`,
+      nume: `Prima treaptă CASS pe dividende, SRL cu angajat (${FISCAL_FORME.srl.trepteCass[0]} salarii minime)`,
       valoare: FISCAL_FORME.srl.trepteCass[0] * sm,
       curent: dividende,
       referinta: "dividendul brut",
@@ -373,25 +417,34 @@ function renderPraguri(rez, opts) {
       )} CASS, indiferent cu cât ai depășit.`,
     },
     {
-      nume: `Treapta a doua CASS pe dividende (${FISCAL_FORME.srl.trepteCass[1]} salarii minime)`,
+      nume: `Treapta a doua CASS pe dividende, SRL cu angajat (${FISCAL_FORME.srl.trepteCass[1]} salarii minime)`,
       valoare: FISCAL_FORME.srl.trepteCass[1] * sm,
       curent: dividende,
       referinta: "dividendul brut",
       efect: "Baza CASS se dublează dintr-odată.",
     },
     {
-      nume: "Cota micro urcă de la 1% la 3% (60.000 EUR venituri)",
+      nume: "Cota micro urcă de la 1% la 3% (60.000 EUR venituri, SRL cu angajat)",
       valoare: 60000 * CURS_EUR_IMPLICIT,
-      curent: rez.srl.venituri,
+      curent: rez.srlAngajat.venituri,
       referinta: "venitul anual al firmei",
       efect: "Se aplică și sub acest prag dacă activitatea este de consultanță sau management.",
     },
     {
-      nume: "Ieșirea din regimul micro (100.000 EUR venituri)",
+      nume: "Ieșirea din regimul micro (100.000 EUR venituri, SRL cu angajat)",
       valoare: 100000 * CURS_EUR_IMPLICIT,
-      curent: rez.srl.venituri,
+      curent: rez.srlAngajat.venituri,
       referinta: "venitul anual al firmei",
-      efect: "Peste plafon, firma trece la impozit pe profit de 16%, calculat altfel.",
+      efect: "Peste plafon, firma trece la impozit pe profit de 16%, calculat altfel, la fel ca varianta fără angajat, de mai jos.",
+    },
+    {
+      nume: `Prima treaptă CASS pe dividende, SRL fără angajat (${FISCAL_FORME.srlProfit.trepteCass[0]} salarii minime)`,
+      valoare: FISCAL_FORME.srlProfit.trepteCass[0] * sm,
+      curent: rez.srlFaraAngajat.profitDistribuibil,
+      referinta: "dividendul brut",
+      efect: `La depășire se datorează ${formatRON(
+        FISCAL_FORME.srlProfit.trepteCass[0] * sm * 0.1
+      )} CASS, indiferent cu cât ai depășit.`,
     },
   ];
 
@@ -414,7 +467,7 @@ function renderPraguri(rez, opts) {
     const note = document.createElement("span");
     note.className = "breakdown-note";
     note.textContent =
-      `${formatRON(p.valoare)} — ${p.referinta} este cu ${formatRON(distanta)} ` +
+      `${formatRON(p.valoare)}: ${p.referinta} este cu ${formatRON(distanta)} ` +
       `${atins ? "peste" : "sub"} acest prag. ${p.efect}`;
     left.appendChild(note);
     row.appendChild(left);
@@ -477,12 +530,14 @@ function recalc() {
       ? "La venituri mici, contractul de muncă rămâne competitiv pentru că deducerea personală reduce impozitul, iar celelalte forme datorează contribuții la plafoane fixe, indiferent cât încasează."
       : rez.castigator === "pfa"
       ? "PFA-ul câștigă pentru că, peste plafoane, contribuțiile nu mai cresc odată cu venitul, iar banii ajung la tine fără al doilea impozit."
-      : "SRL-ul câștigă pentru că impozitul de pe venituri este mic, dar avantajul apare doar dacă veniturile acoperă costurile fixe de funcționare.";
+      : rez.castigator === "srlAngajat"
+      ? "SRL-ul cu angajat câștigă pentru că impozitul pe micro este mic, iar salariul propriu, ca angajat al firmei tale, se întoarce tot la tine."
+      : "SRL-ul fără angajat câștigă pentru că evită costul salariatului obligatoriu, deși plătește impozit pe profit în loc de impozitul mai mic pe micro.";
 
   insight.textContent =
     `Din ${formatRON(suma)} pe an, ${castigator.fraza} îți lasă cel mai mult: ` +
     `${formatRON(rCastigator.netAnual)}, adică ${formatPercent(rCastigator.netAnual / suma)}. ` +
-    `Urmează ${frazaAlDoilea}, cu ${formatRON(alDoilea.net)} — o diferență de ` +
+    `Urmează ${frazaAlDoilea}, cu ${formatRON(alDoilea.net)}, o diferență de ` +
     `${formatRON(rCastigator.netAnual - alDoilea.net)} pe an. ${explicatie}`;
 }
 

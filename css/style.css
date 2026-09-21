@@ -175,10 +175,30 @@ h3 { font-size: 1rem; margin: 24px 0 10px; color: var(--text-secondary); }
 }
 
 .site-nav .brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 700;
   font-size: 1.02rem;
   text-decoration: none;
   color: var(--text-primary);
+}
+
+.site-nav .brand-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex: none;
+  /* Fișierul sursă are cercul roșu înscris exact în cadru: decupajul
+     circular elimină colțurile albe fără să mai fie nevoie de o variantă
+     separată a siglei. */
+  object-fit: cover;
+}
+
+.site-nav .brand-suffix {
+  font-weight: 500;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 

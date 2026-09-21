@@ -13,7 +13,7 @@ const GLOSAR = [
     termeni: ["DAE", "dobânda anuală efectivă"],
     categorie: "Credite",
     scurt: "Costul total anual al unui credit, incluzând dobânda și comisioanele.",
-    lung: "Dobânda anuală efectivă exprimă într-un singur număr tot ce plătești pentru un credit: dobânda propriu-zisă, comisionul de analiză, cel de administrare și asigurările obligatorii. Este singura valoare comparabilă între oferte — două credite cu aceeași dobândă nominală pot avea DAE foarte diferite. Prin lege, băncile sunt obligate să o afișeze.",
+    lung: "Dobânda anuală efectivă exprimă într-un singur număr tot ce plătești pentru un credit: dobânda propriu-zisă, comisionul de analiză, cel de administrare și asigurările obligatorii. Este singura valoare comparabilă între oferte: două credite cu aceeași dobândă nominală pot avea DAE foarte diferite. Prin lege, băncile sunt obligate să o afișeze.",
     vezi: ["dobanda-nominala", "comision"],
   },
   {
@@ -40,7 +40,7 @@ const GLOSAR = [
     termeni: ["principal", "soldul creditului"],
     categorie: "Credite",
     scurt: "Suma efectiv împrumutată, care rămâne de rambursat.",
-    lung: "Este partea din datorie care nu include dobânda. Doar plățile care reduc principalul îți cresc averea netă — dobânda este un cost pur. De aceea o plată anticipată făcută devreme economisește mult: reduce principalul cât mai este mult timp de generat dobândă pe el.",
+    lung: "Este partea din datorie care nu include dobânda. Doar plățile care reduc principalul îți cresc averea netă, pentru că dobânda este un cost pur. De aceea o plată anticipată făcută devreme economisește mult: reduce principalul cât mai este mult timp de generat dobândă pe el.",
     vezi: ["anuitate", "amortizare"],
   },
   {
@@ -66,8 +66,8 @@ const GLOSAR = [
     termen: "IFN",
     termeni: ["IFN", "instituție financiară nebancară", "credit rapid"],
     categorie: "Credite",
-    scurt: "Instituție financiară nebancară — dă credite, dar nu are voie să atragă depozite.",
-    lung: "IFN-urile acordă creditele rapide, cu acte puține și bani în aceeași zi. Comoditatea se plătește prin dobândă: DAE trece frecvent de 50% pe an, față de 6-7% la un credit ipotecar și 10-14% la unul bancar de nevoi personale. Sunt înregistrate la BNR și raportează la Biroul de Credit ca orice bancă, deci o restanță aici afectează la fel de mult accesul viitor la un credit ipotecar. Înainte de a semna, compară DAE, nu rata lunară — o perioadă mai lungă face rata să pară mică, dar mărește costul total.",
+    scurt: "Instituție financiară nebancară: dă credite, dar nu are voie să atragă depozite.",
+    lung: "IFN-urile acordă creditele rapide, cu acte puține și bani în aceeași zi. Comoditatea se plătește prin dobândă: DAE trece frecvent de 50% pe an, față de 6-7% la un credit ipotecar și 10-14% la unul bancar de nevoi personale. Sunt înregistrate la BNR și raportează la Biroul de Credit ca orice bancă, deci o restanță aici afectează la fel de mult accesul viitor la un credit ipotecar. Înainte de a semna, compară DAE, nu rata lunară: o perioadă mai lungă face rata să pară mică, dar mărește costul total.",
     vezi: ["dae", "grad-indatorare", "avalansa"],
   },
   {
@@ -86,7 +86,7 @@ const GLOSAR = [
     termeni: ["ETF", "fond index", "fond tranzacționat la bursă"],
     categorie: "Investiții",
     scurt: "Fond care urmărește automat un indice bursier și se tranzacționează ca o acțiune.",
-    lung: "Un ETF pe un indice larg cumpără, în proporții fixe, toate companiile din acel indice. Nu încearcă să aleagă câștigătorii, deci are costuri de administrare mult mai mici decât un fond activ — de obicei sub 0,3% pe an față de 1,5-2%. Pe termen lung, această diferență de cost este motivul principal pentru care majoritatea fondurilor active rămân în urma indicelui.",
+    lung: "Un ETF pe un indice larg cumpără, în proporții fixe, toate companiile din acel indice. Nu încearcă să aleagă câștigătorii, deci are costuri de administrare mult mai mici decât un fond activ, de obicei sub 0,3% pe an față de 1,5-2%. Pe termen lung, această diferență de cost este motivul principal pentru care majoritatea fondurilor active rămân în urma indicelui.",
     vezi: ["diversificare", "comision", "indice"],
   },
   {
@@ -95,7 +95,7 @@ const GLOSAR = [
     termeni: ["indice bursier", "indice"],
     categorie: "Investiții",
     scurt: "O măsură a evoluției unui grup de companii, folosită ca reper pentru piață.",
-    lung: "S&P 500 urmărește 500 de companii mari din SUA, MSCI World urmărește peste 1.500 din țările dezvoltate, BET urmărește cele mai lichide companii de la Bursa de Valori București. Un indice nu poate fi cumpărat direct — cumperi un fond care îl replică.",
+    lung: "S&P 500 urmărește 500 de companii mari din SUA, MSCI World urmărește peste 1.500 din țările dezvoltate, BET urmărește cele mai lichide companii de la Bursa de Valori București. Un indice nu poate fi cumpărat direct: cumperi un fond care îl replică.",
     vezi: ["etf", "diversificare"],
   },
   {
@@ -104,7 +104,7 @@ const GLOSAR = [
     termeni: ["diversificare", "diversificat"],
     categorie: "Investiții",
     scurt: "Împărțirea investiției între multe active, ca falimentul unuia să nu conteze.",
-    lung: "Reduce riscul specific — cel legat de o singură firmă, un sector sau o țară — fără să reducă randamentul așteptat. Este descrisă uneori ca „singurul prânz gratuit din finanțe”. Nu protejează însă împotriva riscului de piață: într-o criză generală scade tot.",
+    lung: "Reduce riscul specific (cel legat de o singură firmă, un sector sau o țară) fără să reducă randamentul așteptat. Este descrisă uneori ca „singurul prânz gratuit din finanțe”. Nu protejează însă împotriva riscului de piață: într-o criză generală scade tot.",
     vezi: ["etf", "volatilitate", "risc-specific"],
   },
   {
@@ -131,7 +131,7 @@ const GLOSAR = [
     termeni: ["randament real", "randamentul real"],
     categorie: "Investiții",
     scurt: "Randamentul rămas după scăderea inflației.",
-    lung: "Un depozit cu 6% dobândă într-un an cu 8% inflație are un randament real de aproximativ −2%: soldul crește, dar puterea de cumpărare scade. Este singura valoare care contează pentru decizii pe termen lung — randamentul nominal spune doar cum se schimbă numărul din cont.",
+    lung: "Un depozit cu 6% dobândă într-un an cu 8% inflație are un randament real de aproximativ −2%: soldul crește, dar puterea de cumpărare scade. Este singura valoare care contează pentru decizii pe termen lung, iar randamentul nominal spune doar cum se schimbă numărul din cont.",
     vezi: ["inflatie", "putere-de-cumparare"],
   },
   {
@@ -140,7 +140,7 @@ const GLOSAR = [
     termeni: ["dobândă compusă", "dobânda compusă", "capitalizare"],
     categorie: "Investiții",
     scurt: "Randamentul care se aplică și randamentului acumulat anterior.",
-    lung: "Diferența față de dobânda simplă este că, la fiecare perioadă, câștigul se adaugă la capital și începe la rândul lui să producă. Efectul este aproape invizibil în primii ani și devine dominant după 15-20 de ani — motiv pentru care numărul de ani contează mai mult decât suma lunară.",
+    lung: "Diferența față de dobânda simplă este că, la fiecare perioadă, câștigul se adaugă la capital și începe la rândul lui să producă. Efectul este aproape invizibil în primii ani și devine dominant după 15-20 de ani, motiv pentru care numărul de ani contează mai mult decât suma lunară.",
     vezi: ["randament-real", "cost-oportunitate"],
   },
   {
@@ -149,7 +149,7 @@ const GLOSAR = [
     termeni: ["comision de administrare", "comision"],
     categorie: "Investiții",
     scurt: "Procentul anual reținut de administratorul unui fond din valoarea investiției.",
-    lung: "Se aplică întregii sume în fiecare an, inclusiv randamentului acumulat — exact ca dobânda compusă, dar în defavoarea ta. Diferența dintre 0,2% și 2% pe an poate consuma, pe 30 de ani, un sfert din câștigul final. Este singura variabilă din investiții care este cunoscută dinainte cu certitudine.",
+    lung: "Se aplică întregii sume în fiecare an, inclusiv randamentului acumulat, exact ca dobânda compusă, dar în defavoarea ta. Diferența dintre 0,2% și 2% pe an poate consuma, pe 30 de ani, un sfert din câștigul final. Este singura variabilă din investiții care este cunoscută dinainte cu certitudine.",
     vezi: ["etf", "dae"],
   },
   {
@@ -177,7 +177,7 @@ const GLOSAR = [
     termeni: ["inflație", "inflația"],
     categorie: "Bazele",
     scurt: "Creșterea generală a prețurilor, care reduce puterea de cumpărare a banilor.",
-    lung: "Nu îți ia bani din cont — suma rămâne identică. Se schimbă doar cât poți cumpăra cu ea. De aceea pierderea este greu de observat: nu apare nicio tranzacție. La 5% pe an, banii își pierd aproximativ 40% din putere în zece ani.",
+    lung: "Nu îți ia bani din cont: suma rămâne identică. Se schimbă doar cât poți cumpăra cu ea. De aceea pierderea este greu de observat: nu apare nicio tranzacție. La 5% pe an, banii își pierd aproximativ 40% din putere în zece ani.",
     vezi: ["putere-de-cumparare", "randament-real"],
   },
   {
@@ -232,7 +232,7 @@ const GLOSAR = [
     termeni: ["Pilonul I", "Pilon I", "pensie publică"],
     categorie: "Pensii",
     scurt: "Pensia publică, finanțată de contribuțiile generației active.",
-    lung: "Nu este o acumulare: contribuțiile de azi plătesc pensiile de azi. Ce vei primi depinde de legislația din momentul pensionării și de raportul dintre numărul de salariați și cel de pensionari — factori pe care nu îi poți controla și care se deteriorează demografic.",
+    lung: "Nu este o acumulare: contribuțiile de azi plătesc pensiile de azi. Ce vei primi depinde de legislația din momentul pensionării și de raportul dintre numărul de salariați și cel de pensionari, factori pe care nu îi poți controla și care se deteriorează demografic.",
     vezi: ["pilon-ii"],
   },
   {
@@ -241,7 +241,7 @@ const GLOSAR = [
     termeni: ["Pilonul III", "Pilon III", "pensie facultativă"],
     categorie: "Pensii",
     scurt: "Pensia privată facultativă, deductibilă fiscal până la 400 EUR pe an.",
-    lung: "Contribuție voluntară, peste cea obligatorie. Deducerea fiscală înseamnă că statul îți returnează 10% din suma contribuită sub forma unui impozit mai mic — un câștig cert, înainte de orice randament al fondului. Peste plafonul de 400 EUR pe an, avantajul dispare și merită comparat cu un cont propriu de investiții.",
+    lung: "Contribuție voluntară, peste cea obligatorie. Deducerea fiscală înseamnă că statul îți returnează 10% din suma contribuită sub forma unui impozit mai mic, un câștig cert obținut înainte de orice randament al fondului. Peste plafonul de 400 EUR pe an, avantajul dispare și merită comparat cu un cont propriu de investiții.",
     vezi: ["pilon-ii", "comision"],
   },
 
@@ -251,7 +251,7 @@ const GLOSAR = [
     termeni: ["avalanșă", "metoda avalanșă"],
     categorie: "Datorii",
     scurt: "Strategie de achitare care atacă întâi datoria cu dobânda cea mai mare.",
-    lung: "Plătești minimul la toate datoriile și trimiți tot surplusul către cea mai scumpă. Este matematic optimă: minimizează dobânda totală plătită. Dezavantajul este psihologic — dacă datoria cea mai scumpă are și cel mai mare sold, prima victorie vine târziu.",
+    lung: "Plătești minimul la toate datoriile și trimiți tot surplusul către cea mai scumpă. Este matematic optimă: minimizează dobânda totală plătită. Dezavantajul este psihologic: dacă datoria cea mai scumpă are și cel mai mare sold, prima victorie vine târziu.",
     vezi: ["bulgare"],
   },
   {
@@ -260,7 +260,7 @@ const GLOSAR = [
     termeni: ["bulgăre de zăpadă", "metoda bulgărelui"],
     categorie: "Datorii",
     scurt: "Strategie care atacă întâi datoria cu soldul cel mai mic.",
-    lung: "Costă puțin mai mult decât avalanșa, dar elimină rapid o datorie întreagă. Studiile de comportament arată că oamenii duc planul la capăt mai des atunci când văd victorii rapide — iar un plan dus la capăt bate un plan optim abandonat.",
+    lung: "Costă puțin mai mult decât avalanșa, dar elimină rapid o datorie întreagă. Studiile de comportament arată că oamenii duc planul la capăt mai des atunci când văd victorii rapide, iar un plan dus la capăt bate un plan optim abandonat.",
     vezi: ["avalansa"],
   },
   {
@@ -277,8 +277,8 @@ const GLOSAR = [
     termen: "PFA",
     termeni: ["PFA", "persoană fizică autorizată"],
     categorie: "Antreprenoriat",
-    scurt: "Persoană fizică autorizată — cea mai simplă formă în care îți poți factura munca.",
-    lung: "Se înființează repede și la cost mic, iar evidența contabilă este simplă. În sistem real, impozitarea pornește de la venitul net — încasări minus cheltuieli justificate cu documente. Diferența esențială față de un salariat: contribuțiile nu se calculează pe tot venitul, ci pe plafoane fixe legate de salariul minim, ceea ce face ca la venituri mari cota efectivă să scadă, dar și ca pensia acumulată să fie mai mică. Nu există concediu plătit, concediu medical decent sau protecție la pierderea clientului.",
+    scurt: "Persoană fizică autorizată: cea mai simplă formă în care îți poți factura munca.",
+    lung: "Se înființează repede și la cost mic, iar evidența contabilă este simplă. În sistem real, impozitarea pornește de la venitul net, adică încasări minus cheltuieli justificate cu documente. Diferența esențială față de un salariat: contribuțiile nu se calculează pe tot venitul, ci pe plafoane fixe legate de salariul minim, ceea ce face ca la venituri mari cota efectivă să scadă, dar și ca pensia acumulată să fie mai mică. Nu există concediu plătit, concediu medical decent sau protecție la pierderea clientului.",
     vezi: ["microintreprindere", "cheltuiala-deductibila", "pilon-ii"],
   },
   {
@@ -287,7 +287,7 @@ const GLOSAR = [
     termeni: ["microîntreprindere", "impozit pe micro", "SRL micro"],
     categorie: "Antreprenoriat",
     scurt: "Regim fiscal în care firma plătește un impozit mic, dar aplicat pe venituri, nu pe profit.",
-    lung: "Cota redusă induce în eroare: se aplică pe tot ce încasezi, indiferent de cheltuieli, deci o firmă cu marjă mică poate plăti mai mult decât ar plăti la impozit pe profit. Regimul are condiții — un plafon de venituri, cel puțin un salariat sau un administrator remunerat — iar la depășirea plafonului firma trece la impozit pe profit. Banii ajung la asociat abia după al doilea impozit, cel pe dividende.",
+    lung: "Cota redusă induce în eroare: se aplică pe tot ce încasezi, indiferent de cheltuieli, deci o firmă cu marjă mică poate plăti mai mult decât ar plăti la impozit pe profit. Regimul are condiții: un plafon de venituri, cel puțin un salariat sau un administrator remunerat. La depășirea plafonului, firma trece la impozit pe profit. Banii ajung la asociat abia după al doilea impozit, cel pe dividende.",
     vezi: ["dividend", "pfa"],
   },
   {
@@ -314,7 +314,7 @@ const GLOSAR = [
     termeni: ["cheltuială deductibilă", "cheltuieli deductibile"],
     categorie: "Antreprenoriat",
     scurt: "Cheltuială legată de activitate, care scade venitul pe care se calculează taxele.",
-    lung: "Deductibilitatea nu înseamnă că statul îți dă banii înapoi: o cheltuială de 1.000 de lei îți reduce impozitul cu aproximativ 100 de lei, nu cu 1.000. Rămâi deci în minus cu restul — de aceea nu are sens să cumperi ceva doar „ca să deduci”. Condiția este ca ea să servească activității și să fie justificată cu document. La o microîntreprindere, cheltuielile nu reduc impozitul pe venituri, ci doar profitul distribuibil.",
+    lung: "Deductibilitatea nu înseamnă că statul îți dă banii înapoi: o cheltuială de 1.000 de lei îți reduce impozitul cu aproximativ 100 de lei, nu cu 1.000. Rămâi deci în minus cu restul, de aceea nu are sens să cumperi ceva doar „ca să deduci”. Condiția este ca ea să servească activității și să fie justificată cu document. La o microîntreprindere, cheltuielile nu reduc impozitul pe venituri, ci doar profitul distribuibil.",
     vezi: ["pfa", "microintreprindere"],
   },
 ];

@@ -165,7 +165,7 @@ function recalc() {
 
   document.getElementById("insight").textContent =
     `Pe ${years} ${years === 1 ? "an" : "ani"}, diferența dintre „${worst.name}” și „${best.name}” este de ` +
-    `${formatRON(diff)} — acesta este costul de oportunitate al randamentului mai mic. ` +
+    `${formatRON(diff)}, acesta este costul de oportunitate al randamentului mai mic. ` +
     (proportiaCastig > 0
       ? `În scenariul cel mai bun, ${formatPercent(proportiaCastig)} din suma finală nu vine din banii depuși de tine, ci din randamentul acumulat.`
       : "");
@@ -280,7 +280,7 @@ function ruleazaMonteCarlo() {
   document.getElementById("mc-insight").textContent =
     `Din 500 de simulări cu randament mediu de ${meanReturnPct}% și volatilitate de ${volatilityPct}%, ` +
     `rezultatul median după ${years} ani este ${formatRON(p50)}. ` +
-    `Însă opt din zece rezultate se încadrează între ${formatRON(p10)} și ${formatRON(p90)} — ` +
+    `Însă opt din zece rezultate se încadrează între ${formatRON(p10)} și ${formatRON(p90)}, ` +
     `o diferență de ${raport.toFixed(1)} ori între capete. ` +
     (r.probLoss > 0.15
       ? `În ${formatPercent(r.probLoss)} din cazuri ai termina cu mai puțin decât ai depus (${formatRON(totalDepus)}). ` +

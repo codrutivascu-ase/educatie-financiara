@@ -17,7 +17,7 @@ const LECTII = [
     rezumat: "Estimările din memorie greșesc sistematic într-o singură direcție.",
     continut: [
       { tip: "p", text: "Dacă întrebi pe cineva cât cheltuiește pe lună, răspunsul este aproape întotdeauna mai mic decât realitatea. Nu din rea-credință: creierul reține cheltuielile mari și rare (chiria, o vacanță) și le uită pe cele mici și dese." },
-      { tip: "p", text: "Problema este că exact cele mici și dese se adună. O cafea de 15 lei în fiecare zi lucrătoare înseamnă 300 lei pe lună și 3.600 lei pe an — mai mult decât majoritatea oamenilor ar accepta ca „buget pentru cafea” dacă ar fi întrebați direct." },
+      { tip: "p", text: "Problema este că exact cele mici și dese se adună. O cafea de 15 lei în fiecare zi lucrătoare înseamnă 300 lei pe lună și 3.600 lei pe an, mai mult decât majoritatea oamenilor ar accepta ca „buget pentru cafea” dacă ar fi întrebați direct." },
       { tip: "h", text: "Efectul abonamentelor" },
       { tip: "p", text: "Abonamentele sunt cazul extrem: le plătești fără nicio decizie conștientă. Un cost de 40 lei pe lună nu declanșează nicio alarmă, dar cinci astfel de abonamente sunt 2.400 lei pe an. Testul util: dacă ar trebui să reînnoiești manual fiecare abonament în fiecare lună, pe care le-ai reînnoi?" },
       { tip: "insight", text: "Un buget scris nu îți spune să nu cheltuiești. Îți arată compromisul: fiecare leu are o singură destinație." },
@@ -33,7 +33,7 @@ const LECTII = [
         ],
         correct: 1,
         explicatii: [
-          "Tranzacțiile apar toate în extras — problema nu este disponibilitatea datelor, ci felul în care le reținem.",
+          "Tranzacțiile apar toate în extras: problema nu este disponibilitatea datelor, ci felul în care le reținem.",
           "Exact. Cheltuielile mici par nesemnificative individual, iar creierul nu le însumează automat.",
           "Inflația schimbă prețurile, dar nu explică de ce greșim estimarea în aceeași direcție.",
           "Mulți își verifică contul; verificarea soldului nu produce însă o sumă pe categorii.",
@@ -60,7 +60,7 @@ const LECTII = [
         ],
         correct: 1,
         explicatii: [
-          "Clasificarea nu schimbă singură nicio sumă — doar informația despre ea.",
+          "Clasificarea nu schimbă singură nicio sumă, doar informația despre ea.",
           "Corect. Când apare nevoia de a tăia, știi dinainte de unde se poate fără să afectezi lucrurile esențiale.",
           "Băncile se uită la venit și la rate existente, nu la această clasificare.",
           "Dimpotrivă: cheltuielile mici sunt cel mai des „dorințe” și tocmai ele trebuie urmărite.",
@@ -79,8 +79,8 @@ const LECTII = [
       { tip: "p", text: "Dobânda simplă se aplică doar sumei depuse. Dobânda compusă se aplică și dobânzii acumulate anterior: câștigul de anul trecut începe, la rândul lui, să producă câștig." },
       { tip: "p", text: "Efectul este aproape invizibil la început. În primii ani, aproape tot ce vezi în cont sunt banii tăi. Abia după 15-20 de ani proporția se inversează și cea mai mare parte din sold vine din randament, nu din depuneri." },
       { tip: "h", text: "Comparația care contează" },
-      { tip: "p", text: "Cine începe la 25 de ani cu 300 lei pe lună depune, până la 65 de ani, 144.000 lei. Cine începe la 40 de ani cu 600 lei pe lună depune 180.000 lei — mai mult. Dar la un randament de 7% pe an, primul ajunge la aproximativ 720.000 lei, iar al doilea la aproximativ 500.000. Cu 36.000 lei mai puțin depuși, primul termină cu peste 200.000 lei în plus." },
-      { tip: "insight", text: "Cei 15 ani în plus valorează mai mult decât dublarea contribuției lunare. Aceasta este singura variabilă din finanțe care nu costă nimic — dar care nu poate fi recuperată." },
+      { tip: "p", text: "Cine începe la 25 de ani cu 300 lei pe lună depune, până la 65 de ani, 144.000 lei. Cine începe la 40 de ani cu 600 lei pe lună depune 180.000 lei, mai mult. Dar la un randament de 7% pe an, primul ajunge la aproximativ 720.000 lei, iar al doilea la aproximativ 500.000. Cu 36.000 lei mai puțin depuși, primul termină cu peste 200.000 lei în plus." },
+      { tip: "insight", text: "Cei 15 ani în plus valorează mai mult decât dublarea contribuției lunare. Aceasta este singura variabilă din finanțe care nu costă nimic, dar care nu poate fi recuperată." },
       { tip: "p", text: "Atenție însă: randamentul constant din exemple nu există în realitate. Bursa poate scădea cu 30-50% într-un an de criză. Media pe termen lung ascunde o traiectorie mult mai zbuciumată decât arată graficul." },
     ],
     intrebari: [
@@ -110,7 +110,7 @@ const LECTII = [
         ],
         correct: 2,
         explicatii: [
-          "Depune de fapt mai puțin — 144.000 față de 180.000 lei.",
+          "Depune de fapt mai puțin: 144.000 față de 180.000 lei.",
           "Randamentul pieței nu depinde de vârsta investitorului.",
           "Corect. Fiecare leu depus la 25 de ani se compune timp de 40 de ani, nu 25.",
           "Inflația afectează ambele scenarii, deci nu explică diferența.",
@@ -127,7 +127,7 @@ const LECTII = [
         correct: 1,
         explicatii: [
           "Randamentul devine dominant abia după mulți ani.",
-          "Corect. De aceea graficul pare aproape liniar la început — și de aceea mulți renunță prea devreme.",
+          "Corect. De aceea graficul pare aproape liniar la început, și de aceea mulți renunță prea devreme.",
           "Acest efect are nevoie de timp ca să conteze.",
           "Comisioanele reduc soldul, nu îl construiesc.",
         ],
@@ -158,10 +158,10 @@ const LECTII = [
     grup: "Bazele",
     rezumat: "Un cont fără dobândă nu păstrează valoarea, ci o pierde tăcut.",
     continut: [
-      { tip: "p", text: "Inflația nu îți ia bani din cont. Suma rămâne identică — se schimbă doar cât poți cumpăra cu ea. De aceea pierderea este greu de observat: nu apare nicio tranzacție." },
+      { tip: "p", text: "Inflația nu îți ia bani din cont. Suma rămâne identică: se schimbă doar cât poți cumpăra cu ea. De aceea pierderea este greu de observat: nu apare nicio tranzacție." },
       { tip: "p", text: "La o inflație de 5% pe an, 10.000 lei ținuți zece ani într-un cont fără dobândă mai valorează, în putere de cumpărare, aproximativ 6.100 lei. Ai pierdut aproape 40% fără să vezi vreodată un minus în extras." },
       { tip: "h", text: "Randamentul real" },
-      { tip: "p", text: "Ce contează nu este randamentul nominal, ci cel real: randamentul minus inflația. Un depozit cu 6% dobândă într-un an cu 8% inflație are un randament real negativ — pierzi putere de cumpărare, chiar dacă soldul crește." },
+      { tip: "p", text: "Ce contează nu este randamentul nominal, ci cel real: randamentul minus inflația. Un depozit cu 6% dobândă într-un an cu 8% inflație are un randament real negativ: pierzi putere de cumpărare, chiar dacă soldul crește." },
       { tip: "insight", text: "„Banii sunt în siguranță în cont” este adevărat doar nominal. În putere de cumpărare, un cont fără dobândă este o pierdere garantată, doar lentă." },
       { tip: "p", text: "Asta nu înseamnă că nu trebuie să ai bani lichizi. Fondul de urgență își merită costul: plătești acea erodare ca preț pentru disponibilitate imediată. Problema apare când sume mult peste fondul de urgență rămân acolo din inerție." },
     ],
@@ -170,7 +170,7 @@ const LECTII = [
         text: "De ce pierderea cauzată de inflație este greu de observat?",
         options: [
           "Pentru că băncile o ascund în comisioane",
-          "Pentru că suma din cont rămâne aceeași — se schimbă doar ce poți cumpăra cu ea",
+          "Pentru că suma din cont rămâne aceeași, se schimbă doar ce poți cumpăra cu ea",
           "Pentru că se aplică doar sumelor mari",
           "Pentru că apare o singură dată pe an",
         ],
@@ -193,7 +193,7 @@ const LECTII = [
         correct: 2,
         explicatii: [
           "6% este randamentul nominal, înainte de inflație.",
-          "Semnul este inversat — inflația depășește dobânda.",
+          "Semnul este inversat: inflația depășește dobânda.",
           "Corect. Soldul crește, dar puterea de cumpărare scade.",
           "Ar fi adevărat doar dacă dobânda ar egala exact inflația.",
         ],
@@ -224,10 +224,10 @@ const LECTII = [
     grup: "Siguranță",
     rezumat: "Fără rezervă, o cheltuială neprevăzută te obligă să vinzi în cel mai prost moment.",
     continut: [
-      { tip: "p", text: "Un fond de urgență este o sumă ținută lichid, care acoperă 3-6 luni de cheltuieli. Nu este o investiție și nu trebuie să producă randament — rolul lui este să existe atunci când ai nevoie de el." },
+      { tip: "p", text: "Un fond de urgență este o sumă ținută lichid, care acoperă 3-6 luni de cheltuieli. Nu este o investiție și nu trebuie să producă randament: rolul lui este să existe atunci când ai nevoie de el." },
       { tip: "h", text: "De ce înaintea investițiilor" },
       { tip: "p", text: "Fără rezervă, orice cheltuială neprevăzută te pune în fața a două opțiuni proaste: împrumut scump sau vânzarea investițiilor. Iar problema cu a doua este momentul: crizele economice produc simultan concedieri și scăderi ale bursei. Exact atunci ai nevoie de bani și exact atunci investițiile valorează cel mai puțin." },
-      { tip: "insight", text: "Fondul de urgență nu te face bogat. Te împiedică să iei decizii proaste la presiune — ceea ce, pe termen lung, valorează mai mult." },
+      { tip: "insight", text: "Fondul de urgență nu te face bogat. Te împiedică să iei decizii proaste la presiune, ceea ce, pe termen lung, valorează mai mult." },
       { tip: "h", text: "Cât de mare" },
       { tip: "p", text: "Trei luni este minimul rezonabil pentru cineva cu venit stabil și un al doilea venit în gospodărie. Șase luni devin necesare dacă ești singurul venit, dacă ai venituri variabile sau dacă lucrezi într-un domeniu unde recalificarea durează." },
       { tip: "p", text: "Se calculează la nivelul cheltuielilor, nu al venitului. Dacă ai nevoie de 4.000 lei pe lună ca să trăiești, fondul de urgență este 12.000-24.000 lei, indiferent cât câștigi." },
@@ -289,7 +289,7 @@ const LECTII = [
       { tip: "p", text: "O datorie cu dobândă mare este opusul unei investiții: în loc să produci randament, îl plătești. Iar acest randament negativ este garantat, spre deosebire de cel pozitiv al bursei, care este doar probabil." },
       { tip: "insight", text: "Achitarea unui credit rapid cu 24% dobândă îți aduce, cu certitudine, echivalentul unui randament de 24% pe an. Nicio investiție legală nu oferă asta fără risc." },
       { tip: "h", text: "Avalanșă sau bulgăre de zăpadă" },
-      { tip: "p", text: "Când ai mai multe datorii, plătești minimul la toate și trimiți restul bugetului către una singură. Metoda avalanșă alege datoria cu dobânda cea mai mare — matematic optimă, costă cel mai puțin. Metoda bulgărelui alege soldul cel mai mic — costă puțin mai mult, dar elimină rapid o datorie întreagă." },
+      { tip: "p", text: "Când ai mai multe datorii, plătești minimul la toate și trimiți restul bugetului către una singură. Metoda avalanșă alege datoria cu dobânda cea mai mare: este matematic optimă, costă cel mai puțin. Metoda bulgărelui alege soldul cel mai mic: costă puțin mai mult, dar elimină rapid o datorie întreagă." },
       { tip: "p", text: "Diferența de cost între cele două este de obicei mică. Diferența de rată de abandon nu este: studiile de comportament arată că oamenii duc planul la capăt mai des când văd victorii rapide. Cea mai bună strategie este cea pe care chiar o urmezi." },
       { tip: "h", text: "De ce plata anticipată timpurie contează mai mult" },
       { tip: "p", text: "La un credit cu rate egale, dobânda se calculează de fiecare dată la soldul rămas. La început soldul e mare, deci aproape toată rata este dobândă. Un leu care reduce principalul acum elimină toată dobânda pe care acel leu ar fi generat-o în toți anii următori. Același leu plătit în ultimul an nu economisește aproape nimic." },
@@ -369,21 +369,21 @@ const LECTII = [
     grup: "Investiții",
     rezumat: "Randamentul mai mare nu este un cadou, ci plata pentru un risc asumat.",
     continut: [
-      { tip: "p", text: "Orice instrument care promite un randament mai mare îl promite pentru că cere asumarea unui risc mai mare. Nu există randament ridicat fără risc — iar când cineva îl promite, riscul este de obicei chiar pierderea totală a sumei." },
+      { tip: "p", text: "Orice instrument care promite un randament mai mare îl promite pentru că cere asumarea unui risc mai mare. Nu există randament ridicat fără risc, iar când cineva îl promite, riscul este de obicei chiar pierderea totală a sumei." },
       { tip: "h", text: "Ce înseamnă diversificarea" },
-      { tip: "p", text: "O acțiune individuală poate ajunge la zero: firma dă faliment și banii dispar. Un fond care urmărește un indice cu 500 de companii nu poate ajunge la zero decât dacă toate cele 500 dau faliment simultan — ceea ce ar însemna probleme mult mai mari decât portofoliul tău." },
-      { tip: "p", text: "Diversificarea nu elimină riscul de piață: într-o criză scade tot. Elimină însă riscul specific — cel legat de o singură firmă, un singur sector sau o singură țară. Este singura reducere de risc care nu costă randament așteptat." },
+      { tip: "p", text: "O acțiune individuală poate ajunge la zero: firma dă faliment și banii dispar. Un fond care urmărește un indice cu 500 de companii nu poate ajunge la zero decât dacă toate cele 500 dau faliment simultan, ceea ce ar însemna probleme mult mai mari decât portofoliul tău." },
+      { tip: "p", text: "Diversificarea nu elimină riscul de piață: într-o criză scade tot. Elimină însă riscul specific, cel legat de o singură firmă, un singur sector sau o singură țară. Este singura reducere de risc care nu costă randament așteptat." },
       { tip: "insight", text: "Diversificarea este descrisă uneori ca „singurul prânz gratuit din finanțe”: reduce riscul fără să reducă randamentul așteptat." },
       { tip: "h", text: "Riscul care contează cu adevărat" },
-      { tip: "p", text: "Volatilitatea — cât de mult oscilează prețul — nu este riscul real pentru cineva care investește pe 20 de ani. Riscul real este să vinzi în scădere. O scădere de 40% devine pierdere definitivă doar dacă vinzi; altfel este o perioadă neplăcută dintr-un grafic lung." },
+      { tip: "p", text: "Volatilitatea, adică cât de mult oscilează prețul, nu este riscul real pentru cineva care investește pe 20 de ani. Riscul real este să vinzi în scădere. O scădere de 40% devine pierdere definitivă doar dacă vinzi; altfel este o perioadă neplăcută dintr-un grafic lung." },
       { tip: "p", text: "De aceea orizontul de timp și fondul de urgență sunt instrumente de gestionare a riscului mai importante decât alegerea instrumentului: amândouă reduc probabilitatea de a fi forțat să vinzi la momentul nepotrivit." },
     ],
     intrebari: [
       {
         text: "Ce reduce diversificarea?",
         options: [
-          "Riscul de piață — scăderea generală a bursei",
-          "Riscul specific — cel legat de o singură firmă sau sector",
+          "Riscul de piață, adică scăderea generală a bursei",
+          "Riscul specific, cel legat de o singură firmă sau sector",
           "Inflația",
           "Comisioanele de administrare",
         ],
@@ -437,11 +437,11 @@ const LECTII = [
     grup: "Investiții",
     rezumat: "Un procent în plus pe an poate consuma un sfert din câștigul pe 30 de ani.",
     continut: [
-      { tip: "p", text: "Un comision anual de administrare de 2% pare mic. Nu este. Se aplică întregii sume în fiecare an, inclusiv randamentului acumulat — exact ca dobânda compusă, dar în defavoarea ta." },
+      { tip: "p", text: "Un comision anual de administrare de 2% pare mic. Nu este. Se aplică întregii sume în fiecare an, inclusiv randamentului acumulat, exact ca dobânda compusă, dar în defavoarea ta." },
       { tip: "p", text: "La 500 lei pe lună, 30 de ani și un randament brut de 7%, diferența dintre un comision de 0,2% și unul de 2% este de ordinul a 150.000 lei. Nu ai văzut niciodată acea sumă ca tranzacție: a fost reținută în fiecare an, câte puțin." },
       { tip: "h", text: "Ce comisioane există" },
       { tip: "p", text: "Comisionul de administrare (anual, procent din sumă) este cel mai important pe termen lung. Comisionul de tranzacționare se plătește la fiecare cumpărare și penalizează operațiunile dese. Comisionul de subscriere sau de retragere, unde există, se aplică o singură dată, dar poate fi semnificativ." },
-      { tip: "insight", text: "Randamentul viitor nu poate fi controlat. Comisionul poate — și este singura variabilă din investiții care este cunoscută dinainte cu certitudine." },
+      { tip: "insight", text: "Randamentul viitor nu poate fi controlat. Comisionul poate, și este singura variabilă din investiții care este cunoscută dinainte cu certitudine." },
     ],
     intrebari: [
       {
@@ -504,10 +504,10 @@ const LECTII = [
     continut: [
       { tip: "p", text: "Salariul brut nu este ce plătește angajatorul și nici ce primești tu. Angajatorul plătește brutul plus contribuția asiguratorie pentru muncă (2,25%). Din brut se rețin apoi contribuțiile tale și impozitul." },
       { tip: "h", text: "Cele trei rețineri" },
-      { tip: "p", text: "CAS — contribuția la pensie — este 25% din brut și merge în sistemul public, din care o parte (4,75%) se virează către Pilonul II, contul tău personal de pensie. CASS — sănătate — este 10% din brut. Impozitul pe venit este 10%, dar se aplică pe ce rămâne după CAS și CASS, nu pe brut." },
+      { tip: "p", text: "CAS (contribuția la pensie) este 25% din brut și merge în sistemul public, din care o parte (4,75%) se virează către Pilonul II, contul tău personal de pensie. CASS (sănătate) este 10% din brut. Impozitul pe venit este 10%, dar se aplică pe ce rămâne după CAS și CASS, nu pe brut." },
       { tip: "p", text: "Ordinea contează: impozitul de 10% aplicat după reținerea a 35% înseamnă efectiv 6,5% din brut, nu 10%." },
       { tip: "insight", text: "Când negociezi salariul, valoarea care contează pentru angajator este costul total, iar cea care contează pentru tine este netul. Între ele este o diferență de aproximativ 40%." },
-      { tip: "p", text: "Deducerea personală reduce baza impozabilă pentru salariile mici și dispare complet peste salariul minim plus 2.000 lei. Este singurul element din formulă care depinde de situația ta personală — numărul de persoane în întreținere." },
+      { tip: "p", text: "Deducerea personală reduce baza impozabilă pentru salariile mici și dispare complet peste salariul minim plus 2.000 lei. Este singurul element din formulă care depinde de situația ta personală: numărul de persoane în întreținere." },
     ],
     intrebari: [
       {
@@ -566,10 +566,10 @@ const LECTII = [
       { tip: "p", text: "Comparația corectă nu este între chirie și rată. Este între averea netă a două persoane cu același capital de start și aceeași disponibilitate lunară, după un număr de ani." },
       { tip: "h", text: "Costurile nerecuperabile ale cumpărării" },
       { tip: "p", text: "Chiria este integral un cost nerecuperabil. Dar și cumpărarea are astfel de costuri: dobânda plătită băncii (care în primii ani este cea mai mare parte din rată), întreținerea și reparațiile (aproximativ 1% din valoare pe an), impozitul pe proprietate, asigurarea și costurile de tranzacție la cumpărare și la vânzare." },
-      { tip: "p", text: "Pe un credit de 25 de ani cu 6,5% dobândă, dobânda totală depășește de multe ori jumătate din prețul locuinței. Aceia sunt bani care nu se recuperează la revânzare — exact ca chiria." },
+      { tip: "p", text: "Pe un credit de 25 de ani cu 6,5% dobândă, dobânda totală depășește de multe ori jumătate din prețul locuinței. Aceia sunt bani care nu se recuperează la revânzare, exact ca chiria." },
       { tip: "insight", text: "Partea din rată care construiește avere este doar principalul. Dobânda este chiria plătită băncii pentru bani, în loc de chiria plătită proprietarului pentru spațiu." },
       { tip: "h", text: "Ce nu apare în calcul" },
-      { tip: "p", text: "Varianta cu chirie funcționează matematic doar dacă diferența este chiar investită lună de lună. Rata la bancă este o economisire forțată; contul de investiții nu este. În practică, mulți chiriași cheltuiesc diferența — iar atunci comparația se schimbă complet." },
+      { tip: "p", text: "Varianta cu chirie funcționează matematic doar dacă diferența este chiar investită lună de lună. Rata la bancă este o economisire forțată; contul de investiții nu este. În practică, mulți chiriași cheltuiesc diferența, iar atunci comparația se schimbă complet." },
       { tip: "p", text: "Există și lucruri care nu intră în niciun tabel: flexibilitatea de a te muta pentru un job mai bun, siguranța că nu ești dat afară, faptul că rata nu crește la dobândă fixă. Acestea sunt reale, chiar dacă nu au o valoare." },
     ],
     intrebari: [
@@ -629,9 +629,9 @@ const LECTII = [
       { tip: "p", text: "Aproape toate greșelile costisitoare din finanțele personale nu sunt greșeli de calcul. Sunt decizii luate sub presiune emoțională: vânzarea în panică la o scădere, cumpărarea în euforie la un vârf, abandonarea unui plan după trei luni." },
       { tip: "h", text: "Automatizarea bate motivația" },
       { tip: "p", text: "Un transfer automat executat în ziua salariului economisește mai mult decât orice intenție. Motivul este simplu: elimină decizia. Ceea ce rămâne vizibil în contul curent tinde să fie cheltuit, indiferent de intenția inițială." },
-      { tip: "insight", text: "Ordinea contează: economisește întâi, cheltuiește ce rămâne. Varianta inversă — cheltuiește și economisește ce rămâne — produce aproape întotdeauna zero." },
+      { tip: "insight", text: "Ordinea contează: economisește întâi, cheltuiește ce rămâne. Varianta inversă, cheltuiește și economisește ce rămâne, produce aproape întotdeauna zero." },
       { tip: "h", text: "Sincronizarea pieței" },
-      { tip: "p", text: "Încercarea de a cumpăra la minim și de a vinde la maxim eșuează pentru majoritatea investitorilor, inclusiv profesioniști. Investirea unei sume constante la intervale regulate cumpără automat mai multe unități când prețurile sunt mici și mai puține când sunt mari — fără să necesite nicio predicție." },
+      { tip: "p", text: "Încercarea de a cumpăra la minim și de a vinde la maxim eșuează pentru majoritatea investitorilor, inclusiv profesioniști. Investirea unei sume constante la intervale regulate cumpără automat mai multe unități când prețurile sunt mici și mai puține când sunt mari, fără să necesite nicio predicție." },
       { tip: "p", text: "Un plan mediocru dus la capăt bate un plan optim abandonat după un an. Aceasta este singura afirmație din finanțe care este adevărată aproape fără excepții." },
     ],
     intrebari: [
@@ -647,7 +647,7 @@ const LECTII = [
         explicatii: [
           "Dobânda nu depinde de modul în care ajung banii în cont.",
           "Corect. Fiecare decizie repetată este o ocazie de a nu o lua.",
-          "Poate fi anulat oricând — puterea lui vine din inerție, nu din constrângere.",
+          "Poate fi anulat oricând: puterea lui vine din inerție, nu din constrângere.",
           "Comisioanele nu au legătură cu automatizarea.",
         ],
       },
@@ -663,7 +663,7 @@ const LECTII = [
         explicatii: [
           "Niciun randament nu este garantat.",
           "Corect. Este singurul mecanism care exploatează scăderile fără să le prezici.",
-          "Riscul de piață rămâne — se reduce doar riscul de moment prost ales.",
+          "Riscul de piață rămâne: se reduce doar riscul de moment prost ales.",
           "Impozitarea nu depinde de ritmul investiției.",
         ],
       },

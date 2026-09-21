@@ -10,7 +10,7 @@
  * în localStorage, care nu trece prin service worker.
  */
 
-const CACHE_NAME = "educatie-financiara-v3";
+const CACHE_NAME = "educatie-financiara-v4";
 
 /** Tot ce trebuie disponibil offline de la prima vizită. */
 const PRECACHE = [
@@ -52,6 +52,7 @@ const PRECACHE = [
   "manifest.json",
   "icon.svg",
   "icon-maskable.svg",
+  "img/fabbv.jpg",
 ];
 
 self.addEventListener("install", (event) => {

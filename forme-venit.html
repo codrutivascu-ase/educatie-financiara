@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Angajat, PFA sau SRL — Educație Financiară</title>
-  <meta name="description" content="Aceeași sumă plătită de client, trecută prin trei forme de organizare: contract de muncă, PFA în sistem real și SRL cu impozit pe micro. Vezi ce net îți rămâne din fiecare." />
+  <title>Angajat, PFA sau SRL · Educație Financiară</title>
+  <meta name="description" content="Aceeași sumă plătită de client, trecută prin patru forme de organizare: contract de muncă, PFA în sistem real, SRL cu angajat și SRL fără angajat. Vezi ce net îți rămâne din fiecare." />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#2a78d6" />
@@ -17,15 +17,16 @@
 
   <main id="main">
     <h1>Angajat, PFA sau SRL</h1>
-    <p class="subtitle">Din aceeași sumă plătită de client sau de angajator, cele trei forme îți lasă în mână bani diferiți. Diferența nu vine dintr-o cotă mai mică, ci din ce anume se impozitează.</p>
+    <p class="subtitle">Din aceeași sumă plătită de client sau de angajator, cele patru forme îți lasă în mână bani diferiți. Diferența nu vine dintr-o cotă mai mică, ci din ce anume se impozitează.</p>
 
     <details class="explainer">
       <summary>De ce nu poți compara cotele direct</summary>
       <p>Adunarea cotelor duce aproape întotdeauna la o concluzie greșită. Un PFA pare să plătească „25% + 10% + 10% = 45%”, iar un SRL doar „1% + 16% = 17%”. Niciuna dintre ele nu descrie realitatea, pentru că <strong>fiecare cotă se aplică pe altă bază</strong>:</p>
       <ul>
         <li><strong>Contract de muncă (CIM).</strong> CAS și CASS se rețin din brut, iar impozitul de 10% se aplică pe ce rămâne după ele și după deducerea personală. Peste brut, angajatorul mai plătește CAM 2,25%. Compararea corectă pornește de la costul total al angajatorului, nu de la brut.</li>
-        <li><strong>PFA în sistem real.</strong> Contribuțiile se calculează pe venitul net (încasări minus cheltuieli deductibile), nu pe încasări. CAS apare doar peste pragul de 12 salarii minime și se calculează la un plafon fix, nu la venitul real — deci la venituri mari cota efectivă scade. Impozitul de 10% se aplică după scăderea contribuțiilor.</li>
-        <li><strong>SRL cu impozit pe micro.</strong> Cei 1% se aplică pe <em>venituri</em>, nu pe profit — cheltuielile nu îl reduc. Apoi banii mai trec printr-un al doilea impozit ca să ajungă la tine: impozitul pe dividende, plus CASS pe treaptă. Firma are și costuri de funcționare pe care un salariat nu le are.</li>
+        <li><strong>PFA în sistem real.</strong> Contribuțiile se calculează pe venitul net (încasări minus cheltuieli deductibile), nu pe încasări. CAS apare doar peste pragul de 12 salarii minime și se calculează la un plafon fix, nu la venitul real, deci la venituri mari cota efectivă scade. Impozitul de 10% se aplică după scăderea contribuțiilor.</li>
+        <li><strong>SRL cu angajat, impozit pe micro.</strong> Cei 1% se aplică pe <em>venituri</em>, nu pe profit, așa că cheltuielile nu îl reduc. Apoi banii mai trec printr-un al doilea impozit ca să ajungă la tine: impozitul pe dividende, plus CASS pe treaptă. O microîntreprindere este obligată să aibă cel puțin un salariat, de obicei chiar patronul, angajat cu salariul minim, al cărui net se întoarce la el.</li>
+        <li><strong>SRL fără angajat, impozit pe profit.</strong> Fără niciun salariat, firma nu se mai califică la micro și trece la impozitul pe profit de 16%, aplicat pe ce rămâne după cheltuieli, nu pe încasări. Restul drumului e identic: impozit pe dividende, apoi CASS pe treaptă.</li>
       </ul>
       <p class="warn">Cotele, pragurile și plafoanele de mai jos se modifică prin lege aproape în fiecare an, iar unele au fost anunțate pentru 2026 fără să fie încă aplicate în practică. Verifică valorile din secțiunea „Parametri fiscali” înainte de a lua o decizie și consultă un contabil pentru situația ta concretă.</p>
     </details>
@@ -67,17 +68,17 @@
         <div class="field">
           <label for="chelt-pfa">Cheltuieli PFA (lei/an)</label>
           <input type="number" id="chelt-pfa" min="0" max="5000000" step="500" value="4000" />
-          <p class="field-hint">Contabilitate, echipamente, abonamente — justificate cu documente.</p>
+          <p class="field-hint">Contabilitate, echipamente, abonamente, toate justificate cu documente.</p>
         </div>
         <div class="field">
-          <label for="chelt-srl">Cheltuieli SRL (lei/an)</label>
+          <label for="chelt-srl">Cheltuieli de funcționare SRL (lei/an)</label>
           <input type="number" id="chelt-srl" min="0" max="5000000" step="500" value="6000" />
-          <p class="field-hint">Contabilitate, mai scumpă decât la PFA, plus comisioane bancare.</p>
+          <p class="field-hint">Contabilitate, mai scumpă decât la PFA, plus comisioane bancare. Se aplică la ambele variante de SRL, de mai jos.</p>
         </div>
         <div class="field">
           <label for="cost-angajat">Salariatul obligatoriu SRL (lei/an)</label>
-          <input type="number" id="cost-angajat" min="0" max="5000000" step="1000" value="49700" />
-          <p class="field-hint">O microîntreprindere trebuie să aibă cel puțin un salariat sau un administrator remunerat. Pune 0 dacă rolul e acoperit altfel.</p>
+          <input type="number" id="cost-angajat" min="0" max="5000000" step="1000" value="51900" />
+          <p class="field-hint">Cât costă la stat un angajat cu salariul minim pe economie, pe un an. Se folosește doar la „SRL cu angajat”: patronul se poate angaja chiar pe el, iar salariul lui net se întoarce tot la el, mai jos.</p>
         </div>
       </div>
     </div>
@@ -96,9 +97,14 @@
           <div class="label" style="margin-top:4px" id="stat-pfa-pct"></div>
         </div>
         <div class="stat-tile">
-          <div class="label">SRL cu impozit pe micro</div>
-          <div class="value" id="stat-srl">—</div>
-          <div class="label" style="margin-top:4px" id="stat-srl-pct"></div>
+          <div class="label">SRL cu angajat</div>
+          <div class="value" id="stat-srlAngajat">—</div>
+          <div class="label" style="margin-top:4px" id="stat-srlAngajat-pct"></div>
+        </div>
+        <div class="stat-tile">
+          <div class="label">SRL fără angajat</div>
+          <div class="value" id="stat-srlFaraAngajat">—</div>
+          <div class="label" style="margin-top:4px" id="stat-srlFaraAngajat-pct"></div>
         </div>
         <div class="stat-tile">
           <div class="label">Diferența maximă</div>
@@ -127,13 +133,14 @@
 
       <div id="table-view" class="hidden table-scroll">
         <table class="data-table">
-          <caption class="sr-only">Comparația celor trei forme de organizare</caption>
+          <caption class="sr-only">Comparația celor patru forme de organizare</caption>
           <thead>
             <tr>
               <th scope="col">Element</th>
               <th scope="col">Contract de muncă</th>
               <th scope="col">PFA</th>
-              <th scope="col">SRL micro</th>
+              <th scope="col">SRL cu angajat</th>
+              <th scope="col">SRL fără angajat</th>
             </tr>
           </thead>
           <tbody id="table-body"></tbody>
@@ -152,17 +159,17 @@
       <ul class="notes-list">
         <li><strong>Contractul de muncă nu se compară doar în bani.</strong> Include concediu plătit, concediu medical, protecție la concediere, vechime pentru pensie și acces mai ușor la credit. Un PFA care nu lucrează o lună nu încasează nimic în acea lună.</li>
         <li><strong>Pensia depinde de baza de contribuție, nu de venit.</strong> Un PFA cu venituri mari care contribuie la plafonul de 24 de salarii minime acumulează mai puțin decât un salariat cu același venit, care contribuie pe tot brutul. Diferența se vede peste treizeci de ani, în modulul <a href="pensii.html">Pensii</a>.</li>
-        <li><strong>Salariatul obligatoriu poți fi chiar tu.</strong> Calculul îl tratează ca pe un cost pur, ceea ce este corect dacă angajezi pe altcineva. Dacă te angajezi tu în propria firmă, o parte din acei bani se întorc la tine ca salariu net — iar rezultatul real se află între valoarea de aici și una calculată cu 0 lei pe acest rând. Varianta cu salariu propriu are și un avantaj: îți construiește vechime și contribuție la pensie.</li>
-        <li><strong>Un SRL care nu distribuie dividende arată altfel.</strong> Dacă lași banii în firmă, al doilea impozit se amână — dar banii rămân ai firmei, nu ai tăi. Calculul de aici presupune că scoți tot profitul în același an.</li>
+        <li><strong>La „SRL cu angajat”, calculul presupune că salariatul obligatoriu ești chiar tu.</strong> Cost-angajat este cheltuit de firmă, dar salariul net rezultat se întoarce la tine ca asociat, de aceea apare adunat înapoi la net. Dacă angajezi pe altcineva, scade acea sumă din rezultat. Varianta cu salariu propriu are și un avantaj netrecut în calcul: îți construiește vechime și contribuție la pensie.</li>
+        <li><strong>Un SRL care nu distribuie dividende arată altfel.</strong> Dacă lași banii în firmă, al doilea impozit se amână, dar banii rămân ai firmei, nu ai tăi. Calculul de aici presupune că scoți tot profitul în același an.</li>
         <li><strong>TVA nu intră în calcul.</strong> Peste plafonul de înregistrare, atât PFA cât și SRL devin plătitoare de TVA. Nu îți scade venitul dacă lucrezi cu firme, dar schimbă prețul pentru clienți persoane fizice și adaugă muncă de evidență.</li>
-        <li><strong>Există și alte forme.</strong> PFA cu normă de venit (impozitare la o sumă fixă, stabilită administrativ, indiferent de cât încasezi), II, SRL plătitor de impozit pe profit, contract de drepturi de autor. Fiecare are propriile praguri.</li>
+        <li><strong>Există și alte forme.</strong> PFA cu normă de venit (impozitare la o sumă fixă, stabilită administrativ, indiferent de cât încasezi), II, contract de drepturi de autor. Fiecare are propriile praguri.</li>
         <li><strong>Costurile de conformare contează.</strong> Un SRL cere contabil autorizat, registre, bilanț anual și termene lunare. Un PFA se poate ține și singur, cu un registru simplu. Timpul acela are o valoare.</li>
       </ul>
     </div>
 
     <div class="card">
       <h2>Parametri fiscali</h2>
-      <p class="field-hint" id="param-an">Valorile implicite sunt cele anunțate pentru 2026. Sunt editabile pentru că se modifică prin lege — verifică-le înainte de a te baza pe rezultat.</p>
+      <p class="field-hint" id="param-an">Valorile implicite sunt cele anunțate pentru 2026. Sunt editabile pentru că se modifică prin lege, așa că verifică-le înainte de a te baza pe rezultat.</p>
       <div class="field-grid">
         <div class="field">
           <label for="salariu-minim">Salariu minim brut (lei)</label>
@@ -198,7 +205,8 @@
       <ul class="notes-list" style="margin-top:14px">
         <li><strong>CIM:</strong> CAS 25%, CASS 10%, impozit 10% pe baza rămasă, CAM 2,25% plătit de angajator peste brut.</li>
         <li><strong>PFA:</strong> CAS 25% pe plafon, CASS 10% pe venitul net încadrat între limite, impozit 10% pe venitul net rămas după contribuții.</li>
-        <li><strong>SRL micro:</strong> impozit pe venituri, apoi impozit pe dividende, apoi CASS 10% pe treapta de 6, 12 sau 24 de salarii minime.</li>
+        <li><strong>SRL cu angajat:</strong> impozit pe micro pe venituri, apoi impozit pe dividende, apoi CASS 10% pe treapta de 6, 12 sau 24 de salarii minime; salariul propriu, ca angajat, se adaugă înapoi la net.</li>
+        <li><strong>SRL fără angajat:</strong> impozit pe profit 16% pe ce rămâne după cheltuieli, apoi impozit pe dividende și CASS, la fel ca mai sus.</li>
       </ul>
       <div class="button-row">
         <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
@@ -207,7 +215,7 @@
 
     <div class="card">
       <h2>Mai departe</h2>
-      <p class="insight">Dacă alegi contractul de muncă, <a href="salariu.html">calculatorul de salariu</a> îți arată detaliat drumul de la brut la net, lună de lună. Netul rezultat, indiferent de formă, se poate folosi ca venit în <a href="buget.html">bugetul lunar</a>. Iar dacă lucrezi pe cont propriu, veniturile variază de la o lună la alta — <a href="obiective.html">fondul de urgență</a> devine mai important decât pentru un salariat.</p>
+      <p class="insight">Dacă alegi contractul de muncă, <a href="salariu.html">calculatorul de salariu</a> îți arată detaliat drumul de la brut la net, lună de lună. Netul rezultat, indiferent de formă, se poate folosi ca venit în <a href="buget.html">bugetul lunar</a>. Iar dacă lucrezi pe cont propriu, veniturile variază de la o lună la alta, iar <a href="obiective.html">fondul de urgență</a> devine mai important decât pentru un salariat.</p>
     </div>
   </main>
 

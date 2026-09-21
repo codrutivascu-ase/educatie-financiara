@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Salariu brut → net — Educație Financiară</title>
+  <title>Salariu brut → net · Educație Financiară</title>
   <meta name="description" content="Calculator de salariu: vezi ce se reține din brut, cât costă efectiv angajatorul și cât ajunge la tine." />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="manifest" href="manifest.json" />
@@ -24,12 +24,14 @@
       <p>Angajatorul plătește <strong>salariul brut plus 2,25%</strong> contribuție asiguratorie pentru muncă (CAM). Aceasta este valoarea reală a costului tău pentru firmă.</p>
       <p>Din brut se rețin, în ordine:</p>
       <ul>
-        <li><strong>CAS (pensie) — 25%</strong> din brut. O parte, 4,75% din brut, merge în contul tău personal de la Pilonul II; restul finanțează pensiile aflate în plată acum.</li>
-        <li><strong>CASS (sănătate) — 10%</strong> din brut.</li>
-        <li><strong>Impozit pe venit — 10%</strong>, dar aplicat pe ce rămâne după CAS, CASS și deducerea personală, nu pe brut. De aceea impozitul efectiv raportat la brut este aproximativ 6,5%, nu 10%.</li>
+        <li><strong>CAS, contribuția pentru pensie: 25%</strong> din brut. O parte, 4,75% din brut, merge în contul tău personal de la Pilonul II, iar restul finanțează pensiile aflate în plată acum.</li>
+        <li><strong>CASS, contribuția pentru sănătate: 10%</strong> din brut.</li>
+        <li><strong>Impozitul pe venit: 10%</strong>, dar aplicat pe ce rămâne după CAS, CASS și deducerea personală, nu pe brut. De aceea impozitul efectiv raportat la brut este de aproximativ 6,5%, nu de 10%.</li>
       </ul>
-      <p><strong>Deducerea personală</strong> reduce baza impozabilă pentru salariile mici. Se acordă integral până la nivelul salariului minim, scade treptat peste el și dispare complet la salariul minim plus 2.000 lei. Crește cu numărul de persoane aflate în întreținere.</p>
-      <p class="warn">Calculul acoperă un contract de muncă standard, cu normă întreagă. Nu include facilitățile pentru IT, construcții sau agricultură, deducerile suplimentare pentru tineri sub 26 de ani, tichetele de masă sau alte beneficii extrasalariale. Cotele se modifică prin lege — verifică valorile din secțiunea „Parametri” dacă folosești calculatorul după o schimbare legislativă.</p>
+      <p><strong>Deducerea personală</strong> reduce baza impozabilă pentru salariile mici. Se acordă integral până la nivelul salariului minim, scade în trepte de 50 de lei brut peste el și dispare complet la salariul minim plus 2.000 lei. Crește cu numărul de persoane aflate în întreținere.</p>
+      <p><strong>La exact salariul minim</strong> se aplică o facilitate suplimentară: primii 200 de lei din brut sunt scutiți de CAS, CASS și impozit. Practic, CAS, CASS și impozitul se calculează ca pentru un brut mai mic cu 200 de lei, iar diferența rămâne integral la tine.</p>
+      <p><strong>Sub salariul minim</strong> (mai exact, sub salariul minim minus 200 de lei) se aplică regula normei parțiale: tu plătești contribuții și impozit pe brutul real, dar angajatorul mai achită separat, în plus, diferența de CAS și CASS până la acel prag. Este mecanismul prin care statul descurajează un brut artificial de mic, folosit ca să se evite contribuțiile.</p>
+      <p class="warn">Calculul acoperă un contract de muncă standard, cu normă întreagă. Nu include facilitățile pentru IT, construcții sau agricultură, deducerile suplimentare pentru tineri sub 26 de ani, tichetele de masă sau alte beneficii extrasalariale. Cotele se modifică prin lege, așa că verifică valorile din secțiunea „Parametri” dacă folosești calculatorul după o schimbare legislativă.</p>
     </details>
 
     <div class="card">
@@ -137,7 +139,7 @@
         </div>
       </div>
       <div id="prefill-slot"></div>
-      <p class="insight">Netul de aici este valoarea pe care o poți folosi ca „venit lunar net” în <a href="buget.html">bugetul lunar</a>. Contribuția la Pilonul II apare în proiecția din modulul <a href="pensii.html">Pensii</a>. Dacă lucrezi pe cont propriu sau ai de ales între angajare și facturare, compară cele trei forme în <a href="forme-venit.html">Angajat, PFA sau SRL</a>.</p>
+      <p class="insight">Netul de aici este valoarea pe care o poți folosi ca „venit lunar net” în <a href="buget.html">bugetul lunar</a>. Contribuția la Pilonul II apare în proiecția din modulul <a href="pensii.html">Pensii</a>. Dacă lucrezi pe cont propriu sau ai de ales între angajare și facturare, compară cele patru forme în <a href="forme-venit.html">Angajat, PFA sau SRL</a>.</p>
       <div class="button-row">
         <button id="btn-la-buget" type="button" class="primary">Folosește netul în bugetul lunar →</button>
         <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
@@ -146,12 +148,12 @@
 
     <div class="card">
       <h2>Parametri folosiți în calcul</h2>
-      <p class="field-hint">Sunt editabili pentru că se modifică prin lege. Valorile implicite corespund anului 2025.</p>
+      <p class="field-hint">Sunt editabili pentru că se modifică prin lege. Valorile implicite corespund salariului minim actual.</p>
       <div class="field-grid">
         <div class="field">
           <label for="salariu-minim">Salariu minim brut pe economie (lei)</label>
-          <input type="number" id="salariu-minim" min="0" max="20000" step="50" value="4050" />
-          <p class="field-hint">Determină pragul până la care se acordă deducerea personală.</p>
+          <input type="number" id="salariu-minim" min="0" max="20000" step="50" value="4325" />
+          <p class="field-hint">Determină pragul până la care se acordă deducerea personală integrală și declanșează regulile de mai jos, la exact acest nivel sau sub el.</p>
         </div>
       </div>
       <ul class="notes-list" style="margin-top:14px">

@@ -116,7 +116,7 @@ function renderProgressSummary(progress) {
     done.length === 0
       ? "Nicio lecție începută"
       : done.length === LECTII.length
-        ? `Toate cele ${LECTII.length} lecții parcurse — ${corecte} din ${totalIntrebari} răspunsuri corecte`
+        ? `Toate cele ${LECTII.length} lecții parcurse, ${corecte} din ${totalIntrebari} răspunsuri corecte`
         : `${done.length} din ${LECTII.length} lecții parcurse`;
 
   // Butonul duce la prima lecție nerezolvată, sau la prima dacă e totul gata.
@@ -264,10 +264,10 @@ function showResult() {
 
   document.getElementById("result-text").textContent =
     score === total
-      ? "Toate corecte. Mecanismul este clar — poți trece mai departe."
+      ? "Toate corecte. Mecanismul este clar, poți trece mai departe."
       : score >= total / 2
         ? "Majoritatea corecte. Merită să recitești paragrafele legate de întrebările ratate: explicațiile de la fiecare variantă spun exact unde s-a rupt raționamentul."
-        : "Mai mult de jumătate greșite. Nu este o problemă — reia lecția, de data asta citind și explicațiile variantelor greșite, nu doar pe cea corectă.";
+        : "Mai mult de jumătate greșite. Nu este o problemă: reia lecția, de data asta citind și explicațiile variantelor greșite, nu doar pe cea corectă.";
 
   const idx = LECTII.indexOf(currentLesson);
   const nextLesson = LECTII[idx + 1];
@@ -302,14 +302,14 @@ function openLesson(lesson) {
   viewList.classList.add("hidden");
   viewLesson.classList.remove("hidden");
   window.scrollTo({ top: 0 });
-  document.title = `${lesson.titlu} — Educație Financiară`;
+  document.title = `${lesson.titlu} · Educație Financiară`;
 }
 
 function showList() {
   currentLesson = null;
   viewLesson.classList.add("hidden");
   viewList.classList.remove("hidden");
-  document.title = "Lecții și quiz — Educație Financiară";
+  document.title = "Lecții și quiz · Educație Financiară";
   renderList();
 }
 

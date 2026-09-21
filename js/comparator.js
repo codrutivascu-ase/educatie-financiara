@@ -180,7 +180,7 @@ function recalc() {
   // Menționăm pragul doar dacă a existat efectiv o perioadă în care
   // chiria era în avantaj; altfel mesajul ar fi derutant.
   if (breakEvenYear !== null && breakEvenYear > 1) {
-    parts.push(`Cumpărarea depășește varianta cu chirie abia din anul ${breakEvenYear} — sub acest orizont, chiria iese mai bine.`);
+    parts.push(`Cumpărarea depășește varianta cu chirie abia din anul ${breakEvenYear}, sub acest orizont chiria iese mai bine.`);
   }
   parts.push(
     sim.rataLunara + (pret * intretinerePct) / 100 / 12 > chirieInitiala

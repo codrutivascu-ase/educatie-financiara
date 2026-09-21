@@ -42,7 +42,7 @@ function personalizeaza() {
     title.textContent = "Continuă de unde ai rămas";
     text.textContent =
       `Ai parcurs ${lectii.rezolvate} din ${lectii.total} lecții. ` +
-      `Urmează „${lectii.urmatoarea.titlu}” — ${lectii.urmatoarea.durata} minute.`;
+      `Urmează „${lectii.urmatoarea.titlu}”, ${lectii.urmatoarea.durata} minute.`;
     cta.textContent = "Continuă lecțiile";
     cta.href = `lectii.html#${lectii.urmatoarea.id}`;
   } else if (!lectii.urmatoarea) {
@@ -56,7 +56,7 @@ function personalizeaza() {
     title.textContent = "Ai deja câteva valori introduse";
     text.textContent =
       `Ai completat ${module} ${module === 1 ? "modul" : "module"}. ` +
-      `Lecțiile explică mecanismele din spatele valorilor — de ce dobânda compusă are nevoie de ani, ` +
+      `Lecțiile explică mecanismele din spatele valorilor: de ce dobânda compusă are nevoie de ani, ` +
       `de ce datoriile scumpe se plătesc înaintea oricărei investiții.`;
     cta.textContent = "Începe cu prima lecție";
     cta.href = "lectii.html";
@@ -129,7 +129,7 @@ function gestioneazaDatele() {
   } else {
     rezumat.textContent =
       `Aplicația are ${chei} ${chei === 1 ? "set de valori salvat" : "seturi de valori salvate"} ` +
-      `în acest browser — bugetul, parametrii modulelor pe care le-ai folosit și progresul la lecții.`;
+      `în acest browser: bugetul, parametrii modulelor pe care le-ai folosit și progresul la lecții.`;
   }
 
   btn.addEventListener("click", () => {

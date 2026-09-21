@@ -189,6 +189,70 @@ describe("salariuNet — brut către net", () => {
   });
 });
 
+describe("salariuNet — facilitatea de 200 lei și regula normei parțiale sub minim", () => {
+  // Valorile de mai jos reproduc exact exemplele verificate manual la
+  // salariul minim de 4.325 lei: 200 lei neimpozabili la brut exact egal
+  // cu minimul, și CAS/CASS suplimentar plătit de angajator sub pragul de
+  // minim − 200.
+  const opts = { minWage: 4325, dependents: 0 };
+
+  it("la brut exact egal cu minimul, aplică 200 lei neimpozabili", () => {
+    const r = salariuNet(4325, opts);
+    expect(r.bonusNeimpozabil).toBe(200);
+    expect(r.cas).toBeCloseTo(4125 * 0.25, 0.01);
+    expect(r.cass).toBeCloseTo(4125 * 0.1, 0.01);
+    expect(r.net).toBeCloseTo(2699.625, 0.01);
+  });
+
+  it("între minim − 200 și minim, calculul e normal, fără facilități", () => {
+    const r = salariuNet(4200, opts);
+    expect(r.bonusNeimpozabil).toBe(0);
+    expect(r.casSuplimentarAngajator).toBe(0);
+    expect(r.cas).toBeCloseTo(1050, 0.01);
+    expect(r.cass).toBeCloseTo(420, 0.01);
+    expect(r.impozit).toBeCloseTo(186.5, 0.01);
+    expect(r.net).toBeCloseTo(2543.5, 0.01);
+  });
+
+  it("sub minim − 200, angajatorul plătește separat CAS/CASS suplimentar", () => {
+    const r = salariuNet(4000, opts);
+    expect(r.cas).toBeCloseTo(1000, 0.01);
+    expect(r.cass).toBeCloseTo(400, 0.01);
+    expect(r.impozit).toBeCloseTo(173.5, 0.01);
+    expect(r.casSuplimentarAngajator).toBeCloseTo(31.25, 0.01);
+    expect(r.cassSuplimentarAngajator).toBeCloseTo(12.5, 0.01);
+    expect(r.cam).toBeCloseTo(90, 0.01);
+  });
+
+  it("regula normei parțiale nu schimbă ce primește angajatul, doar costul angajatorului", () => {
+    const r = salariuNet(4000, opts);
+    expect(r.net).toBeCloseTo(4000 - r.cas - r.cass - r.impozit, 0.01);
+    expect(r.costTotalAngajator).toBeCloseTo(
+      4000 + r.cam + r.casSuplimentarAngajator + r.cassSuplimentarAngajator,
+      0.01
+    );
+  });
+});
+
+describe("deducerePersonala — trepte de 50 de lei peste salariul minim", () => {
+  it("este integrală până la salariul minim", () => {
+    expect(deducerePersonala(4325, 4325, 0)).toBeCloseTo(865, 0.01);
+    expect(deducerePersonala(4000, 4325, 0)).toBeCloseTo(865, 0.01);
+  });
+
+  it("scade cu 1/40 din procentul de bază la fiecare treaptă de 50 de lei", () => {
+    // Exemplul din audit: 4.326–4.375 → 19,5% din 4.325.
+    expect(deducerePersonala(4326, 4325, 0)).toBeCloseTo(4325 * 0.195, 0.01);
+    expect(deducerePersonala(4375, 4325, 0)).toBeCloseTo(4325 * 0.195, 0.01);
+    expect(deducerePersonala(4376, 4325, 0)).toBeCloseTo(4325 * 0.19, 0.01);
+  });
+
+  it("ajunge la zero exact la salariul minim plus 2.000", () => {
+    expect(deducerePersonala(6325, 4325, 0)).toBeCloseTo(0, 0.01);
+    expect(deducerePersonala(6326, 4325, 0)).toBe(0);
+  });
+});
+
 describe("brutDinNet — netul către brut", () => {
   it("găsește brutul care produce netul cerut", () => {
     const opts = { minWage: 4050, dependents: 0 };
@@ -502,6 +566,8 @@ describe("venitSRLMicro — SRL cu impozit pe veniturile microîntreprinderii", 
   });
 
   it("închide bilanțul: veniturile se regăsesc integral în componente", () => {
+    // Fără cost de angajat, netAnual este doar dividendul — nu apare
+    // niciun salariu propriu adunat înapoi.
     const r = venitSRLMicro({ venituri: 300000, cheltuieli: 60000, salariuMinim: sm });
     const suma = r.cheltuieli + r.impozitMicro + r.impozitDividende + r.cass + r.netAnual;
     expect(suma).toBeCloseTo(r.venituri, 0.5);
@@ -511,6 +577,54 @@ describe("venitSRLMicro — SRL cu impozit pe veniturile microîntreprinderii", 
     const r = venitSRLMicro({ venituri: 30000, cheltuieli: 80000, salariuMinim: sm });
     expect(r.profitDistribuibil).toBe(0);
     expect(r.netAnual).toBe(0);
+  });
+
+  it("adaugă salariul propriu la net doar dacă firma are un cost de angajat", () => {
+    const fara = venitSRLMicro({ venituri: 100000, cheltuieli: 0, salariuMinim: sm });
+    const cu = venitSRLMicro({ venituri: 100000, cheltuieli: 0, costAngajat: 51900, salariuMinim: sm });
+    expect(fara.salariuPropriuNet).toBe(0);
+    expect(cu.salariuPropriuNet).toBeGreaterThan(0);
+    // Costul de angajat reduce dividendul distribuibil, dar salariul propriu
+    // net se întoarce la asociat — de aceea diferența de net e mai mică
+    // decât costul brut al angajatului.
+    expect(cu.netAnual).toBeLessThan(fara.netAnual);
+    expect(fara.netAnual - cu.netAnual).toBeLessThan(51900);
+  });
+
+  it("chiar și fără dividende, salariul propriu tot ajunge la asociat", () => {
+    const r = venitSRLMicro({ venituri: 30000, cheltuieli: 80000, costAngajat: 51900, salariuMinim: sm });
+    expect(r.netDividende).toBe(0);
+    expect(r.netAnual).toBeCloseTo(r.salariuPropriuNet, 0.01);
+  });
+});
+
+describe("venitSRLProfit — SRL fără angajat, impozit pe profit", () => {
+  const sm = 4050;
+
+  it("aplică impozitul de 16% pe profit, nu pe venituri", () => {
+    // Exemplul din audit: 120.000 venituri, 0 cheltuieli.
+    const r = venitSRLProfit({ venituri: 120000, cheltuieli: 0, salariuMinim: sm });
+    expect(r.profitBrut).toBeCloseTo(120000, 0.01);
+    expect(r.impozitProfit).toBeCloseTo(19200, 0.01);
+    expect(r.profitDistribuibil).toBeCloseTo(100800, 0.01);
+  });
+
+  it("impozitează dividendele și CASS la fel ca varianta cu angajat", () => {
+    const r = venitSRLProfit({ venituri: 120000, cheltuieli: 0, salariuMinim: sm });
+    expect(r.impozitDividende).toBeCloseTo(100800 * 0.16, 0.01);
+    expect(r.bazaCass).toBeCloseTo(24 * sm, 0.01);
+    expect(r.cass).toBeCloseTo(24 * sm * 0.1, 0.01);
+  });
+
+  it("nu adaugă niciun salariu propriu — nu are angajat", () => {
+    const r = venitSRLProfit({ venituri: 120000, cheltuieli: 0, salariuMinim: sm });
+    expect(r.salariuPropriuNet).toBe(undefined);
+  });
+
+  it("închide bilanțul: veniturile se regăsesc integral în componente", () => {
+    const r = venitSRLProfit({ venituri: 300000, cheltuieli: 60000, salariuMinim: sm });
+    const suma = r.cheltuieli + r.impozitProfit + r.impozitDividende + r.cass + r.netAnual;
+    expect(suma).toBeCloseTo(r.venituri, 0.5);
   });
 });
 
@@ -533,32 +647,44 @@ describe("venitCIM — contract de muncă, pornind de la costul angajatorului", 
   });
 });
 
-describe("compareFormeVenit — cele trei forme pe aceeași bază", () => {
+describe("compareFormeVenit — cele patru forme pe aceeași bază", () => {
   it("pornește toate formele de la aceeași sumă", () => {
     const r = compareFormeVenit({ sumaAnuala: 120000 });
     expect(r.cim.costAnual).toBe(120000);
     expect(r.pfa.venituri).toBe(120000);
-    expect(r.srl.venituri).toBe(120000);
+    expect(r.srlAngajat.venituri).toBe(120000);
+    expect(r.srlFaraAngajat.venituri).toBe(120000);
   });
 
   it("desemnează drept câștigătoare forma cu netul cel mai mare", () => {
     const r = compareFormeVenit({ sumaAnuala: 250000, cheltuieliPfa: 5000, cheltuieliSrl: 60000 });
-    const nete = { cim: r.cim.netAnual, pfa: r.pfa.netAnual, srl: r.srl.netAnual };
-    const maxim = Math.max(nete.cim, nete.pfa, nete.srl);
+    const nete = {
+      cim: r.cim.netAnual,
+      pfa: r.pfa.netAnual,
+      srlAngajat: r.srlAngajat.netAnual,
+      srlFaraAngajat: r.srlFaraAngajat.netAnual,
+    };
+    const maxim = Math.max(...Object.values(nete));
     expect(nete[r.castigator]).toBe(maxim);
   });
 
-  it("costul salariatului obligatoriu poate anula avantajul SRL-ului", () => {
-    const fara = compareFormeVenit({ sumaAnuala: 120000, cheltuieliSrl: 6000 });
-    const cu = compareFormeVenit({ sumaAnuala: 120000, cheltuieliSrl: 6000 + 49700 });
-    expect(cu.srl.netAnual).toBeLessThan(fara.srl.netAnual);
+  it("costul salariatului obligatoriu, minus salariul propriu recuperat, reduce netul SRL-ului cu angajat", () => {
+    const fara = compareFormeVenit({ sumaAnuala: 120000, cheltuieliSrl: 6000, costAngajatSrl: 0 });
+    const cu = compareFormeVenit({ sumaAnuala: 120000, cheltuieliSrl: 6000, costAngajatSrl: 51900 });
+    expect(cu.srlAngajat.netAnual).toBeLessThan(fara.srlAngajat.netAnual);
+  });
+
+  it("SRL fără angajat nu depinde de cost-angajat", () => {
+    const r = compareFormeVenit({ sumaAnuala: 120000, cheltuieliSrl: 6000, costAngajatSrl: 51900 });
+    expect(r.srlFaraAngajat.cheltuieli).toBeCloseTo(6000, 0.01);
   });
 
   it("întoarce zerouri pentru o sumă nulă, fără să arunce", () => {
     const r = compareFormeVenit({ sumaAnuala: 0 });
     expect(r.cim.netAnual).toBe(0);
     expect(r.pfa.netAnual).toBe(0);
-    expect(r.srl.netAnual).toBe(0);
+    expect(r.srlAngajat.netAnual).toBe(0);
+    expect(r.srlFaraAngajat.netAnual).toBe(0);
   });
 });
 

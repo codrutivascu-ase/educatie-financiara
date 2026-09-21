@@ -77,7 +77,7 @@ function recalcViitor() {
     insight.textContent =
       `Cu o dobândă de ${dobanda}% și o inflație de ${inflatie}%, randamentul real este ` +
       `${formatPercent(randamentReal)} pe an. După ${ani} ani, cei ${formatRON(suma)} vor mai cumpăra ` +
-      `cât cumpără astăzi ${formatRON(realFinal)} — o pierdere de ${formatPercent(rezultat.lostPct)} ` +
+      `cât cumpără astăzi ${formatRON(realFinal)}, o pierdere de ${formatPercent(rezultat.lostPct)} ` +
       `din puterea de cumpărare, fără să apară vreodată un minus în extras.`;
   } else if (randamentReal === 0) {
     insight.textContent =
@@ -85,7 +85,7 @@ function recalcViitor() {
   } else {
     insight.textContent =
       `Dobânda de ${dobanda}% depășește inflația de ${inflatie}%, deci randamentul real este pozitiv: ` +
-      `${formatPercent(randamentReal)} pe an. Este o situație rar întâlnită pe perioade lungi — ` +
+      `${formatPercent(randamentReal)} pe an. Este o situație rar întâlnită pe perioade lungi, așa că ` +
       `verifică dacă dobânda este garantată pe toată durata sau doar promoțională.`;
   }
 

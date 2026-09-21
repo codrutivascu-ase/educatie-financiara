@@ -13,7 +13,7 @@ let mode = MODES.BRUT;
 /** Parametrii care depind de câmpurile din pagină, nu de o direcție anume. */
 function citesteOptiuni() {
   return {
-    minWage: readNumber("salariu-minim", { min: 0, max: 20000, fallback: 4050 }),
+    minWage: readNumber("salariu-minim", { min: 0, max: 20000, fallback: SALARIU_MINIM_CURENT }),
     dependents: parseInt(document.getElementById("persoane").value, 10) || 0,
     pillar3Amount: readNumber("pilon3", { min: 0, max: 20000 }),
   };
@@ -38,14 +38,20 @@ function renderCostBar(r) {
 
   const parti = [
     { nume: "Net (la tine)", suma: r.net, culoare: seriesColor(2) },
-    { nume: "CAS — pensie", suma: r.cas, culoare: seriesColor(0) },
-    { nume: "CASS — sănătate", suma: r.cass, culoare: seriesColor(3) },
+    { nume: "CAS, pensie", suma: r.cas, culoare: seriesColor(0) },
+    { nume: "CASS, sănătate", suma: r.cass, culoare: seriesColor(3) },
     { nume: "Impozit pe venit", suma: r.impozit, culoare: seriesColor(1) },
-    { nume: "CAM — angajator", suma: r.cam, culoare: seriesColor(6) },
+    { nume: "CAM, angajator", suma: r.cam, culoare: seriesColor(6) },
   ];
   // Pilonul III apare doar dacă utilizatorul chiar contribuie.
   if (r.pilon3 > 0) {
     parti.push({ nume: "Pilon III", suma: r.pilon3, culoare: seriesColor(4) });
+  }
+  // Regula salariilor sub minimul pe economie: angajatorul mai plătește
+  // separat diferența de CAS și CASS până la prag — apare doar sub acel prag.
+  if (r.casSuplimentarAngajator > 0) {
+    parti.push({ nume: "CAS suplimentar (angajator)", suma: r.casSuplimentarAngajator, culoare: seriesColor(5) });
+    parti.push({ nume: "CASS suplimentar (angajator)", suma: r.cassSuplimentarAngajator, culoare: seriesColor(7) });
   }
 
   parti.forEach((p) => {
@@ -85,24 +91,46 @@ function renderBreakdown(r, opts) {
   mount.textContent = "";
 
   const pasi = [
-    { eticheta: "Cost total angajator", suma: r.costTotalAngajator, nota: "brut + CAM", tip: "total" },
-    { eticheta: "− CAM (2,25%)", suma: -r.cam, nota: "plătit de angajator peste brut" },
-    { eticheta: "Salariu brut", suma: r.gross, nota: "valoarea din contract", tip: "subtotal" },
-    { eticheta: "− CAS, pensie (25%)", suma: -r.cas, nota: `din care ${formatRON(r.pilon2)} la Pilonul II` },
-    { eticheta: "− CASS, sănătate (10%)", suma: -r.cass, nota: "" },
     {
-      eticheta: "Bază impozabilă",
-      suma: r.bazaImpozabila,
-      nota: r.deducere > 0
-        ? `după deducerea personală de ${formatRON(r.deducere)}`
-        : "fără deducere personală (brut peste prag)",
-      tip: "subtotal",
+      eticheta: "Cost total angajator",
+      suma: r.costTotalAngajator,
+      nota: r.casSuplimentarAngajator > 0 ? "brut + CAM + CAS/CASS suplimentar" : "brut + CAM",
+      tip: "total",
     },
-    { eticheta: "− Impozit pe venit (10%)", suma: -r.impozit, nota: "" },
+    { eticheta: "− CAM (2,25%)", suma: -r.cam, nota: "plătit de angajator peste brut" },
   ];
+
+  if (r.casSuplimentarAngajator > 0) {
+    pasi.push({
+      eticheta: "− CAS suplimentar angajator",
+      suma: -r.casSuplimentarAngajator,
+      nota: `brutul e sub ${formatRON(opts.minWage - 200)}, angajatorul completează diferența până acolo`,
+    });
+    pasi.push({ eticheta: "− CASS suplimentar angajator", suma: -r.cassSuplimentarAngajator, nota: "" });
+  }
+
+  pasi.push({ eticheta: "Salariu brut", suma: r.gross, nota: "valoarea din contract", tip: "subtotal" });
+  pasi.push({ eticheta: "− CAS, pensie (25%)", suma: -r.cas, nota: `din care ${formatRON(r.pilon2)} la Pilonul II` });
+  pasi.push({ eticheta: "− CASS, sănătate (10%)", suma: -r.cass, nota: "" });
+  pasi.push({
+    eticheta: "Bază impozabilă",
+    suma: r.bazaImpozabila,
+    nota: r.deducere > 0
+      ? `după deducerea personală de ${formatRON(r.deducere)}`
+      : "fără deducere personală (brut peste prag)",
+    tip: "subtotal",
+  });
+  pasi.push({ eticheta: "− Impozit pe venit (10%)", suma: -r.impozit, nota: "" });
 
   if (r.pilon3 > 0) {
     pasi.push({ eticheta: "− Contribuție Pilon III", suma: -r.pilon3, nota: "reținută din net" });
+  }
+  if (r.bonusNeimpozabil > 0) {
+    pasi.push({
+      eticheta: "+ 200 lei neimpozabili",
+      suma: r.bonusNeimpozabil,
+      nota: "facilitate la salariul minim pe economie, fără CAS, CASS sau impozit",
+    });
   }
   pasi.push({ eticheta: "Salariu net", suma: r.net, nota: "ce îți intră în cont", tip: "total" });
 
@@ -141,15 +169,30 @@ function renderTable(r, opts) {
   const randuri = [
     ["Salariu brut", "—", "—", r.gross],
     ["CAM (angajator)", "Brut", "2,25%", r.cam],
-    ["Cost total angajator", "Brut + CAM", "—", r.costTotalAngajator],
-    ["CAS — pensie", "Brut", "25%", r.cas],
+  ];
+
+  if (r.casSuplimentarAngajator > 0) {
+    randuri.push(["CAS suplimentar (angajator)", `Diferență până la ${formatRON(opts.minWage - 200)}`, "25%", r.casSuplimentarAngajator]);
+    randuri.push(["CASS suplimentar (angajator)", `Diferență până la ${formatRON(opts.minWage - 200)}`, "10%", r.cassSuplimentarAngajator]);
+  }
+
+  randuri.push(
+    ["Cost total angajator", "Brut + CAM + suplimentar", "—", r.costTotalAngajator],
+    ["CAS, pensie", "Brut", "25%", r.cas],
     ["  din care Pilon II", "Brut", "4,75%", r.pilon2],
-    ["CASS — sănătate", "Brut", "10%", r.cass],
-    ["Deducere personală", `Salariu minim ${formatRON(opts.minWage)}`, "—", r.deducere],
+    ["CASS, sănătate", "Brut", "10%", r.cass],
+    ["Deducere personală", `Salariu minim ${formatRON(opts.minWage)}`, "—", r.deducere]
+  );
+
+  if (r.bonusNeimpozabil > 0) {
+    randuri.push(["200 lei neimpozabili", "Facilitate la salariul minim", "—", r.bonusNeimpozabil]);
+  }
+
+  randuri.push(
     ["Bază impozabilă", "Brut − CAS − CASS − deduceri", "—", r.bazaImpozabila],
     ["Impozit pe venit", "Bază impozabilă", "10%", r.impozit],
-    ["Salariu net", "—", "—", r.net],
-  ];
+    ["Salariu net", "—", "—", r.net]
+  );
 
   randuri.forEach((cells) => {
     const tr = document.createElement("tr");
@@ -209,11 +252,22 @@ function recalc() {
   } else {
     const peste = r.deducere > 0
       ? `Primești o deducere personală de ${formatRON(r.deducere)}, care îți reduce impozitul cu aproximativ ${formatRON(r.deducere * 0.1)}.`
-      : `La acest nivel de salariu nu se mai acordă deducere personală — ea dispare peste ${formatRON(opts.minWage + 2000)} brut.`;
+      : `La acest nivel de salariu nu se mai acordă deducere personală, ea dispare peste ${formatRON(opts.minWage + 2000)} brut.`;
+    let regim = "";
+    if (r.bonusNeimpozabil > 0) {
+      regim =
+        ` La exact salariul minim se aplică o facilitate specială: primii ${formatRON(r.bonusNeimpozabil)} ` +
+        `din brut sunt scutiți de CAS, CASS și impozit, deci nu se regăsesc printre reținerile de mai sus.`;
+    } else if (r.casSuplimentarAngajator > 0) {
+      regim =
+        ` Brutul este sub salariul minim pe economie, deci se aplică regula normei parțiale: tu plătești ` +
+        `contribuții și impozit pe brutul real, dar angajatorul mai achită separat ${formatRON(r.casSuplimentarAngajator + r.cassSuplimentarAngajator)} ` +
+        `CAS și CASS suplimentar către stat, ca să nu poată evita contribuțiile printr-un brut artificial de mic.`;
+    }
     insight.textContent =
-      `Din ${formatRON(r.costTotalAngajator)} cât plătește angajatorul, la tine ajung ${formatRON(r.net)} — ` +
+      `Din ${formatRON(r.costTotalAngajator)} cât plătește angajatorul, la tine ajung ${formatRON(r.net)}, ` +
       `adică ${formatPercent(r.net / r.costTotalAngajator)}. Restul de ${formatRON(retinut)} sunt contribuții și impozit. ` +
-      peste;
+      peste + regim;
   }
 }
 

@@ -76,7 +76,7 @@ function recalc() {
     if (pilon3Lunar > 0) {
       const raport = r.final2 > 0 ? r.final3 / r.final2 : 0;
       comparatieP3 =
-        ` Contribuția voluntară de ${formatRON(pilon3Lunar)} pe lună adaugă ${formatRON(r.final3)} — ` +
+        ` Contribuția voluntară de ${formatRON(pilon3Lunar)} pe lună adaugă ${formatRON(r.final3)}, ` +
         `adică ${formatPercent(raport)} peste ce ai primi din Pilonul II singur.`;
     } else {
       comparatieP3 =
@@ -87,7 +87,7 @@ function recalc() {
     insight.textContent =
       `În ${aniRamasi} ani până la pensionare acumulezi aproximativ ${formatRON(r.total)}. ` +
       `Din această sumă, ${formatPercent(proportie)} nu vine din contribuții, ci din randamentul acumulat. ` +
-      `În puterea de cumpărare de astăzi, echivalentul este ${formatRON(real)} — ` +
+      `În puterea de cumpărare de astăzi, echivalentul este ${formatRON(real)}, iar ` +
       `diferența față de valoarea nominală este exact efectul inflației pe ${aniRamasi} ani.` +
       comparatieP3;
   }
@@ -124,7 +124,7 @@ function recalc() {
   document.getElementById("reper-p1").textContent =
     `În ${REPER_PILON1.an}, pensia medie de asigurări sociale de stat era de aproximativ ` +
     `${formatRON(REPER_PILON1.pensieMedie)} pe lună, iar câștigul salarial mediu net de aproximativ ` +
-    `${formatRON(REPER_PILON1.salariuNetMediu)} — un raport de ${formatPercent(RATA_INLOCUIRE_PILON1 / 100)}.`;
+    `${formatRON(REPER_PILON1.salariuNetMediu)}, un raport de ${formatPercent(RATA_INLOCUIRE_PILON1 / 100)}.`;
 
   const insightP1 = document.getElementById("insight-p1");
   if (brut <= 0) {
@@ -132,13 +132,13 @@ function recalc() {
   } else {
     const pierdere = 1 - rataInlocuire / 100;
     insightP1.textContent =
-      `La ${rataInlocuire}% rată de înlocuire, pensia publică ar fi de ${formatRON(p1.monthlyPension)} pe lună — ` +
+      `La ${rataInlocuire}% rată de înlocuire, pensia publică ar fi de ${formatRON(p1.monthlyPension)} pe lună, ` +
       `cu ${formatPercent(pierdere)} mai puțin decât salariul net din ultimul an de muncă. ` +
       (venitLunar > 0
         ? `Retragerile din pilonii II și III adaugă ${formatRON(venitLunar)} pe lună timp de ${ANI_DE_PENSIE} de ani, ` +
           `deci ajungi la ${formatPercent(inlocuireTotala)} din salariul de atunci. ` +
           (inlocuireTotala < 0.7
-            ? "Sub 70% înseamnă o scădere sesizabilă a nivelului de trai — diferența trebuie acoperită din economii proprii."
+            ? "Sub 70% înseamnă o scădere sesizabilă a nivelului de trai, iar diferența trebuie acoperită din economii proprii."
             : "Peste 70% este pragul de la care majoritatea oamenilor nu resimt o schimbare bruscă a nivelului de trai.")
         : "Fără pilonii II și III, aceasta ar fi singura ta sursă de venit la pensie.");
   }
@@ -159,7 +159,7 @@ function recalc() {
         `O contribuție până la acest nivel îți reduce impozitul cu 10% din suma contribuită.`
       : anual <= plafonAnual
         ? `Toată contribuția ta este deductibilă. Statul îți returnează ${formatRON(economieFiscala)} pe an ` +
-          `sub forma unui impozit mai mic — un randament cert de 10%, înainte de orice câștig al fondului.`
+          `sub forma unui impozit mai mic, un randament cert de 10%, înainte de orice câștig al fondului.`
         : `Contribui ${formatRON(anual)} pe an, dar doar ${formatRON(deductibil)} sunt deductibili. ` +
           `Suma peste plafon nu mai are avantaj fiscal, deci merită comparată cu un cont propriu de investiții, ` +
           `care este mai flexibil și de obicei are comisioane mai mici.`;

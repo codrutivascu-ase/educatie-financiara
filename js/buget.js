@@ -514,7 +514,7 @@ function randeazaNotaFrecventa() {
   if (rare.length === 0) {
     nota.textContent =
       "Toate categoriile sunt lunare. Dacă ai asigurări, taxe sau vacanțe care se plătesc " +
-      "o dată pe an, adaugă-le cu frecvența potrivită — suma se împarte automat la lună.";
+      "o dată pe an, adaugă-le cu frecvența potrivită, iar suma se împarte automat la lună.";
     return;
   }
 
@@ -722,8 +722,8 @@ function randeazaDistributie(luna, camp) {
 
     if (seg.esteAltele) {
       notaAltele.textContent =
-        `„Altele” cuprinde ${seg.numarCategorii} ${seg.numarCategorii === 1 ? "categorie" : "categorii"} ` +
-        `— paleta are ${SLOTURI_CULOARE} culori care rămân distincte inclusiv pentru daltonism, ` +
+        `„Altele” cuprinde ${seg.numarCategorii} ${seg.numarCategorii === 1 ? "categorie" : "categorii"}, ` +
+        `pentru că paleta are ${SLOTURI_CULOARE} culori care rămân distincte inclusiv pentru daltonism, ` +
         `iar dincolo de ele segmentele nu s-ar mai putea deosebi. În tabel apar toate, separat.`;
     }
   });
@@ -792,7 +792,7 @@ function randeazaRegula(luna, camp) {
     const cap = document.createElement("div");
     cap.className = "rule-head";
     const stanga = document.createElement("span");
-    stanga.textContent = `${parte.eticheta} — ${formatRON(parte.valoare)}`;
+    stanga.textContent = `${parte.eticheta}: ${formatRON(parte.valoare)}`;
     const dreapta = document.createElement("span");
     dreapta.className = "rule-target";
     dreapta.textContent = `${formatPercent(efectiv)} (țintă ${formatPercent(parte.tinta)})`;
@@ -831,7 +831,7 @@ function randeazaAbateri(luna) {
   if (!areDateReale(luna)) {
     hint.textContent =
       "Completează coloana „Real” din tabelul de cheltuieli pe măsură ce trece luna. " +
-      "Diferența dintre plan și realitate este singura parte din buget care schimbă ceva — " +
+      "Diferența dintre plan și realitate este singura parte din buget care schimbă ceva, " +
       "restul sunt intenții.";
     return;
   }
@@ -883,7 +883,7 @@ function randeazaAbateri(luna) {
 
   if (Math.abs(diferenta) < planTotal * 0.05) {
     concluzie.textContent =
-      `Ai cheltuit ${formatRON(realTotal)} față de ${formatRON(planTotal)} planificat — ` +
+      `Ai cheltuit ${formatRON(realTotal)} față de ${formatRON(planTotal)} planificat, ` +
       `o diferență sub 5%. Un buget care se potrivește atât de bine cu realitatea este util: ` +
       `îl poți folosi ca bază pentru lunile următoare fără ajustări mari.`;
   } else if (diferenta > 0) {
@@ -898,7 +898,7 @@ function randeazaAbateri(luna) {
   } else {
     concluzie.textContent =
       `Ai cheltuit cu ${formatRON(Math.abs(diferenta))} mai puțin decât planificat. ` +
-      `Dacă diferența a rămas în cont fără destinație, mută-o explicit la economii — ` +
+      `Dacă diferența a rămas în cont fără destinație, mută-o explicit la economii, pentru că ` +
       `banii nealocați tind să dispară în luna următoare.`;
   }
   mount.appendChild(concluzie);
@@ -928,7 +928,7 @@ function randeazaRepere(luna) {
     bine.className = "insight";
     bine.textContent =
       "Toate categoriile pe care le pot recunoaște se încadrează în reperele obișnuite. " +
-      "Reperele acoperă locuința, utilitățile, alimentele, transportul, ieșirile și abonamentele — " +
+      "Reperele acoperă locuința, utilitățile, alimentele, transportul, ieșirile și abonamentele; " +
       "categoriile cu alte denumiri nu sunt verificate.";
     mount.appendChild(bine);
     return;
@@ -969,7 +969,7 @@ function randeazaRepere(luna) {
     explicatie.className = "benchmark-note";
     explicatie.textContent =
       `Depășești reperul cu ${formatRON(d.exces)} pe lună. ` +
-      `Nu este o greșeală în sine, dar înseamnă că altă categorie trebuie să fie sub reperul ei — ` +
+      `Nu este o greșeală în sine, dar înseamnă că altă categorie trebuie să fie sub reperul ei, ` +
       `cel mai des, economiile.`;
     rand.appendChild(explicatie);
 
@@ -992,7 +992,7 @@ function randeazaEvolutie() {
   if (date.length < 2) {
     card.classList.remove("hidden");
     hint.textContent =
-      "Ai o singură lună înregistrată. Apasă „+ Lună nouă” la începutul lunii viitoare — " +
+      "Ai o singură lună înregistrată. Apasă „+ Lună nouă” la începutul lunii viitoare: " +
       "categoriile se copiază automat, iar aici apare tendința. Trei-patru luni sunt suficiente " +
       "ca să se vadă dacă rata de economisire crește sau scade.";
     document.getElementById("evo-chart-view").classList.add("hidden");
@@ -1194,7 +1194,7 @@ function randeazaConcluzie(ind, luna) {
 
   if (ind.nealocat < -1) {
     el.textContent =
-      `Ai alocat ${formatRON(ind.alocat)} dintr-un venit de ${formatRON(ind.venit)} — ` +
+      `Ai alocat ${formatRON(ind.alocat)} dintr-un venit de ${formatRON(ind.venit)}, ` +
       `cu ${formatRON(Math.abs(ind.nealocat))} mai mult decât ai. ` +
       `Într-o lună obișnuită asta înseamnă că te împrumuți sau consumi din economii. ` +
       `Caută mai întâi în categoriile marcate ca „dorință”: acolo compromisul doare cel mai puțin.`;
@@ -1205,7 +1205,7 @@ function randeazaConcluzie(ind, luna) {
     el.textContent =
       `${formatRON(ind.nealocat)} din venit nu au nicio destinație (${formatPercent(ind.nealocat / ind.venit)}). ` +
       `Banii fără destinație tind să fie cheltuiți fără decizie. ` +
-      `Adaugă-i explicit la o categorie de economii — chiar dacă rămân în același cont, ` +
+      `Adaugă-i explicit la o categorie de economii: chiar dacă rămân în același cont, ` +
       `faptul că sunt „promiși” schimbă felul în care îi tratezi.`;
     return;
   }
@@ -1221,7 +1221,7 @@ function randeazaConcluzie(ind, luna) {
       `nu din multe economii mici.`;
   } else if (rata < 0.2) {
     el.textContent =
-      `Economisești ${formatPercent(rata)} din venit — te apropii de ținta uzuală de 20%. ` +
+      `Economisești ${formatPercent(rata)} din venit, te apropii de ținta uzuală de 20%. ` +
       `Un fond de urgență de trei luni înseamnă ${formatRON(ind.cheltuieliPentruFond * 3)} ` +
       `la nivelul actual al cheltuielilor.`;
   } else {

@@ -288,14 +288,23 @@ const COTA_PILON2 = 0.0475;
 const PLAFON_PILON3_LUNAR = (400 * 5) / 12;
 
 /**
+ * Salariul minim brut pe economie folosit implicit la calculul brut → net.
+ * Este distinct de `FISCAL_FORME.salariuMinim`, care fixează pragurile de
+ * la PFA și SRL la valoarea anunțată pentru 1 ianuarie 2026 — cele două nu
+ * se actualizează neapărat în același moment.
+ */
+const SALARIU_MINIM_CURENT = 4325;
+
+/** Felia din salariul minim neimpozabilă și scutită de CAS/CASS — vezi mai jos. */
+const PRAG_NEIMPOZABIL_MINIM = 200;
+
+/**
  * Deducerea personală de bază.
  *
- * Se acordă integral până la nivelul salariului minim brut, apoi scade
- * treptat și dispare complet peste salariul minim + 2.000 lei. Procentul
- * de pornire depinde de numărul de persoane aflate în întreținere.
- *
- * Este o aproximare liniară a tabelului din lege — legea folosește
- * intervale de câte 100 de lei, deci pot apărea diferențe de câțiva lei.
+ * Se acordă integral până la nivelul salariului minim brut, apoi scade în
+ * trepte de 50 de lei brut și dispare complet peste salariul minim + 2.000
+ * lei. Procentul de pornire depinde de numărul de persoane aflate în
+ * întreținere.
  *
  * @param {number} gross salariul brut lunar
  * @param {number} minWage salariul minim brut pe economie
@@ -309,13 +318,31 @@ function deducerePersonala(gross, minWage, dependents = 0) {
   if (gross <= minWage) return deducereMaxima;
   if (gross > minWage + 2000) return 0;
 
-  // Între cele două praguri, deducerea scade proporțional cu depășirea.
-  const factor = 1 - (gross - minWage) / 2000;
+  // Legea nu scade deducerea lin, ci în trepte de 50 de lei brut: fiecare
+  // treaptă depășită taie o fracție egală din procentul de pornire, până
+  // la a 40-a treaptă (2.000 lei / 50), unde deducerea ajunge la 0.
+  const PAS = 50;
+  const NR_PASI = 2000 / PAS;
+  const treapta = Math.ceil((gross - minWage) / PAS);
+  const factor = Math.max(0, 1 - treapta / NR_PASI);
   return deducereMaxima * factor;
 }
 
 /**
  * Calculează salariul net pornind de la brut.
+ *
+ * Pe lângă calculul standard, tratează separat cele două situații în care
+ * brutul nu ajunge la salariul minim pe economie:
+ *
+ *   - la brut *exact egal* cu salariul minim se aplică facilitatea celor
+ *     200 de lei neimpozabili: CAS, CASS și impozitul se calculează ca
+ *     pentru un brut mai mic cu 200 de lei, iar diferența rămâne integral
+ *     la angajat, fără nicio reținere;
+ *   - sub pragul de mai sus (echivalentul normei parțiale), angajatul
+ *     plătește CAS/CASS/impozit pe brutul real, dar angajatorul achită
+ *     separat diferența de CAS și CASS până la acel prag — mecanismul prin
+ *     care statul descurajează un brut artificial de mic ca să se evite
+ *     contribuțiile.
  *
  * @param {number} gross salariul brut lunar
  * @param {object} [opts]
@@ -325,29 +352,50 @@ function deducerePersonala(gross, minWage, dependents = 0) {
  * @param {number} [opts.pillar3Amount] suma lunară la Pilon III
  * @returns {{gross:number, cas:number, cass:number, deducere:number,
  *            bazaImpozabila:number, impozit:number, net:number,
- *            cam:number, costTotalAngajator:number, taxRate:number}}
+ *            cam:number, bonusNeimpozabil:number,
+ *            casSuplimentarAngajator:number, cassSuplimentarAngajator:number,
+ *            costTotalAngajator:number, taxRate:number}}
  */
 function salariuNet(gross, opts = {}) {
-  const { minWage = 4050, dependents = 0, pillar3Amount = 0 } = opts;
+  const { minWage = SALARIU_MINIM_CURENT, dependents = 0, pillar3Amount = 0 } = opts;
 
   if (gross <= 0) {
     return {
       gross: 0, cas: 0, cass: 0, deducere: 0, bazaImpozabila: 0,
-      impozit: 0, net: 0, cam: 0, costTotalAngajator: 0, taxRate: 0,
+      impozit: 0, net: 0, cam: 0, bonusNeimpozabil: 0,
+      casSuplimentarAngajator: 0, cassSuplimentarAngajator: 0,
+      costTotalAngajator: 0, taxRate: 0,
     };
   }
 
-  const cas = gross * CONTRIBUTII.cas;
-  const cass = gross * CONTRIBUTII.cass;
-  const deducere = deducerePersonala(gross, minWage, dependents);
+  const pragPartTime = minWage - PRAG_NEIMPOZABIL_MINIM;
+
+  let bazaCalcul = gross;
+  let bonusNeimpozabil = 0;
+  let casSuplimentarAngajator = 0;
+  let cassSuplimentarAngajator = 0;
+
+  if (gross === minWage) {
+    bazaCalcul = pragPartTime;
+    bonusNeimpozabil = PRAG_NEIMPOZABIL_MINIM;
+  } else if (gross < pragPartTime) {
+    const diferenta = pragPartTime - gross;
+    casSuplimentarAngajator = diferenta * CONTRIBUTII.cas;
+    cassSuplimentarAngajator = diferenta * CONTRIBUTII.cass;
+  }
+
+  const cas = bazaCalcul * CONTRIBUTII.cas;
+  const cass = bazaCalcul * CONTRIBUTII.cass;
+  const deducere = deducerePersonala(bazaCalcul, minWage, dependents);
 
   // Pilonul III este deductibil la calculul impozitului, în limita legală.
   const deducerePilon3 = Math.min(pillar3Amount, PLAFON_PILON3_LUNAR);
 
-  const bazaImpozabila = Math.max(0, gross - cas - cass - deducere - deducerePilon3);
+  const bazaImpozabila = Math.max(0, bazaCalcul - cas - cass - deducere - deducerePilon3);
   const impozit = bazaImpozabila * CONTRIBUTII.impozit;
-  const net = gross - cas - cass - impozit - pillar3Amount;
+  const net = bazaCalcul - cas - cass - impozit - pillar3Amount + bonusNeimpozabil;
   const cam = gross * CONTRIBUTII.cam;
+  const costTotalAngajator = gross + cam + casSuplimentarAngajator + cassSuplimentarAngajator;
 
   return {
     gross,
@@ -358,9 +406,12 @@ function salariuNet(gross, opts = {}) {
     impozit,
     net,
     cam,
-    costTotalAngajator: gross + cam,
+    bonusNeimpozabil,
+    casSuplimentarAngajator,
+    cassSuplimentarAngajator,
+    costTotalAngajator,
     // Cât din costul total al angajatorului ajunge efectiv la angajat.
-    taxRate: (gross + cam - net) / (gross + cam),
+    taxRate: costTotalAngajator > 0 ? (costTotalAngajator - net) / costTotalAngajator : 0,
   };
 }
 
@@ -417,6 +468,15 @@ const FISCAL_FORME = {
     cass: 10,
     // Pentru dividende, CASS nu se calculează pe venitul realizat, ci pe
     // treapta în care acesta se încadrează — de aici saltul brusc la prag.
+    trepteCass: [6, 12, 24],
+  },
+  // O microîntreprindere este obligată să aibă cel puțin un salariat sau un
+  // administrator remunerat. Un SRL fără niciun angajat nu se mai califică
+  // la impozitul pe micro și trece automat la impozit pe profit.
+  srlProfit: {
+    profit: 16,
+    dividende: 16,
+    cass: 10,
     trepteCass: [6, 12, 24],
   },
 };
@@ -541,16 +601,22 @@ function venitPFA({
 }
 
 /**
- * SRL plătitor de impozit pe veniturile microîntreprinderilor, cu banii
- * scoși ca dividende.
+ * SRL plătitor de impozit pe veniturile microîntreprinderilor, cu un
+ * angajat obligatoriu — de obicei chiar patronul, angajat pe el însuși
+ * cu salariul minim, ca să optimizeze taxele.
  *
- * Două lucruri sunt ușor de ratat aici:
+ * Trei lucruri sunt ușor de ratat aici:
  *
  *   1. impozitul micro se aplică pe *venituri*, nu pe profit — cheltuielile
  *      nu îl reduc, spre deosebire de impozitul pe profit;
  *   2. banii ajung la asociat abia după al doilea impozit, cel pe dividende,
  *      plus CASS pe treaptă. Suma vizibilă în contul firmei nu este suma
- *      pe care o poți folosi.
+ *      pe care o poți folosi;
+ *   3. dacă firma are un cost al salariatului obligatoriu (`costAngajat`),
+ *      acesta apare de două ori — o dată ca cheltuială a firmei, care
+ *      reduce profitul, și o dată ca venit al asociatului
+ *      (`salariuPropriuNet`, adunat înapoi la net), pentru că patronul
+ *      care se angajează pe sine primește efectiv acel salariu net.
  *
  * Modelul presupune că întreg profitul se distribuie ca dividende în același
  * an. Un asociat care lasă banii în firmă amână al doilea impozit.
@@ -558,19 +624,26 @@ function venitPFA({
  * @param {object} opts
  * @param {number} opts.venituri încasările anuale ale firmei
  * @param {number} [opts.cheltuieli] cheltuielile anuale de funcționare
- *        (contabilitate, salariatul obligatoriu, comisioane bancare)
+ *        (contabilitate, comisioane bancare)
+ * @param {number} [opts.costAngajat] costul anual al salariatului
+ *        obligatoriu al microîntreprinderii — separat de `cheltuieli`
+ *        pentru că, atunci când e chiar patronul, salariul lui net se
+ *        adaugă înapoi la net (vezi punctul 3 de mai sus)
  * @param {number} [opts.salariuMinim]
  * @param {object} [opts.cote] suprascrie cotele implicite
  */
 function venitSRLMicro({
   venituri,
   cheltuieli = 0,
+  costAngajat = 0,
   salariuMinim = FISCAL_FORME.salariuMinim,
   cote = {},
 }) {
   const c = { ...FISCAL_FORME.srl, ...cote };
   const incasari = Math.max(0, venituri);
-  const costuri = Math.max(0, cheltuieli);
+  const costuriFunctionare = Math.max(0, cheltuieli);
+  const costAngajatSrl = Math.max(0, costAngajat);
+  const costuri = costuriFunctionare + costAngajatSrl;
 
   const impozitMicro = incasari * (c.micro / 100);
   // Impozitul micro este el însuși o cheltuială a firmei, deci reduce
@@ -586,7 +659,19 @@ function venitSRLMicro({
   }
   const cass = bazaCass * (c.cass / 100);
 
-  const netAnual = Math.max(0, profitDistribuibil - impozitDividende - cass);
+  // Salariul propriu se adaugă doar dacă firma chiar are costul unui
+  // salariat (altfel ar fi bani din senin) și se calculează la salariul
+  // minim curent — nu la cel folosit pentru pragurile de mai sus, care
+  // poate fi altă valoare, vezi SALARIU_MINIM_CURENT — beneficiind de
+  // facilitatea celor 200 de lei neimpozabili, pentru că brutul este
+  // exact salariul minim.
+  const salariuPropriuNet =
+    costAngajatSrl > 0
+      ? salariuNet(SALARIU_MINIM_CURENT, { minWage: SALARIU_MINIM_CURENT }).net * 12
+      : 0;
+
+  const netDividende = Math.max(0, profitDistribuibil - impozitDividende - cass);
+  const netAnual = netDividende + salariuPropriuNet;
 
   return {
     venituri: incasari,
@@ -596,6 +681,8 @@ function venitSRLMicro({
     impozitDividende,
     bazaCass,
     cass,
+    salariuPropriuNet,
+    netDividende,
     netAnual,
     contributii: cass,
     impozite: impozitMicro + impozitDividende,
@@ -604,19 +691,82 @@ function venitSRLMicro({
 }
 
 /**
- * Rulează aceeași sumă anuală prin toate cele trei forme.
+ * SRL fără niciun angajat, plătitor de impozit pe profit.
+ *
+ * O microîntreprindere trebuie să aibă cel puțin un salariat sau un
+ * administrator remunerat; fără el, firma nu se mai califică la impozitul
+ * pe micro și trece la impozitul pe profit clasic de 16%, aplicat pe ce
+ * rămâne după cheltuielile de funcționare — nu pe încasări, ca la micro.
+ * Restul drumului banilor până la asociat este identic: impozit pe
+ * dividende, apoi CASS pe treaptă.
+ *
+ * @param {object} opts
+ * @param {number} opts.venituri încasările anuale ale firmei
+ * @param {number} [opts.cheltuieli] cheltuielile anuale de funcționare
+ * @param {number} [opts.salariuMinim]
+ * @param {object} [opts.cote] suprascrie cotele implicite
+ */
+function venitSRLProfit({
+  venituri,
+  cheltuieli = 0,
+  salariuMinim = FISCAL_FORME.salariuMinim,
+  cote = {},
+}) {
+  const c = { ...FISCAL_FORME.srlProfit, ...cote };
+  const incasari = Math.max(0, venituri);
+  const costuri = Math.max(0, cheltuieli);
+
+  const profitBrut = Math.max(0, incasari - costuri);
+  const impozitProfit = profitBrut * (c.profit / 100);
+  const profitDistribuibil = Math.max(0, profitBrut - impozitProfit);
+
+  const impozitDividende = profitDistribuibil * (c.dividende / 100);
+
+  let bazaCass = 0;
+  for (const trepte of c.trepteCass) {
+    if (profitDistribuibil >= trepte * salariuMinim) bazaCass = trepte * salariuMinim;
+  }
+  const cass = bazaCass * (c.cass / 100);
+
+  const netAnual = Math.max(0, profitDistribuibil - impozitDividende - cass);
+
+  return {
+    venituri: incasari,
+    cheltuieli: costuri,
+    profitBrut,
+    impozitProfit,
+    profitDistribuibil,
+    impozitDividende,
+    bazaCass,
+    cass,
+    netAnual,
+    contributii: cass,
+    impozite: impozitProfit + impozitDividende,
+    rataEfectiva: incasari > 0 ? (incasari - netAnual) / incasari : 0,
+  };
+}
+
+/**
+ * Rulează aceeași sumă anuală prin toate cele patru forme.
  *
  * Baza comună este suma pe care o plătește cel care cumpără munca: costul
  * total al angajatorului la un contract de muncă, respectiv factura emisă
  * de PFA sau SRL. Orice altă bază (brutul, de exemplu) ar avantaja artificial
  * salariul, pentru că ar ascunde CAM.
  *
- * @returns {{cim:object, pfa:object, srl:object, castigator:string}}
+ * SRL-ul apare de două ori pentru că regimul fiscal chiar diferă după cum
+ * firma are sau nu un angajat: cu angajat rămâne la impozitul pe micro (mai
+ * mic) și patronul își recuperează salariul propriu; fără angajat pierde
+ * dreptul la micro și trece la impozit pe profit.
+ *
+ * @returns {{cim:object, pfa:object, srlAngajat:object,
+ *            srlFaraAngajat:object, castigator:string, clasament:Array}}
  */
 function compareFormeVenit({
   sumaAnuala,
   cheltuieliPfa = 0,
   cheltuieliSrl = 0,
+  costAngajatSrl = 0,
   salariuMinim = FISCAL_FORME.salariuMinim,
   dependents = 0,
   areSalariu = false,
@@ -631,7 +781,14 @@ function compareFormeVenit({
     areSalariu,
     cote: cotePfa,
   });
-  const srl = venitSRLMicro({
+  const srlAngajat = venitSRLMicro({
+    venituri: sumaAnuala,
+    cheltuieli: cheltuieliSrl,
+    costAngajat: costAngajatSrl,
+    salariuMinim,
+    cote: coteSrl,
+  });
+  const srlFaraAngajat = venitSRLProfit({
     venituri: sumaAnuala,
     cheltuieli: cheltuieliSrl,
     salariuMinim,
@@ -641,10 +798,11 @@ function compareFormeVenit({
   const clasament = [
     { cheie: "cim", net: cim.netAnual },
     { cheie: "pfa", net: pfa.netAnual },
-    { cheie: "srl", net: srl.netAnual },
+    { cheie: "srlAngajat", net: srlAngajat.netAnual },
+    { cheie: "srlFaraAngajat", net: srlFaraAngajat.netAnual },
   ].sort((a, b) => b.net - a.net);
 
-  return { cim, pfa, srl, castigator: clasament[0].cheie, clasament };
+  return { cim, pfa, srlAngajat, srlFaraAngajat, castigator: clasament[0].cheie, clasament };
 }
 
 /* ==================================================================== */
@@ -721,7 +879,7 @@ function estimatePillar1({
   retirementAge,
   wageGrowthPct,
   replacementRatePct,
-  minWage = 4050,
+  minWage = SALARIU_MINIM_CURENT,
   salaryCap = Infinity,
 }) {
   const yearsToRetire = Math.max(0, Math.round(retirementAge - currentAge));

@@ -204,7 +204,20 @@ function renderNav(activeHref) {
   const brand = document.createElement("a");
   brand.className = "brand";
   brand.href = "index.html";
-  brand.textContent = "Educație Financiară";
+  const logo = document.createElement("img");
+  logo.className = "brand-logo";
+  logo.src = "img/fabbv.jpg";
+  logo.alt = "Sigla FABBV";
+  logo.width = 28;
+  logo.height = 28;
+  brand.appendChild(logo);
+  const brandText = document.createElement("span");
+  brandText.appendChild(document.createTextNode("Educație Financiară "));
+  const brandSuffix = document.createElement("span");
+  brandSuffix.className = "brand-suffix";
+  brandSuffix.textContent = "by FABBV";
+  brandText.appendChild(brandSuffix);
+  brand.appendChild(brandText);
   mount.appendChild(brand);
 
   // Buton de meniu pentru ecrane înguste.

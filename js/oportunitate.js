@@ -90,7 +90,7 @@ function recalc() {
     const multiplu = totalCheltuit > 0 ? totalInvestit / totalCheltuit : 0;
     insight.textContent =
       `O cheltuială unică de ${formatRON(suma)} ar fi devenit ${formatRON(totalInvestit)} în ${ani} ani ` +
-      `la un randament de ${randament}% — de ${multiplu.toFixed(1)} ori mai mult. ` +
+      `la un randament de ${randament}%, adică de ${multiplu.toFixed(1)} ori mai mult. ` +
       `În puterea de cumpărare de astăzi, asta înseamnă aproximativ ${formatRON(real)}, ` +
       `deci prețul real al achiziției este mai aproape de această valoare decât de cea de pe etichetă.`;
   } else {

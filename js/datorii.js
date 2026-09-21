@@ -125,7 +125,7 @@ function renderStrategies() {
     box.appendChild(
       makeNote(
         `Bugetul lunar de ${formatRON(buget)} nu acoperă nici măcar plățile minime, care însumează ${formatRON(totalMin)}. ` +
-          `Într-o astfel de situație datoria crește de la sine — primul pas este renegocierea sau consilierea de specialitate, nu o strategie de plată.`
+          `Într-o astfel de situație datoria crește de la sine, iar primul pas este renegocierea sau consilierea de specialitate, nu o strategie de plată.`
       )
     );
     return;
@@ -181,7 +181,7 @@ function renderStrategies() {
   const monthsDiff = snowball.months - avalanche.months;
   let text;
   if (Math.abs(diff) < 1 && monthsDiff === 0) {
-    text = "În acest caz cele două strategii dau exact același rezultat — ordinea datoriilor coincide.";
+    text = "În acest caz cele două strategii dau exact același rezultat: ordinea datoriilor coincide.";
   } else {
     text =
       `Metoda avalanșă te costă cu ${formatRON(Math.abs(diff))} mai puțină dobândă` +
@@ -241,15 +241,15 @@ function recalc() {
     msg.textContent = "Introdu venitul net lunar ca să vezi o estimare a eligibilității.";
   } else if (grad <= DTI_COMFORT) {
     msg.textContent =
-      `Grad de îndatorare ${formatPercent(grad)} — sub pragul uzual de 40%. ` +
+      `Grad de îndatorare ${formatPercent(grad)}, sub pragul uzual de 40%. ` +
       `După rate ți-ar rămâne ${formatRON(ramas)} pe lună pentru toate celelalte cheltuieli.`;
   } else if (grad <= DTI_LIMIT) {
     msg.textContent =
-      `Grad de îndatorare ${formatPercent(grad)} — aproape de pragul uzual de 40%. ` +
+      `Grad de îndatorare ${formatPercent(grad)}, aproape de pragul uzual de 40%. ` +
       `Ai șanse, dar la limită, iar marja pentru cheltuieli neprevăzute este mică.`;
   } else {
     msg.textContent =
-      `Grad de îndatorare ${formatPercent(grad)} — peste pragul uzual de 40% folosit de bănci. ` +
+      `Grad de îndatorare ${formatPercent(grad)}, peste pragul uzual de 40% folosit de bănci. ` +
       `Ai nevoie de un credit mai mic, un avans mai mare sau o perioadă mai lungă.`;
   }
 
@@ -336,7 +336,7 @@ function recalc() {
       `${formatMonths(Math.max(0, luniMaiDevreme))} mai devreme și economisești ` +
       `${formatEUR(Math.max(0, economie))} din dobândă. ` +
       `Practic, acei bani „câștigă” un randament garantat egal cu dobânda creditului (${formatPercent(rate / 100)}), ` +
-      `ceea ce este mult față de un depozit bancar — dar verifică întâi dacă banca percepe comision de rambursare anticipată.`;
+      `ceea ce este mult față de un depozit bancar, dar verifică întâi dacă banca percepe comision de rambursare anticipată.`;
   }
 
   renderStrategies();
