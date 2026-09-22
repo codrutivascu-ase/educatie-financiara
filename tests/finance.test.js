@@ -129,7 +129,7 @@ describe("simulateDebtPayoff — avalanșă vs. bulgăre", () => {
 });
 
 describe("salariuNet — brut către net", () => {
-  const opts = { minWage: 4050, dependents: 0 };
+  const opts = { minWage: 4325, dependents: 0 };
 
   it("reține CAS 25% și CASS 10% din brut", () => {
     const r = salariuNet(10000, opts);
@@ -152,19 +152,19 @@ describe("salariuNet — brut către net", () => {
   });
 
   it("acordă deducere personală integrală la salariul minim", () => {
-    const r = salariuNet(4050, opts);
+    const r = salariuNet(4325, opts);
     // 20% din salariul minim pentru cineva fără persoane în întreținere.
-    expect(r.deducere).toBeCloseTo(810, 0.01);
+    expect(r.deducere).toBeCloseTo(865, 0.01);
   });
 
   it("nu mai acordă deducere peste salariul minim plus 2.000", () => {
-    expect(salariuNet(6051, opts).deducere).toBe(0);
+    expect(salariuNet(6326, opts).deducere).toBe(0);
     expect(salariuNet(20000, opts).deducere).toBe(0);
   });
 
   it("mărește deducerea cu numărul de persoane în întreținere", () => {
-    const fara = salariuNet(4050, { minWage: 4050, dependents: 0 });
-    const cuDoi = salariuNet(4050, { minWage: 4050, dependents: 2 });
+    const fara = salariuNet(4325, { minWage: 4325, dependents: 0 });
+    const cuDoi = salariuNet(4325, { minWage: 4325, dependents: 2 });
     expect(cuDoi.deducere).toBeGreaterThan(fara.deducere);
     expect(cuDoi.net).toBeGreaterThan(fara.net);
   });
@@ -255,13 +255,13 @@ describe("deducerePersonala — trepte de 50 de lei peste salariul minim", () =>
 
 describe("brutDinNet — netul către brut", () => {
   it("găsește brutul care produce netul cerut", () => {
-    const opts = { minWage: 4050, dependents: 0 };
+    const opts = { minWage: 4325, dependents: 0 };
     const brut = brutDinNet(5850, opts);
     expect(salariuNet(brut, opts).net).toBeCloseTo(5850, 1);
   });
 
   it("este inversa lui salariuNet pentru mai multe valori", () => {
-    const opts = { minWage: 4050, dependents: 1 };
+    const opts = { minWage: 4325, dependents: 1 };
     [3000, 5000, 8000, 12000].forEach((netDorit) => {
       const brut = brutDinNet(netDorit, opts);
       expect(salariuNet(brut, opts).net).toBeCloseTo(netDorit, 1);
@@ -485,10 +485,10 @@ describe("seededRandom — generatorul cu sămânță", () => {
 });
 
 describe("venitPFA — impozitarea unei persoane fizice autorizate", () => {
-  const sm = 4050;
+  const sm = 4325;
 
   it("nu datorează CAS sub pragul de 12 salarii minime", () => {
-    // Venit net de 40.000 lei, sub 12 × 4.050 = 48.600.
+    // Venit net de 40.000 lei, sub 12 × 4.325 = 51.900.
     const r = venitPFA({ venituri: 40000, cheltuieli: 0, salariuMinim: sm });
     expect(r.cas).toBe(0);
     expect(r.bazaCas).toBe(0);
@@ -518,7 +518,7 @@ describe("venitPFA — impozitarea unei persoane fizice autorizate", () => {
 
   it("plafonează CASS la limita superioară", () => {
     const r = venitPFA({ venituri: 2000000, cheltuieli: 0, salariuMinim: sm });
-    expect(r.bazaCass).toBeCloseTo(60 * sm, 0.01);
+    expect(r.bazaCass).toBeCloseTo(72 * sm, 0.01);
   });
 
   it("aplică impozitul după contribuții, nu pe venitul net brut", () => {
@@ -541,7 +541,7 @@ describe("venitPFA — impozitarea unei persoane fizice autorizate", () => {
 });
 
 describe("venitSRLMicro — SRL cu impozit pe veniturile microîntreprinderii", () => {
-  const sm = 4050;
+  const sm = 4325;
 
   it("aplică impozitul micro pe venituri, nu pe profit", () => {
     const r = venitSRLMicro({ venituri: 200000, cheltuieli: 150000, salariuMinim: sm });
@@ -581,25 +581,25 @@ describe("venitSRLMicro — SRL cu impozit pe veniturile microîntreprinderii", 
 
   it("adaugă salariul propriu la net doar dacă firma are un cost de angajat", () => {
     const fara = venitSRLMicro({ venituri: 100000, cheltuieli: 0, salariuMinim: sm });
-    const cu = venitSRLMicro({ venituri: 100000, cheltuieli: 0, costAngajat: 51900, salariuMinim: sm });
+    const cu = venitSRLMicro({ venituri: 100000, cheltuieli: 0, costAngajat: 53065, salariuMinim: sm });
     expect(fara.salariuPropriuNet).toBe(0);
     expect(cu.salariuPropriuNet).toBeGreaterThan(0);
     // Costul de angajat reduce dividendul distribuibil, dar salariul propriu
     // net se întoarce la asociat — de aceea diferența de net e mai mică
     // decât costul brut al angajatului.
     expect(cu.netAnual).toBeLessThan(fara.netAnual);
-    expect(fara.netAnual - cu.netAnual).toBeLessThan(51900);
+    expect(fara.netAnual - cu.netAnual).toBeLessThan(53065);
   });
 
   it("chiar și fără dividende, salariul propriu tot ajunge la asociat", () => {
-    const r = venitSRLMicro({ venituri: 30000, cheltuieli: 80000, costAngajat: 51900, salariuMinim: sm });
+    const r = venitSRLMicro({ venituri: 30000, cheltuieli: 80000, costAngajat: 53065, salariuMinim: sm });
     expect(r.netDividende).toBe(0);
     expect(r.netAnual).toBeCloseTo(r.salariuPropriuNet, 0.01);
   });
 });
 
 describe("venitSRLProfit — SRL fără angajat, impozit pe profit", () => {
-  const sm = 4050;
+  const sm = 4325;
 
   it("aplică impozitul de 16% pe profit, nu pe venituri", () => {
     // Exemplul din audit: 120.000 venituri, 0 cheltuieli.
@@ -630,19 +630,19 @@ describe("venitSRLProfit — SRL fără angajat, impozit pe profit", () => {
 
 describe("venitCIM — contract de muncă, pornind de la costul angajatorului", () => {
   it("recuperează brutul din costul total", () => {
-    const r = venitCIM({ costAnual: 122700, salariuMinim: 4050 });
+    const r = venitCIM({ costAnual: 122700, salariuMinim: 4325 });
     // Costul lunar de 10.225 lei corespunde unui brut de 10.000.
     expect(r.brutLunar).toBeCloseTo(10000, 1);
   });
 
   it("închide bilanțul: costul se regăsește integral în componente", () => {
-    const r = venitCIM({ costAnual: 150000, salariuMinim: 4050 });
+    const r = venitCIM({ costAnual: 150000, salariuMinim: 4325 });
     expect(r.contributii + r.impozite + r.netAnual).toBeCloseTo(r.costAnual, 0.5);
   });
 
   it("persoanele în întreținere cresc netul, prin deducere", () => {
-    const fara = venitCIM({ costAnual: 55000, salariuMinim: 4050, dependents: 0 });
-    const cu = venitCIM({ costAnual: 55000, salariuMinim: 4050, dependents: 2 });
+    const fara = venitCIM({ costAnual: 55000, salariuMinim: 4325, dependents: 0 });
+    const cu = venitCIM({ costAnual: 55000, salariuMinim: 4325, dependents: 2 });
     expect(cu.netAnual).toBeGreaterThan(fara.netAnual);
   });
 });

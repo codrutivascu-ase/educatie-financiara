@@ -260,7 +260,7 @@ const GLOSAR = [
     termeni: ["bulgăre de zăpadă", "metoda bulgărelui"],
     categorie: "Datorii",
     scurt: "Strategie care atacă întâi datoria cu soldul cel mai mic.",
-    lung: "Costă puțin mai mult decât avalanșa, dar elimină rapid o datorie întreagă. Studiile de comportament arată că oamenii duc planul la capăt mai des atunci când văd victorii rapide, iar un plan dus la capăt bate un plan optim abandonat.",
+    lung: "Poate avea un cost mai mare decât metoda avalanșă, dar permite închiderea rapidă a unei datorii. Rezultatele intermediare pot crește consecvența cu care este urmat planul de rambursare.",
     vezi: ["avalansa"],
   },
   {

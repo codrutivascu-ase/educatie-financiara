@@ -87,7 +87,9 @@ function recalc() {
   const xValues = Array.from({ length: years + 1 }, (_, i) => i);
   const scenarii = SCENARIOS.map((sc, index) => {
     const rateEl = document.getElementById(`rate-${sc.id}`);
-    const rate = rateEl ? parseFloat(rateEl.value) || 0 : sc.defaultRate;
+    const rate = rateEl
+      ? readNumber(rateEl.id, { min: -20, max: 30, fallback: sc.defaultRate })
+      : sc.defaultRate;
     return {
       name: sc.name,
       color: seriesColor(index),

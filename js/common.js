@@ -22,23 +22,23 @@ const MODULES = [
     // Veniturile stau înaintea bugetului pentru că bugetul pornește de la
     // ele: nu poți împărți o sumă pe care nu ai calculat-o încă.
     label: "Venituri",
-    desc: "De unde vin banii și cât ajunge efectiv la tine.",
+    desc: "Venitul net, contribuțiile și formele de organizare a activității.",
     items: [
       {
         href: "salariu.html",
         label: "Salariu brut → net",
-        desc: "Ce se reține din brut și cât plătește de fapt angajatorul.",
+        desc: "Calculul venitului net și al costului total pentru angajator.",
       },
       {
         href: "forme-venit.html",
         label: "Angajat, PFA sau SRL",
-        desc: "Din aceeași sumă încasată, ce net îți rămâne în fiecare formă.",
+        desc: "Comparația venitului net pentru contract de muncă, PFA și SRL.",
       },
     ],
   },
   {
     label: "Buget personal",
-    desc: "Cât iese, pe ce, și cât rămâne la sfârșitul lunii.",
+    desc: "Evidența lunară a veniturilor, cheltuielilor și economiilor.",
     items: [
       {
         href: "buget.html",
@@ -48,28 +48,28 @@ const MODULES = [
       {
         href: "obiective.html",
         label: "Obiective de economisire",
-        desc: "Cât pui deoparte lunar ca să atingi o țintă până la un termen.",
+        desc: "Contribuția lunară necesară pentru atingerea unei sume țintă.",
       },
     ],
   },
   {
     label: "Investiții",
-    desc: "Cum se multiplică banii și ce le mănâncă valoarea în timp.",
+    desc: "Randament, inflație și risc în administrarea economiilor.",
     items: [
       {
         href: "investitii.html",
         label: "Dobândă compusă",
-        desc: "Cât crește o sumă investită lunar, cu randament constant sau variabil.",
+        desc: "Proiecția capitalului cu randament constant sau variabil.",
       },
       {
         href: "inflatie.html",
         label: "Inflație",
-        desc: "Cât pierd, an după an, banii ținuți pe loc.",
+        desc: "Evoluția puterii de cumpărare în timp.",
       },
       {
         href: "oportunitate.html",
         label: "Cost de oportunitate",
-        desc: "Ce ar fi devenit banii dacă rămâneau investiți.",
+        desc: "Valoarea viitoare asociată unei cheltuieli prezente.",
       },
       {
         href: "pensii.html",
@@ -80,12 +80,12 @@ const MODULES = [
   },
   {
     label: "Credite",
-    desc: "Cât costă banii împrumutați și cum scapi mai repede de ei.",
+    desc: "Costul împrumuturilor și opțiunile de rambursare.",
     items: [
       {
         href: "datorii.html",
         label: "Calculator de datorii",
-        desc: "Eligibilitate, grafic de rambursare, plată anticipată, avalanșă vs. bulgăre.",
+        desc: "Eligibilitate, rambursare anticipată și strategii pentru mai multe datorii.",
       },
       {
         href: "comparator.html",
@@ -96,17 +96,17 @@ const MODULES = [
   },
   {
     label: "Învață",
-    desc: "Mecanismele din spatele instrumentelor, explicate în cuvinte.",
+    desc: "Noțiuni financiare introductive și exemple de aplicare.",
     items: [
       {
         href: "lectii.html",
         label: "Lecții și quiz",
-        desc: "Zece lecții de 3-4 minute, cu întrebări care explică și variantele greșite.",
+        desc: "Zece lecții scurte, cu întrebări și explicații pentru fiecare răspuns.",
       },
       {
         href: "glosar.html",
         label: "Glosar",
-        desc: "Termenii din aplicație, explicați pentru decizii, nu pentru examen.",
+        desc: "Definiții și explicații pentru termenii utilizați în aplicație.",
       },
     ],
   },

@@ -248,7 +248,7 @@ function recalc() {
   /* --- Concluzie ---------------------------------------------------- */
   const insight = document.getElementById("insight");
   if (brut <= 0) {
-    insight.textContent = "Introdu un salariu ca să vezi calculul.";
+    insight.textContent = "Este necesară introducerea salariului pentru realizarea calculului.";
   } else {
     const peste = r.deducere > 0
       ? `Primești o deducere personală de ${formatRON(r.deducere)}, care îți reduce impozitul cu aproximativ ${formatRON(r.deducere * 0.1)}.`

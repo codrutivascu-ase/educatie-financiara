@@ -80,7 +80,7 @@ function recalc() {
         `adică ${formatPercent(raport)} peste ce ai primi din Pilonul II singur.`;
     } else {
       comparatieP3 =
-        " Nu contribui la Pilonul III. Introdu o sumă mai sus ca să vezi ce diferență ar face, " +
+        " Nu a fost introdusă o contribuție la Pilonul III. O valoare pozitivă permite estimarea efectului acesteia, " +
         "ținând cont că primii 400 EUR pe an sunt deductibili fiscal.";
     }
 
@@ -128,7 +128,7 @@ function recalc() {
 
   const insightP1 = document.getElementById("insight-p1");
   if (brut <= 0) {
-    insightP1.textContent = "Introdu un salariu brut ca să vezi estimarea pentru Pilonul I.";
+    insightP1.textContent = "Este necesară introducerea salariului brut pentru estimarea aferentă Pilonului I.";
   } else {
     const pierdere = 1 - rataInlocuire / 100;
     insightP1.textContent =

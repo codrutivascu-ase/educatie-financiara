@@ -64,9 +64,9 @@ function recalc() {
   /* --- Concluzie ---------------------------------------------------- */
   const insight = document.getElementById("insight");
   if (tinta <= 0) {
-    insight.textContent = "Introdu o sumă țintă ca să vezi cât trebuie să economisești lunar.";
+    insight.textContent = "Este necesară introducerea unei sume țintă pentru calcularea contribuției lunare.";
   } else if (atinsDeja) {
-    insight.textContent = "Felicitări, ai atins deja ținta propusă. Următorul pas util este să stabilești unde țin acești bani.";
+    insight.textContent = "Suma economisită este egală cu sau mai mare decât ținta stabilită. Nu mai este necesară o contribuție lunară suplimentară.";
   } else {
     const zilnic = lunar / 30;
     insight.textContent =

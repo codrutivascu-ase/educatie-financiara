@@ -104,8 +104,8 @@ const CATEGORII_IMPLICITE = [
 const SABLOANE = {
   student: {
     eticheta: "Student",
-    descriere: "Chirie împărțită, fără mașină, venit din bursă sau part-time.",
-    venituri: [{ nume: "Part-time / bursă", suma: 2500, tip: "fix" }],
+    descriere: "Chirie împărțită, fără mașină, venit din bursă sau program part-time.",
+    venituri: [{ nume: "Program part-time sau bursă", suma: 2500, tip: "fix" }],
     cheltuieli: [
       { nume: "Chirie (parte)", grupa: "nevoi", planificat: 900, frecventaLuni: 1 },
       { nume: "Utilități", grupa: "nevoi", planificat: 200, frecventaLuni: 1 },

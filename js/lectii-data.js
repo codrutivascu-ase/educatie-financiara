@@ -502,7 +502,7 @@ const LECTII = [
     grup: "Practic",
     rezumat: "Din costul total al angajatorului, aproximativ 40% nu ajunge la tine.",
     continut: [
-      { tip: "p", text: "Salariul brut nu este ce plătește angajatorul și nici ce primești tu. Angajatorul plătește brutul plus contribuția asiguratorie pentru muncă (2,25%). Din brut se rețin apoi contribuțiile tale și impozitul." },
+      { tip: "p", text: "Salariul brut nu este nici costul total al angajatorului, nici suma primită de salariat. Angajatorul plătește brutul plus contribuția asiguratorie pentru muncă (2,25%), iar din brut sunt reținute contribuțiile salariatului și impozitul." },
       { tip: "h", text: "Cele trei rețineri" },
       { tip: "p", text: "CAS (contribuția la pensie) este 25% din brut și merge în sistemul public, din care o parte (4,75%) se virează către Pilonul II, contul tău personal de pensie. CASS (sănătate) este 10% din brut. Impozitul pe venit este 10%, dar se aplică pe ce rămâne după CAS și CASS, nu pe brut." },
       { tip: "p", text: "Ordinea contează: impozitul de 10% aplicat după reținerea a 35% înseamnă efectiv 6,5% din brut, nu 10%." },

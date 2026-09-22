@@ -113,7 +113,7 @@ function renderStrategies() {
   const buget = readNumber("buget-datorii", { min: 0, max: 200000 });
 
   if (debts.length === 0) {
-    box.appendChild(makeNote("Introdu cel puțin o datorie ca să compari strategiile."));
+    box.appendChild(makeNote("Este necesară cel puțin o datorie pentru compararea strategiilor."));
     return;
   }
 
@@ -238,7 +238,7 @@ function recalc() {
 
   const msg = document.getElementById("eligibility-msg");
   if (venit <= 0) {
-    msg.textContent = "Introdu venitul net lunar ca să vezi o estimare a eligibilității.";
+    msg.textContent = "Este necesară introducerea venitului net lunar pentru estimarea gradului de îndatorare.";
   } else if (grad <= DTI_COMFORT) {
     msg.textContent =
       `Grad de îndatorare ${formatPercent(grad)}, sub pragul uzual de 40%. ` +
@@ -327,7 +327,7 @@ function recalc() {
 
   const prepayInsight = document.getElementById("prepay-insight");
   if (extra <= 0) {
-    prepayInsight.textContent = "Introdu o sumă suplimentară lunară ca să vezi cât ai economisi.";
+    prepayInsight.textContent = "O sumă suplimentară lunară permite estimarea economiei obținute prin rambursare anticipată.";
   } else {
     // Randamentul implicit al plății anticipate este chiar dobânda creditului:
     // fiecare euro plătit în avans „câștigă” dobânda pe care n-o mai plătești.

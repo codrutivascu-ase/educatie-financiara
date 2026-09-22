@@ -287,12 +287,7 @@ const COTA_PILON2 = 0.0475;
 /** Plafonul lunar deductibil la Pilon III (400 EUR/an, la ~5 lei/EUR). */
 const PLAFON_PILON3_LUNAR = (400 * 5) / 12;
 
-/**
- * Salariul minim brut pe economie folosit implicit la calculul brut → net.
- * Este distinct de `FISCAL_FORME.salariuMinim`, care fixează pragurile de
- * la PFA și SRL la valoarea anunțată pentru 1 ianuarie 2026 — cele două nu
- * se actualizează neapărat în același moment.
- */
+/** Salariul minim brut curent, folosit în toate simulările. */
 const SALARIU_MINIM_CURENT = 4325;
 
 /** Felia din salariul minim neimpozabilă și scutită de CAS/CASS — vezi mai jos. */
@@ -449,7 +444,7 @@ function brutDinNet(targetNet, opts = {}) {
  */
 const FISCAL_FORME = {
   an: 2026,
-  salariuMinim: 4050,
+  salariuMinim: 4325,
   pfa: {
     cas: 25,
     cass: 10,
@@ -460,10 +455,10 @@ const FISCAL_FORME = {
     pragCasSuperior: 24,
     // CASS se calculează pe venitul net efectiv, dar închis între aceste limite.
     cassMin: 6,
-    cassMax: 60,
+    cassMax: 72,
   },
   srl: {
-    micro: 1, // 1% pentru venituri sub 60.000 EUR, 3% peste sau la anumite coduri CAEN
+    micro: 1, // cotă unică în 2026; plafonul regimului este 100.000 EUR
     dividende: 16,
     cass: 10,
     // Pentru dividende, CASS nu se calculează pe venitul realizat, ci pe
@@ -773,7 +768,11 @@ function compareFormeVenit({
   cotePfa = {},
   coteSrl = {},
 }) {
-  const cim = venitCIM({ costAnual: sumaAnuala, salariuMinim, dependents });
+  const cim = venitCIM({
+    costAnual: sumaAnuala,
+    salariuMinim: SALARIU_MINIM_CURENT,
+    dependents,
+  });
   const pfa = venitPFA({
     venituri: sumaAnuala,
     cheltuieli: cheltuieliPfa,

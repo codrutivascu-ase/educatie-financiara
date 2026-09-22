@@ -29,7 +29,7 @@ function recalcTrecut() {
 
   document.getElementById("insight-trecut").textContent =
     suma <= 0
-      ? "Introdu o sumă ca să vezi echivalentul de astăzi."
+      ? "Este necesară introducerea unei sume pentru calcularea echivalentului actual."
       : `Ce cumpărai cu ${formatRON(suma)} acum ${ani} ${ani === 1 ? "an" : "ani"} costă astăzi ` +
         `aproximativ ${formatRON(echivalent)}. Altfel spus, prețurile au crescut cu ${formatPercent(crestere)} ` +
         `în această perioadă, la o inflație medie de ${inflatie}% pe an. ` +
@@ -72,7 +72,7 @@ function recalcViitor() {
   /* --- Concluzie ---------------------------------------------------- */
   const insight = document.getElementById("insight-viitor");
   if (suma <= 0) {
-    insight.textContent = "Introdu o sumă ca să vezi efectul.";
+    insight.textContent = "Este necesară introducerea unei sume pentru calcularea efectului inflației.";
   } else if (randamentReal < 0) {
     insight.textContent =
       `Cu o dobândă de ${dobanda}% și o inflație de ${inflatie}%, randamentul real este ` +

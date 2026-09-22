@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Inflație · Educație Financiară</title>
-  <meta name="description" content="Vezi cât valorează astăzi banii de acum câțiva ani și cât pierde o sumă ținută într-un cont fără dobândă." />
+  <meta name="description" content="Calculul puterii de cumpărare a unei sume și al efectului produs de inflație în timp." />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#2a78d6" />
@@ -17,7 +17,7 @@
 
   <main id="main">
     <h1>Calculator de inflație</h1>
-    <p class="subtitle">Inflația nu îți ia bani din cont: suma rămâne aceeași. Se schimbă doar cât poți cumpăra cu ea. Aici vezi mărimea efectului.</p>
+    <p class="subtitle">Evoluția puterii de cumpărare a unei sume în funcție de inflație, dobândă și perioada analizată.</p>
 
     <details class="explainer">
       <summary>De ce pierderea din inflație este atât de greu de observat</summary>
@@ -28,7 +28,7 @@
 
     <div class="card">
       <h2>Cât valorează azi banii de atunci</h2>
-      <p class="field-hint">Alege o sumă și un an de referință ca să vezi echivalentul în puterea de cumpărare de astăzi.</p>
+      <p class="field-hint">Calculul exprimă o sumă din trecut în puterea de cumpărare corespunzătoare momentului actual.</p>
       <div class="field-grid">
         <div class="field">
           <label for="suma-trecut">Sumă (lei)</label>
@@ -41,7 +41,7 @@
         <div class="field">
           <label for="inflatie-trecut">Inflație medie anuală (%)</label>
           <input type="number" id="inflatie-trecut" min="0" max="50" step="0.1" value="6" />
-          <p class="field-hint">În România, media ultimilor 10 ani a fost aproximativ 6%/an, cu vârfuri mult peste în 2022-2023.</p>
+          <p class="field-hint">Rata medie trebuie aleasă în funcție de perioada analizată, deoarece inflația poate varia semnificativ de la un an la altul.</p>
         </div>
       </div>
 
@@ -133,7 +133,7 @@
       <h2>Ce înseamnă practic</h2>
       <ul class="notes-list">
         <li><strong>Fondul de urgență merită costul.</strong> Plătești erodarea ca preț pentru disponibilitate imediată. Este un cost conștient, nu o greșeală.</li>
-        <li><strong>Sumele peste fondul de urgență au un cost de oportunitate.</strong> Banii care stau din inerție, nu dintr-o decizie, pierd în tăcere. Vezi <a href="oportunitate.html">costul de oportunitate</a>.</li>
+        <li><strong>Sumele care depășesc fondul de urgență au un cost de oportunitate.</strong> Menținerea lor într-un cont cu randament redus poate diminua puterea de cumpărare. Acest efect este prezentat în modulul despre <a href="oportunitate.html">costul de oportunitate</a>.</li>
         <li><strong>Salariul nominal nu este salariul real.</strong> O creștere de 5% într-un an cu 7% inflație este o scădere. Verifică-ți creșterile în termeni reali.</li>
         <li><strong>Inflația ajută debitorii.</strong> Dacă ai un credit cu dobândă fixă, inflația erodează și valoarea reală a datoriei tale. Este singurul caz în care lucrează în favoarea ta.</li>
       </ul>

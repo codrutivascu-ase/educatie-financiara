@@ -17,7 +17,7 @@
 
   <main id="main">
     <h1>Buget lunar</h1>
-    <p class="subtitle">Planifică unde merge fiecare leu, notează ce s-a întâmplat de fapt și vezi cum evoluează de la o lună la alta.</p>
+    <p class="subtitle">O prezentare lunară a veniturilor, cheltuielilor planificate, sumelor cheltuite și economiilor disponibile.</p>
 
     <details class="explainer">
       <summary>De ce un buget scris funcționează, deși pare birocratic</summary>
@@ -50,14 +50,14 @@
 
     <!-- Apare doar când bugetul este gol, ca punct de plecare. -->
     <div class="card hidden" id="sabloane-card">
-      <h2>Pornește de la un șablon</h2>
-      <p class="field-hint">Alege situația cea mai apropiată de a ta și modifică de acolo. E mai rapid decât să scrii categoriile de la zero, iar sumele îți dau un reper despre ce e obișnuit.</p>
+      <h2>Șabloane de buget</h2>
+      <p class="field-hint">Șabloanele oferă categorii și valori orientative pentru câteva situații frecvente. Toate valorile pot fi adaptate situației individuale.</p>
       <div class="template-grid" id="sabloane"></div>
     </div>
 
     <div class="card">
       <h2>Venituri</h2>
-      <p class="field-hint">Adaugă fiecare sursă separat. Pentru veniturile care variază de la o lună la alta, folosește media ultimelor 3-6 luni și marchează-le ca variabile: bugetul te avertizează dacă depinzi prea mult de ele.</p>
+      <p class="field-hint">Fiecare sursă este înregistrată separat. Pentru veniturile variabile poate fi utilizată media ultimelor trei până la șase luni.</p>
 
       <div class="income-header">
         <span>Sursă</span><span>Tip</span><span>Sumă/lună</span><span></span>
@@ -137,8 +137,8 @@
 
       <p id="insight" class="insight"></p>
 
-      <h3>Unde merge fiecare leu</h3>
-      <p class="field-hint">Include și economiile: sunt o destinație a venitului ca oricare alta, iar asta este chiar ideea unui buget, fiecare leu are un singur loc unde se duce.</p>
+      <h3>Distribuția venitului</h3>
+      <p class="field-hint">Reprezentarea include economiile ca destinație distinctă a venitului, alături de nevoi și dorințe.</p>
       <div class="view-toggle" role="group" aria-label="Mod de afișare">
         <button id="btn-view-chart" class="primary" type="button">Grafic</button>
         <button id="btn-view-table" type="button">Tabel</button>
@@ -180,7 +180,7 @@
 
     <div class="card" id="repere-card">
       <h2>Repere pe categorii</h2>
-      <p class="field-hint">Intervale în care se încadrează de obicei bugetele echilibrate, ca procent din venitul net. Nu sunt norme: depășirea unuia înseamnă doar că altceva trebuie să fie sub reper.</p>
+      <p class="field-hint">Intervale orientative exprimate ca procent din venitul net. Acestea nu constituie norme și trebuie interpretate în funcție de situația individuală.</p>
       <div id="repere-lista"></div>
     </div>
 
@@ -216,7 +216,7 @@
 
     <div class="card">
       <h2>Copie de siguranță</h2>
-      <p class="field-hint">Bugetul se salvează doar în acest browser. Dacă golești datele browserului sau schimbi dispozitivul, se pierde. Exportă din când în când un fișier, pe care îl poți reimporta oricând.</p>
+      <p class="field-hint">Bugetul este salvat exclusiv în browserul curent. Ștergerea datelor browserului sau schimbarea dispozitivului elimină accesul la aceste informații. Fișierul exportat poate fi utilizat pentru restaurare.</p>
       <div class="button-row">
         <button id="btn-export-json" type="button">Exportă bugetul (.json)</button>
         <button id="btn-import-json" type="button">Importă din fișier</button>
@@ -229,8 +229,8 @@
     <div class="card">
       <h2>Ce faci cu rezultatul</h2>
       <ul class="notes-list">
-        <li><strong>Automatizează economiile.</strong> Un transfer programat în ziua salariului economisește mai mult decât orice intenție, pentru că elimină decizia lunară. Vezi <a href="obiective.html">obiectivele de economisire</a> ca să-ți dai o țintă și un termen.</li>
-        <li><strong>Verifică datoriile scumpe înainte de a investi.</strong> Un credit rapid de la IFN cu 24% dobândă anulează orice randament realist. Vezi <a href="datorii.html">calculatorul de datorii</a>.</li>
+        <li><strong>Automatizarea economisirii.</strong> Un transfer programat în ziua încasării venitului reduce dependența de deciziile luate pe parcursul lunii. Modulul de <a href="obiective.html">obiective de economisire</a> permite stabilirea unei sume și a unui termen.</li>
+        <li><strong>Prioritatea datoriilor cu dobândă ridicată.</strong> Costul unui credit rapid poate depăși randamentul realist al unei investiții. Situația poate fi analizată în <a href="datorii.html">calculatorul de datorii</a>.</li>
         <li><strong>Soldul lunar nu trebuie să stea în cont.</strong> Inflația îl erodează tăcut (vezi <a href="inflatie.html">cât</a>). După fondul de urgență, restul are alt loc: <a href="investitii.html">simulatorul de investiții</a>.</li>
         <li><strong>Reia în fiecare lună.</strong> Primele două-trei luni de buget sunt estimări; abia de la a patra valorile devin realiste, pentru că apar cheltuielile pe care le uitaseși.</li>
       </ul>

@@ -664,7 +664,7 @@ function randeazaDistributie(luna, camp) {
     gol.textContent =
       camp === "real"
         ? "Nu ai notat încă nicio cheltuială reală în luna asta."
-        : "Adaugă sume planificate ca să vezi distribuția.";
+        : "Distribuția poate fi calculată după introducerea sumelor planificate.";
     legenda.appendChild(gol);
 
     const rand = document.createElement("tr");
@@ -771,7 +771,7 @@ function randeazaRegula(luna, camp) {
   if (ind.venit <= 0) {
     const gol = document.createElement("p");
     gol.className = "field-hint";
-    gol.textContent = "Introdu venitul ca să vezi cum te încadrezi.";
+    gol.textContent = "Este necesară introducerea venitului pentru calcularea distribuției.";
     wrap.appendChild(gol);
     return;
   }
@@ -916,7 +916,7 @@ function randeazaRepere(luna) {
   if (venit <= 0) {
     const gol = document.createElement("p");
     gol.className = "field-hint";
-    gol.textContent = "Introdu venitul ca să compari categoriile cu reperele.";
+    gol.textContent = "Este necesară introducerea venitului pentru compararea cu reperele.";
     mount.appendChild(gol);
     return;
   }
@@ -1188,7 +1188,7 @@ function randeazaConcluzie(ind, luna) {
   const el = document.getElementById("insight");
 
   if (ind.venit <= 0) {
-    el.textContent = "Introdu venitul lunar ca să vezi o evaluare.";
+    el.textContent = "Este necesară introducerea venitului lunar pentru realizarea evaluării.";
     return;
   }
 

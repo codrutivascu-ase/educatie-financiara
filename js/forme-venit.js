@@ -34,7 +34,7 @@ const DESTINATII = [
 /* ------------------------------------------------------------------ */
 
 function citesteOptiuni() {
-  const salariuMinim = readNumber("salariu-minim", { min: 100, max: 20000, fallback: 4050 });
+  const salariuMinim = readNumber("salariu-minim", { min: 100, max: 20000, fallback: 4325 });
   const pragCas = readNumber("prag-cas", { min: 0, max: 60, fallback: 12 });
 
   return {
@@ -52,7 +52,7 @@ function citesteOptiuni() {
       pragCasInferior: pragCas,
       pragCasSuperior: pragCas * 2,
       cassMin: readNumber("cass-min", { min: 0, max: 60, fallback: 6 }),
-      cassMax: readNumber("cass-max", { min: 1, max: 200, fallback: 60 }),
+      cassMax: readNumber("cass-max", { min: 1, max: 200, fallback: 72 }),
     },
     coteSrl: {
       micro: readNumber("cota-micro", { min: 0, max: 20, fallback: 1 }),
@@ -92,7 +92,7 @@ function renderBars(rez, suma, castigator) {
     if (forma.cheie === castigator) {
       const marca = document.createElement("span");
       marca.className = "forma-marca";
-      marca.textContent = "cel mai mare net";
+      marca.textContent = "venitul net maxim";
       nume.appendChild(marca);
     }
     head.appendChild(nume);
@@ -424,13 +424,6 @@ function renderPraguri(rez, opts) {
       efect: "Baza CASS se dublează dintr-odată.",
     },
     {
-      nume: "Cota micro urcă de la 1% la 3% (60.000 EUR venituri, SRL cu angajat)",
-      valoare: 60000 * CURS_EUR_IMPLICIT,
-      curent: rez.srlAngajat.venituri,
-      referinta: "venitul anual al firmei",
-      efect: "Se aplică și sub acest prag dacă activitatea este de consultanță sau management.",
-    },
-    {
       nume: "Ieșirea din regimul micro (100.000 EUR venituri, SRL cu angajat)",
       valoare: 100000 * CURS_EUR_IMPLICIT,
       curent: rez.srlAngajat.venituri,
@@ -516,7 +509,7 @@ function recalc() {
   /* --- Concluzie ---------------------------------------------------- */
   const insight = document.getElementById("insight");
   if (suma <= 0) {
-    insight.textContent = "Introdu suma anuală ca să vezi comparația.";
+    insight.textContent = "Este necesară introducerea sumei anuale pentru realizarea comparației.";
     return;
   }
 
@@ -535,9 +528,9 @@ function recalc() {
       : "SRL-ul fără angajat câștigă pentru că evită costul salariatului obligatoriu, deși plătește impozit pe profit în loc de impozitul mai mic pe micro.";
 
   insight.textContent =
-    `Din ${formatRON(suma)} pe an, ${castigator.fraza} îți lasă cel mai mult: ` +
-    `${formatRON(rCastigator.netAnual)}, adică ${formatPercent(rCastigator.netAnual / suma)}. ` +
-    `Urmează ${frazaAlDoilea}, cu ${formatRON(alDoilea.net)}, o diferență de ` +
+    `Pentru suma anuală de ${formatRON(suma)}, ${castigator.fraza} conduce la venitul net maxim: ` +
+    `${formatRON(rCastigator.netAnual)}, reprezentând ${formatPercent(rCastigator.netAnual / suma)} din baza comparată. ` +
+    `A doua valoare este obținută prin ${frazaAlDoilea}: ${formatRON(alDoilea.net)}, cu o diferență de ` +
     `${formatRON(rCastigator.netAnual - alDoilea.net)} pe an. ${explicatie}`;
 }
 
@@ -547,6 +540,6 @@ document.querySelectorAll("main select").forEach((el) => el.addEventListener("ch
 
 setupViewToggle();
 setupCsvExport("#table-view table", "forme-venit.csv");
-persistInputs("forme-venit", recalc);
+persistInputs("forme-venit-2026-v3", recalc);
 onChartNeedsRedraw(recalc);
 recalc();

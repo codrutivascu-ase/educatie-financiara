@@ -85,7 +85,7 @@ function recalc() {
   /* --- Concluzie ---------------------------------------------------- */
   const insight = document.getElementById("insight");
   if (suma <= 0) {
-    insight.textContent = "Introdu o sumă sau alege un exemplu de mai sus.";
+    insight.textContent = "Este necesară introducerea unei sume sau selectarea unui exemplu.";
   } else if (frecventa === "unic") {
     const multiplu = totalCheltuit > 0 ? totalInvestit / totalCheltuit : 0;
     insight.textContent =

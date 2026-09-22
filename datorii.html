@@ -17,7 +17,7 @@
 
   <main id="main">
     <h1>Calculator de datorii</h1>
-    <p class="subtitle">Vezi dacă te-ai încadra la un credit pentru locuință, cum arată graficul de rambursare și cât economisești dacă plătești anticipat.</p>
+    <p class="subtitle">Estimarea ratei și a costului total al unui credit, împreună cu efectele rambursării anticipate și ale gradului de îndatorare.</p>
 
     <details class="explainer">
       <summary>Cum se calculează o rată de credit</summary>
@@ -41,7 +41,7 @@
         <div class="field">
           <label for="dobanda">Dobândă anuală (%)</label>
           <input type="number" id="dobanda" min="0" max="50" step="0.1" value="6.5" />
-          <p class="field-hint">Folosește DAE dacă vrei să incluzi și comisioanele. Creditele în lei au dobânzi de 6-7%, cele în euro de 4-5%.</p>
+          <p class="field-hint">Pentru graficul de rambursare se utilizează dobânda nominală din oferta băncii. DAE este adecvată pentru compararea costului total al ofertelor, dar poate include costuri care nu intră în formula ratei.</p>
         </div>
         <div class="field">
           <label for="perioada">Perioadă (ani)</label>
@@ -50,7 +50,7 @@
         <div class="field">
           <label for="curs">Curs euro (lei)</label>
           <input type="number" id="curs" min="1" max="20" step="0.01" value="5.2" />
-          <p class="field-hint">Folosit doar ca să compare rata cu venitul tău în lei. Calculul presupune un curs constant pe toată durata creditului, ceea ce în realitate nu se întâmplă.</p>
+          <p class="field-hint">Cursul este utilizat pentru compararea ratei în euro cu venitul exprimat în lei. Modelul presupune un curs constant pe întreaga perioadă.</p>
         </div>
       </div>
     </div>
@@ -86,7 +86,7 @@
       </div>
 
       <p id="eligibility-msg" class="insight"></p>
-      <p class="insight">Calcul orientativ, bazat pe regula generală de îndatorare maximă de 40% folosită de bănci în România. <strong>Nu este o pre-aprobare:</strong> băncile analizează suplimentar istoricul din Biroul de Credit, vechimea în muncă, tipul veniturilor și stabilitatea angajatorului. Dacă iei creditul în euro dar câștigi în lei, banca aplică un prag de îndatorare mai strict, tocmai din cauza riscului valutar.</p>
+      <p class="insight">Calculul este orientativ și folosește ca reper un grad de îndatorare de 40%. <strong>Nu reprezintă aprobarea băncii:</strong> analiza poate include istoricul din Biroul de Credit, vechimea în muncă, tipul veniturilor și riscul valutar.</p>
     </div>
 
     <div class="card">
@@ -173,7 +173,7 @@
 
     <div class="card">
       <h2>Mai multe datorii: avalanșă vs. bulgăre de zăpadă</h2>
-      <p class="field-hint">Dacă ai mai multe datorii simultan, plătești rata la toate și trimiți restul bugetului către una singură. Întrebarea e: către care? Sumele de aici sunt în lei, pentru că sunt datorii de consum, contractate în lei. Cele 24% de la creditul rapid sunt o valoare prudentă: la instituțiile financiare nebancare, DAE trece frecvent de 50%.</p>
+      <p class="field-hint">Ambele strategii presupun plata obligației minime pentru fiecare datorie și alocarea sumei rămase către o singură datorie. Metoda avalanșă acordă prioritate dobânzii celei mai mari, iar metoda bulgăre de zăpadă acordă prioritate soldului celui mai mic.</p>
 
       <div class="debt-grid">
         <div class="debt-head">
@@ -207,7 +207,7 @@
 
       <div id="strategy-result"></div>
 
-      <p class="insight"><strong>Avalanșa</strong> este matematic optimă: ataci întâi dobânda cea mai mare, deci plătești cel mai puțin în total. <strong>Bulgărele</strong> atacă întâi soldul cel mai mic, ca să elimini rapid o datorie întreagă. Costă ceva mai mult, dar studiile de comportament arată că oamenii duc planul la capăt mai des atunci când văd victorii rapide. Cea mai bună strategie este cea pe care chiar o urmezi.</p>
+      <p class="insight"><strong>Metoda avalanșă</strong> acordă prioritate datoriei cu dobânda cea mai mare și minimizează costul total. <strong>Metoda bulgăre de zăpadă</strong> acordă prioritate soldului celui mai mic și permite închiderea mai rapidă a unei datorii. A doua metodă poate avea un cost mai mare, dar rezultatele intermediare pot susține consecvența planului de rambursare.</p>
       <div class="button-row">
         <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
       </div>
