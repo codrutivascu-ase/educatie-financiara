@@ -334,10 +334,10 @@ function randeazaCheltuieli() {
     const swatch = document.createElement("span");
     swatch.className = "swatch";
     if (chelt.slot !== null) {
-      swatch.style.background = seriesColor(chelt.slot);
+      swatch.style.background = fundalSlot(chelt.slot);
     } else {
       swatch.classList.add("swatch-altele");
-      swatch.title = "Apare grupat în „Altele” pe grafic; în tabel apare separat";
+      swatch.title = `Peste ${SLOTURI_CULOARE} categorii, restul apar grupate în „Altele” pe grafic; în tabel apar separat`;
     }
     row.appendChild(swatch);
 
@@ -513,7 +513,7 @@ function randeazaNotaFrecventa() {
 
   if (rare.length === 0) {
     nota.textContent =
-      "Toate categoriile sunt lunare. Dacă ai asigurări, taxe sau vacanțe care se plătesc " +
+      "Toate categoriile sunt lunare. Dacă ai asigurări, impozite locale sau vacanțe care se plătesc " +
       "o dată pe an, adaugă-le cu frecvența potrivită, iar suma se împarte automat la lună.";
     return;
   }
@@ -606,6 +606,16 @@ function ascundeTooltip() {
 }
 
 /**
+ * Fundalul unui slot: culoarea plină pentru primele opt, apoi aceeași
+ * culoare hașurată pe diagonală, ca să rămână distinctă de cea plină.
+ */
+function fundalSlot(slot) {
+  const culoare = seriesColor(slot % CULORI_PALETA);
+  if (slot < CULORI_PALETA) return culoare;
+  return `repeating-linear-gradient(45deg, ${culoare} 0 4px, var(--surface-card) 4px 7px)`;
+}
+
+/**
  * Segmentele graficului, cu categoriile fără slot adunate în „Altele”.
  *
  * Paleta are opt culori distincte inclusiv pentru daltonism; a noua nu se
@@ -620,7 +630,9 @@ function segmenteGrafic(luna, camp) {
     .map((c) => ({
       nume: c.nume.trim() || "Fără nume",
       suma: valoare(c),
-      culoare: seriesColor(c.slot),
+      culoare: fundalSlot(c.slot),
+      // Pe hașură textul alb nu are contrast suficient.
+      hasurat: c.slot >= CULORI_PALETA,
       esteAltele: false,
     }));
 
@@ -689,7 +701,7 @@ function randeazaDistributie(luna, camp) {
     // Eticheta apare doar dacă încape; altfel rămâne în tooltip și în tabel.
     // Pe „Altele” o sărim: textul alb nu are contrast suficient pe griul
     // neutru, iar valoarea este oricum în legendă și în tabel.
-    if (cota >= PRAG_ETICHETA && !seg.esteAltele) {
+    if (cota >= PRAG_ETICHETA && !seg.esteAltele && !seg.hasurat) {
       el.textContent = formatPercent(cota);
       el.classList.add("labelled");
     }
@@ -723,8 +735,9 @@ function randeazaDistributie(luna, camp) {
     if (seg.esteAltele) {
       notaAltele.textContent =
         `„Altele” cuprinde ${seg.numarCategorii} ${seg.numarCategorii === 1 ? "categorie" : "categorii"}, ` +
-        `pentru că paleta are ${SLOTURI_CULOARE} culori care rămân distincte inclusiv pentru daltonism, ` +
-        `iar dincolo de ele segmentele nu s-ar mai putea deosebi. În tabel apar toate, separat.`;
+        `pentru că graficul poate arăta distinct cel mult ${SLOTURI_CULOARE} categorii ` +
+        `(${CULORI_PALETA} culori pline și aceleași culori hașurate), iar dincolo de ele segmentele nu s-ar mai putea deosebi. ` +
+        `În tabel apar toate, separat.`;
     }
   });
 

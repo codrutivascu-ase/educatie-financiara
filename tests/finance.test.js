@@ -612,8 +612,8 @@ describe("venitSRLProfit — SRL fără angajat, impozit pe profit", () => {
   it("impozitează dividendele și CASS la fel ca varianta cu angajat", () => {
     const r = venitSRLProfit({ venituri: 120000, cheltuieli: 0, salariuMinim: sm });
     expect(r.impozitDividende).toBeCloseTo(100800 * 0.16, 0.01);
-    expect(r.bazaCass).toBeCloseTo(24 * sm, 0.01);
-    expect(r.cass).toBeCloseTo(24 * sm * 0.1, 0.01);
+    expect(r.bazaCass).toBeCloseTo(12 * sm, 0.01);
+    expect(r.cass).toBeCloseTo(12 * sm * 0.1, 0.01);
   });
 
   it("nu adaugă niciun salariu propriu — nu are angajat", () => {
@@ -734,5 +734,29 @@ describe("projectPension — plafonul aplicat proiecției", () => {
       wageGrowthPct: 5, replacementRatePct: 55, salaryCap: 30000,
     });
     expect(p1.grossAtRetirement).toBe(30000);
+  });
+});
+
+describe("savingsBalances / requiredMonthlySaving — economisire cu capitalizare", () => {
+  it("la capitalizare lunară coincide cu FV din Excel", () => {
+    // =FV(7%/12;120;-500;-10000) = 106.639,02
+    expect(savingsBalances(10000, 500, 120, 7, 12)[120]).toBeCloseTo(106639.02, 0.01);
+  });
+
+  it("la capitalizare lunară coincide cu PMT din Excel", () => {
+    // =PMT(5%/12;60;0;-50000) = 735,23
+    expect(requiredMonthlySaving(50000, 0, 60, 5, 12)).toBeCloseTo(735.23, 0.01);
+  });
+
+  it("capitalizarea mai rară dă un sold mai mic", () => {
+    const lunar = savingsBalances(10000, 500, 120, 7, 12)[120];
+    const trimestrial = savingsBalances(10000, 500, 120, 7, 4)[120];
+    const anual = savingsBalances(10000, 500, 120, 7, 1)[120];
+    expect(trimestrial).toBeLessThan(lunar);
+    expect(anual).toBeLessThan(trimestrial);
+  });
+
+  it("fără dobândă, depunerea este simpla împărțire", () => {
+    expect(requiredMonthlySaving(12000, 0, 12, 0, 12)).toBeCloseTo(1000, 0.001);
   });
 });

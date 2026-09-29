@@ -45,6 +45,11 @@
           <input type="number" id="dobanda-cont" min="0" max="20" step="0.1" value="0" />
           <p class="field-hint">Lasă 0 dacă banii stau într-un cont curent, fără dobândă.</p>
         </div>
+        <div class="field">
+          <label for="capitalizare">Capitalizarea dobânzii</label>
+          <select id="capitalizare"></select>
+          <p class="field-hint">Cât de des se adaugă dobânda la sold. Dobânda este nominală anuală, ca în contractul băncii.</p>
+        </div>
       </div>
       <div class="button-row">
         <button id="btn-reset" type="button" class="ghost">Resetează valorile</button>
@@ -122,6 +127,7 @@
   </footer>
 
   <script src="js/common.js"></script>
+  <script src="js/finance.js"></script>
   <script src="js/linechart.js"></script>
   <script src="js/obiective.js"></script>
   <script>renderNav("obiective.html");</script>

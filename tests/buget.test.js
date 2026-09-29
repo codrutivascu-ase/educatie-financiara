@@ -336,10 +336,10 @@ describe("slotLiber — repartizarea culorilor", () => {
     expect(slotLiber([{ slot: 0 }, { slot: null }, { slot: null }])).toBe(1);
   });
 
-  it("nu depășește numărul de culori din paletă", () => {
-    // A noua culoare nu se generează și nu se reia: ar deveni
-    // indistinctă de una existentă pentru cititorii cu daltonism.
-    expect(SLOTURI_CULOARE).toBeLessThan(9);
+  it("fiecare culoare din paletă apare cel mult de două ori (plină și hașurată)", () => {
+    // O culoare nouă nu se generează: ar deveni indistinctă de una
+    // existentă pentru cititorii cu daltonism.
+    expect(SLOTURI_CULOARE).toBe(CULORI_PALETA * 2);
   });
 });
 

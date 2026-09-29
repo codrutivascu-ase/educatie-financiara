@@ -313,7 +313,7 @@ const GLOSAR = [
     termen: "Cheltuială deductibilă",
     termeni: ["cheltuială deductibilă", "cheltuieli deductibile"],
     categorie: "Antreprenoriat",
-    scurt: "Cheltuială legată de activitate, care scade venitul pe care se calculează taxele.",
+    scurt: "Cheltuială legată de activitate, care scade venitul pe care se calculează impozitul.",
     lung: "Deductibilitatea nu înseamnă că statul îți dă banii înapoi: o cheltuială de 1.000 de lei îți reduce impozitul cu aproximativ 100 de lei, nu cu 1.000. Rămâi deci în minus cu restul, de aceea nu are sens să cumperi ceva doar „ca să deduci”. Condiția este ca ea să servească activității și să fie justificată cu document. La o microîntreprindere, cheltuielile nu reduc impozitul pe venituri, ci doar profitul distribuibil.",
     vezi: ["pfa", "microintreprindere"],
   },

@@ -444,7 +444,7 @@ function brutDinNet(targetNet, opts = {}) {
  */
 const FISCAL_FORME = {
   an: 2026,
-  salariuMinim: 4325,
+  salariuMinim: 4050,
   pfa: {
     cas: 25,
     cass: 10,
@@ -598,7 +598,7 @@ function venitPFA({
 /**
  * SRL plătitor de impozit pe veniturile microîntreprinderilor, cu un
  * angajat obligatoriu — de obicei chiar patronul, angajat pe el însuși
- * cu salariul minim, ca să optimizeze taxele.
+ * cu salariul minim, ca să optimizeze impozitele și contribuțiile.
  *
  * Trei lucruri sunt ușor de ratat aici:
  *
@@ -1007,4 +1007,71 @@ function purchasingPower(amount, years, inflationPct, interestPct = 0) {
     real,
     lostPct: amount > 0 ? 1 - real[real.length - 1] / amount : 0,
   };
+}
+
+/**
+ * Frecvențele de capitalizare oferite în module: de câte ori pe an se
+ * adaugă dobânda la sold.
+ */
+const CAPITALIZARI = [
+  { value: 12, label: "Lunară" },
+  { value: 4, label: "Trimestrială" },
+  { value: 2, label: "Semestrială" },
+  { value: 1, label: "Anuală" },
+];
+
+/**
+ * Soldul unui plan de economisire, lună cu lună, cu depuneri lunare și
+ * capitalizare la frecvența aleasă.
+ *
+ * Dobânda anuală este nominală, ca în contractele bancare și în funcțiile
+ * PMT/FV din Excel: pe lună se cuvine rata / 12. Dobânda se acumulează
+ * lunar pe soldul existent, dar se adaugă la sold (și începe să producă
+ * la rândul ei dobândă) abia la capitalizare. La capitalizare lunară
+ * rezultatul coincide exact cu FV(rata/12; n; −PMT; −PV).
+ *
+ * Depunerea se face la finalul fiecărei luni.
+ *
+ * @param {number} initial suma de pornire
+ * @param {number} monthly depunerea lunară
+ * @param {number} months numărul de luni
+ * @param {number} annualRatePct dobânda anuală nominală, %
+ * @param {number} [periodsPerYear] capitalizări pe an (12, 4, 2 sau 1)
+ * @returns {number[]} soldul la finalul fiecărei luni; indexul 0 = start
+ */
+function savingsBalances(initial, monthly, months, annualRatePct, periodsPerYear = 12) {
+  const r = annualRatePct / 100 / 12;
+  const step = Math.max(1, Math.round(12 / periodsPerYear));
+  const values = [initial];
+  let balance = initial;
+  let accrued = 0;
+  for (let m = 1; m <= months; m++) {
+    accrued += balance * r;
+    if (m % step === 0) {
+      balance += accrued;
+      accrued = 0;
+    }
+    balance += monthly;
+    // Afișăm și dobânda acumulată, dar încă necapitalizată, altfel
+    // graficul ar avea trepte artificiale între capitalizări.
+    values.push(balance + accrued);
+  }
+  return values;
+}
+
+/**
+ * Depunerea lunară necesară pentru a ajunge la o țintă.
+ *
+ * Soldul final depinde liniar de depunere, deci îl calculăm o dată fără
+ * depuneri și o dată cu 1 leu pe lună, apoi rezolvăm direct. La
+ * capitalizare lunară rezultatul coincide cu PMT(rata/12; n; −PV; FV).
+ */
+function requiredMonthlySaving(target, current, months, annualRatePct, periodsPerYear = 12) {
+  const remaining = Math.max(0, target - current);
+  if (months <= 0) return remaining;
+  const fara = savingsBalances(current, 0, months, annualRatePct, periodsPerYear)[months];
+  const cuUnLeu = savingsBalances(current, 1, months, annualRatePct, periodsPerYear)[months];
+  const perLeu = cuUnLeu - fara;
+  if (perLeu <= 0) return remaining;
+  return Math.max(0, (target - fara) / perLeu);
 }

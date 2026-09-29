@@ -56,23 +56,12 @@ function renderScenarioRows() {
 /* ------------------------------------------------------------------ */
 
 /**
- * Evoluția soldului, an cu an, cu depuneri lunare și capitalizare lunară.
- *
- * Contribuția se adaugă la finalul fiecărei luni, iar dobânda se aplică
- * pe soldul existent — modelul uzual pentru un plan de economisire.
+ * Evoluția soldului, an cu an, cu depuneri lunare la final de lună și
+ * capitalizarea aleasă (vezi savingsBalances din finance.js).
  */
-function projectBalances(initial, monthly, years, annualRatePct) {
-  // Rata lunară echivalentă, calculată compus (nu simpla împărțire la 12).
-  const monthlyRate = Math.pow(1 + annualRatePct / 100, 1 / 12) - 1;
-  const values = [initial];
-  let balance = initial;
-  for (let year = 1; year <= years; year++) {
-    for (let m = 0; m < 12; m++) {
-      balance = balance * (1 + monthlyRate) + monthly;
-    }
-    values.push(balance);
-  }
-  return values;
+function projectBalances(initial, monthly, years, annualRatePct, periodsPerYear) {
+  const lunar = savingsBalances(initial, monthly, years * 12, annualRatePct, periodsPerYear);
+  return Array.from({ length: years + 1 }, (_, y) => lunar[y * 12]);
 }
 
 function recalc() {
@@ -80,6 +69,7 @@ function recalc() {
   const monthly = readNumber("contributie-lunara", { min: 0, max: 200000 });
   const years = readNumber("orizont", { min: 1, max: 40, fallback: 10, integer: true });
   const inflatie = readNumber("inflatie", { min: 0, max: 20 });
+  const capitalizare = Number(document.getElementById("capitalizare").value) || 12;
 
   const totalDepus = initial + monthly * 12 * years;
   document.getElementById("stat-depus").textContent = formatRON(totalDepus);
@@ -94,7 +84,7 @@ function recalc() {
       name: sc.name,
       color: seriesColor(index),
       rate,
-      values: projectBalances(initial, monthly, years, rate),
+      values: projectBalances(initial, monthly, years, rate, capitalizare),
     };
   });
 
@@ -318,6 +308,7 @@ function ruleazaMonteCarlo() {
 document.getElementById("btn-monte-carlo").addEventListener("click", ruleazaMonteCarlo);
 
 /* Pornire */
+fillCapitalizare(document.getElementById("capitalizare"), recalc);
 setupViewToggle(recalc);
 setupCsvExport("#table-view table", "simulare-investitii.csv");
 renderScenarioRows();

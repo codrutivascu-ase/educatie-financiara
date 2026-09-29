@@ -34,7 +34,7 @@ const DESTINATII = [
 /* ------------------------------------------------------------------ */
 
 function citesteOptiuni() {
-  const salariuMinim = readNumber("salariu-minim", { min: 100, max: 20000, fallback: 4325 });
+  const salariuMinim = readNumber("salariu-minim", { min: 100, max: 20000, fallback: FISCAL_FORME.salariuMinim });
   const pragCas = readNumber("prag-cas", { min: 0, max: 60, fallback: 12 });
 
   return {
@@ -347,7 +347,7 @@ function renderTable(rez) {
   // Ultimul rând, cota efectivă, se citește mai bine în procente.
   const tr = document.createElement("tr");
   [
-    "Cât se duce în taxe și costuri",
+    "Cât se duce în impozite, contribuții și costuri",
     cim.rataEfectiva,
     pfa.rataEfectiva,
     srlAngajat.rataEfectiva,

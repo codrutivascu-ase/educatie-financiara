@@ -35,18 +35,19 @@ const FRECVENTE_CHELTUIALA = [
 ];
 
 /**
- * Câte categorii pot primi o culoare proprie în grafic.
+ * Câte categorii pot primi o reprezentare proprie în grafic.
  *
- * Paleta are opt culori distincte inclusiv pentru daltonism. A noua nu se
- * generează și nu se reia — categoriile fără slot se adună în „Altele”.
+ * Paleta are opt culori distincte inclusiv pentru daltonism. Primele opt
+ * categorii primesc culoarea plină; următoarele opt reiau aceleași culori,
+ * dar hașurate, ca să rămână deosebite fără a inventa nuanțe noi care s-ar
+ * confunda. Abia dincolo de 16 categorii restul se adună în „Altele”.
  * În tabel apar toate, individual.
  *
  * „Altele” nu consumă un slot: fiind un rest, nu o categorie, primește
- * un gri neutru. Astfel toate cele opt culori rămân pentru categorii
- * reale — inclusiv pentru cea de economii, care altfel ar fi ajuns
- * prima în gruparea „Altele” din structura implicită.
+ * un gri neutru.
  */
-const SLOTURI_CULOARE = 8;
+const CULORI_PALETA = 8;
+const SLOTURI_CULOARE = CULORI_PALETA * 2;
 
 /* ------------------------------------------------------------------ */
 /* Construcție și migrare                                              */
@@ -284,6 +285,12 @@ function normalizeazaStare(raw) {
         : 1,
       slot: Number.isInteger(c.slot) && c.slot >= 0 && c.slot < SLOTURI_CULOARE ? c.slot : null,
     }));
+
+    // Categoriile rămase fără culoare când graficul avea doar opt sloturi
+    // primesc acum unul dintre sloturile hașurate, dacă mai sunt libere.
+    cheltuieli.forEach((c) => {
+      if (c.slot === null) c.slot = slotLiber(cheltuieli);
+    });
 
     luni[cheie] = { venituri, cheltuieli };
   });
