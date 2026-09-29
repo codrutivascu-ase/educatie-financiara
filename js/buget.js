@@ -577,34 +577,6 @@ document.getElementById("btn-camp-real").addEventListener("click", () => setCamp
 /* Distribuția cheltuielilor                                           */
 /* ------------------------------------------------------------------ */
 
-/** Sub acest procent, eticheta nu încape în segment și rămâne în tooltip. */
-const PRAG_ETICHETA = 0.08;
-
-/** Tooltip pentru un segment, construit doar din text. */
-function arataTooltipCategorie(evt, nume, suma, cota) {
-  tooltip.textContent = "";
-
-  const cap = document.createElement("div");
-  cap.className = "tt-head";
-  cap.textContent = nume;
-  tooltip.appendChild(cap);
-
-  const rand = document.createElement("div");
-  rand.className = "tt-row";
-  const tare = document.createElement("strong");
-  tare.textContent = formatRON(suma);
-  rand.appendChild(tare);
-  rand.appendChild(document.createTextNode(` · ${formatPercent(cota)}`));
-  tooltip.appendChild(rand);
-
-  positionTooltip(tooltip, evt.clientX, evt.clientY);
-  tooltip.classList.add("visible");
-}
-
-function ascundeTooltip() {
-  tooltip.classList.remove("visible");
-}
-
 /**
  * Culoarea unui slot: culoarea plină pentru primele opt, apoi aceeași
  * nuanță, mai pală (amestecată cu alb), pentru următoarele opt.
@@ -655,169 +627,208 @@ function segmenteGrafic(luna, camp) {
   return cuSlot;
 }
 
+/** Animăm intrarea feliilor o singură dată, nu la fiecare tastă. */
+let inelAnimat = false;
+
 /**
  * Graficul circular (inel) al distribuției, desenat ca SVG.
  *
  * Felii separate printr-un spațiu de culoarea fundalului, ca vecinele de
- * nuanțe apropiate să rămână distincte. În centru stă totalul lunar.
+ * nuanțe apropiate să rămână distincte. În centru stă totalul lunar; la
+ * trecerea peste o felie (sau peste eticheta ei), felia iese ușor în afară,
+ * celelalte se estompează, iar centrul arată categoria respectivă.
+ *
+ * Cu `cuEtichete`, fiecare felie primește în jur o etichetă legată de ea
+ * printr-o linie curbă în culoarea feliei — varianta pentru ecrane late.
  */
 function deseneazaInel(mount, segmente, total, cuEtichete = false) {
-  const NS = "http://www.w3.org/2000/svg";
   const R = 100;
-  const r = 58;
-  const svg = document.createElementNS(NS, "svg");
-  svg.setAttribute("viewBox", "-110 -110 220 220");
-  svg.setAttribute("role", "img");
+  const r = 62;
+
+  const svg = elSvg("svg", { viewBox: "-110 -110 220 220", role: "img", class: "pie-svg" });
   svg.setAttribute("aria-label", "Distribuția cheltuielilor pe categorii");
+  if (!inelAnimat) svg.classList.add("pie-intro");
+
+  const stratFelii = elSvg("g", { class: "pie-slices" }, svg);
+  const stratEtichete = elSvg("g", { class: "pie-labels" }, svg);
+
+  /* --- Centrul: totalul, înlocuit la hover de categoria activă ------- */
+  const centru = elSvg("g", { class: "pie-center" }, svg);
+  const cEticheta = elSvg("text", { class: "pie-center-label", y: -18 }, centru);
+  const cValoare = elSvg("text", { class: "pie-center-value", y: 5 }, centru);
+  const cNota = elSvg("text", { class: "pie-center-note", y: 23 }, centru);
+  const arataCentru = (seg) => {
+    if (seg) {
+      cEticheta.textContent = seg.nume.length > 18 ? seg.nume.slice(0, 17) + "…" : seg.nume;
+      cValoare.textContent = formatRON(seg.suma);
+      cNota.textContent = `${formatPercent(seg.suma / total)} din total`;
+    } else {
+      cEticheta.textContent = "Total lunar";
+      cValoare.textContent = formatRON(total);
+      cNota.textContent = `${segmente.length} ${segmente.length === 1 ? "categorie" : "categorii"}`;
+    }
+  };
+  arataCentru(null);
 
   const punct = (raza, unghi) => [raza * Math.sin(unghi), -raza * Math.cos(unghi)];
+  const felii = [];
+
   let start = 0;
-  segmente.forEach((seg) => {
+  segmente.forEach((seg, index) => {
     const cota = seg.suma / total;
     const sfarsit = start + cota * 2 * Math.PI;
-    let felie;
+    const mijloc = (start + sfarsit) / 2;
+
+    const g = elSvg("g", { class: "pie-group" }, stratFelii);
+    // Direcția în care felia activă iese din inel.
+    g.style.setProperty("--dx", `${(6 * Math.sin(mijloc)).toFixed(2)}px`);
+    g.style.setProperty("--dy", `${(-6 * Math.cos(mijloc)).toFixed(2)}px`);
+    g.style.setProperty("--i", String(index));
+
+    let d;
     if (segmente.length === 1) {
-      // Un arc de 360° nu se poate desena ca path; folosim două cercuri.
-      felie = document.createElementNS(NS, "path");
-      felie.setAttribute("d", `M ${R} 0 A ${R} ${R} 0 1 1 ${-R} 0 A ${R} ${R} 0 1 1 ${R} 0 Z M ${r} 0 A ${r} ${r} 0 1 0 ${-r} 0 A ${r} ${r} 0 1 0 ${r} 0 Z`);
-      felie.setAttribute("fill-rule", "evenodd");
+      // Un arc de 360° nu se poate desena dintr-o bucată; folosim două cercuri.
+      d = `M ${R} 0 A ${R} ${R} 0 1 1 ${-R} 0 A ${R} ${R} 0 1 1 ${R} 0 Z ` +
+        `M ${r} 0 A ${r} ${r} 0 1 0 ${-r} 0 A ${r} ${r} 0 1 0 ${r} 0 Z`;
     } else {
       const mare = sfarsit - start > Math.PI ? 1 : 0;
       const [x1, y1] = punct(R, start);
       const [x2, y2] = punct(R, sfarsit);
       const [x3, y3] = punct(r, sfarsit);
       const [x4, y4] = punct(r, start);
-      felie = document.createElementNS(NS, "path");
-      felie.setAttribute(
-        "d",
-        `M ${x1} ${y1} A ${R} ${R} 0 ${mare} 1 ${x2} ${y2} L ${x3} ${y3} A ${r} ${r} 0 ${mare} 0 ${x4} ${y4} Z`
-      );
+      d = `M ${x1} ${y1} A ${R} ${R} 0 ${mare} 1 ${x2} ${y2} L ${x3} ${y3} A ${r} ${r} 0 ${mare} 0 ${x4} ${y4} Z`;
     }
+    const felie = elSvg("path", { d, class: "pie-slice", tabindex: 0, "fill-rule": "evenodd" }, g);
     felie.style.fill = seg.culoare;
-    felie.classList.add("pie-slice");
-    felie.setAttribute("tabindex", "0");
     felie.setAttribute("aria-label", `${seg.nume}: ${formatRON(seg.suma)}, ${formatPercent(cota)}`);
-    felie.addEventListener("mousemove", (e) => arataTooltipCategorie(e, seg.nume, seg.suma, cota));
-    felie.addEventListener("mouseleave", ascundeTooltip);
-    felie.addEventListener("focus", () => {
-      const b = felie.getBoundingClientRect();
-      arataTooltipCategorie({ clientX: b.left + b.width / 2, clientY: b.top }, seg.nume, seg.suma, cota);
-    });
-    felie.addEventListener("blur", ascundeTooltip);
-    svg.appendChild(felie);
+
+    felii.push({ seg, cota, mijloc, g, felie, eticheta: null });
     start = sfarsit;
   });
 
-  const eticheta = document.createElementNS(NS, "text");
-  eticheta.setAttribute("class", "pie-center-label");
-  eticheta.setAttribute("y", "-6");
-  eticheta.textContent = "Total lunar";
-  svg.appendChild(eticheta);
-  const valoare = document.createElementNS(NS, "text");
-  valoare.setAttribute("class", "pie-center-value");
-  valoare.setAttribute("y", "16");
-  valoare.textContent = formatRON(total);
-  svg.appendChild(valoare);
+  /* --- Evidențierea: felia activă iese în afară, restul se estompează -- */
+  const activeaza = (activa) => {
+    svg.classList.toggle("has-active", Boolean(activa));
+    felii.forEach((f) => {
+      f.g.classList.toggle("active", f === activa);
+      if (f.eticheta) f.eticheta.classList.toggle("active", f === activa);
+    });
+    arataCentru(activa ? activa.seg : null);
+  };
+  felii.forEach((f) => {
+    f.felie.addEventListener("mouseenter", () => activeaza(f));
+    f.felie.addEventListener("mouseleave", () => activeaza(null));
+    f.felie.addEventListener("focus", () => activeaza(f));
+    f.felie.addEventListener("blur", () => activeaza(null));
+    // Pe telefon nu există hover: atingerea unei felii o selectează.
+    f.felie.addEventListener("click", () => activeaza(f));
+  });
 
-  if (cuEtichete) adaugaEtichete(svg, segmente, total, R);
+  if (cuEtichete) adaugaEtichete(svg, stratEtichete, felii, R, activeaza);
 
   mount.appendChild(svg);
 }
 
+/** Creează un element SVG cu atributele date și, opțional, îl atașează. */
+function elSvg(tag, attrs = {}, parinte) {
+  const n = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, String(v)));
+  if (parinte) parinte.appendChild(n);
+  return n;
+}
+
 /**
- * Etichete în jurul inelului, legate de felii prin linii frânte.
+ * Etichete în jurul inelului, legate de felii prin linii curbe.
  *
  * Fiecare etichetă pleacă spre stânga sau spre dreapta, după partea pe
- * care se află mijlocul feliei. Pe fiecare parte etichetele se ordonează
- * vertical și se împing una de alta, ca să nu se suprapună.
+ * care se află mijlocul feliei. Etichetele prea apropiate formează
+ * grupuri centrate pe pozițiile dorite, deci nu se suprapun, iar ordinea
+ * lor verticală o păstrează pe a feliilor — liniile nu se încrucișează.
  */
-function adaugaEtichete(svg, segmente, total, R) {
-  const NS = "http://www.w3.org/2000/svg";
-  const PAS = 30; // distanța verticală minimă dintre două etichete
-  const COT = R + 14; // raza la care se proiectează poziția dorită a etichetei
-  const X_TEXT = R + 52;
+function adaugaEtichete(svg, strat, felii, R, activeaza) {
+  const PAS = 34; // distanța verticală minimă dintre două etichete
+  const X_TEXT = R + 60;
+  const LATIME_TEXT = 150;
 
-  let start = 0;
-  const etichete = segmente.map((seg) => {
-    const cota = seg.suma / total;
-    const mijloc = start + cota * Math.PI;
-    start += cota * 2 * Math.PI;
-    const dreapta = Math.sin(mijloc) >= 0;
-    return {
-      seg,
-      cota,
-      dreapta,
-      x0: (R + 2) * Math.sin(mijloc),
-      y0: -(R + 2) * Math.cos(mijloc),
-      y: -COT * Math.cos(mijloc),
-      y0Dorit: -COT * Math.cos(mijloc),
-    };
+  felii.forEach((f) => {
+    f.dreapta = Math.sin(f.mijloc) >= 0;
+    f.x0 = (R + 4) * Math.sin(f.mijloc);
+    f.y0 = -(R + 4) * Math.cos(f.mijloc);
+    f.dorit = -(R + 16) * Math.cos(f.mijloc);
   });
 
-  let sus = -R;
-  let jos = R;
+  let sus = -R - 10;
+  let jos = R + 10;
   [true, false].forEach((parte) => {
-    const lista = etichete.filter((e) => e.dreapta === parte).sort((a, b) => a.y - b.y);
-    // Etichetele prea apropiate formează grupuri; fiecare grup se
-    // centrează pe media pozițiilor dorite, deci se întinde și în sus, și
-    // în jos. Grupurile care ajung să se atingă se unesc, până nu mai
-    // există suprapuneri.
-    let grupuri = lista.map((e) => ({ membri: [e], dorit: e.y }));
+    const lista = felii.filter((f) => f.dreapta === parte).sort((a, b) => a.dorit - b.dorit);
+    const blocuri = lista.map((f) => ({ membri: [f] }));
     let schimbat = true;
     while (schimbat) {
       schimbat = false;
-      grupuri.forEach((g) => {
-        const medie = g.membri.reduce((s, e) => s + e.y0Dorit, 0) / g.membri.length;
-        g.start = medie - ((g.membri.length - 1) * PAS) / 2;
+      blocuri.forEach((b) => {
+        const medie = b.membri.reduce((s, f) => s + f.dorit, 0) / b.membri.length;
+        b.start = medie - ((b.membri.length - 1) * PAS) / 2;
       });
-      for (let i = 1; i < grupuri.length; i++) {
-        const prev = grupuri[i - 1];
-        if (prev.start + prev.membri.length * PAS > grupuri[i].start) {
-          prev.membri.push(...grupuri[i].membri);
-          grupuri.splice(i, 1);
+      for (let i = 1; i < blocuri.length; i++) {
+        const prev = blocuri[i - 1];
+        if (prev.start + prev.membri.length * PAS > blocuri[i].start) {
+          prev.membri.push(...blocuri[i].membri);
+          blocuri.splice(i, 1);
           schimbat = true;
           break;
         }
       }
     }
-    grupuri.forEach((g) => g.membri.forEach((e, i) => (e.y = g.start + i * PAS)));
-    lista.forEach((e) => {
-      sus = Math.min(sus, e.y - 14);
-      jos = Math.max(jos, e.y + 18);
+    blocuri.forEach((b) => b.membri.forEach((f, i) => (f.y = b.start + i * PAS)));
+    lista.forEach((f) => {
+      sus = Math.min(sus, f.y - 18);
+      jos = Math.max(jos, f.y + 20);
     });
   });
 
-  etichete.forEach((e) => {
-    const semn = e.dreapta ? 1 : -1;
-    const xCapat = semn * (X_TEXT - 6);
-    // Linia pleacă din felie direct spre coloana etichetelor și abia apoi
-    // merge orizontal. Etichetele păstrează ordinea verticală a feliilor,
-    // deci liniile de pe aceeași parte nu se încrucișează.
-    const xCot = semn * Math.max(Math.abs(e.x0) + 8, R + 24);
-    const linie = document.createElementNS(NS, "polyline");
-    linie.setAttribute("points", `${e.x0},${e.y0} ${xCot},${e.y} ${xCapat},${e.y}`);
-    linie.setAttribute("class", "pie-leader");
-    svg.appendChild(linie);
+  felii.forEach((f) => {
+    const semn = f.dreapta ? 1 : -1;
+    const xCapat = semn * (X_TEXT - 14);
+    const xCot = semn * Math.max(Math.abs(f.x0) + 14, R + 26);
 
-    const text = document.createElementNS(NS, "text");
-    text.setAttribute("class", "pie-label");
-    text.setAttribute("text-anchor", e.dreapta ? "start" : "end");
-    const nume = document.createElementNS(NS, "tspan");
-    nume.setAttribute("x", String(semn * X_TEXT));
-    nume.setAttribute("y", String(e.y - 2));
-    nume.textContent = e.seg.nume;
-    const valoare = document.createElementNS(NS, "tspan");
-    valoare.setAttribute("class", "pie-label-value");
-    valoare.setAttribute("x", String(semn * X_TEXT));
-    valoare.setAttribute("y", String(e.y + 11));
-    valoare.textContent = `${formatRON(e.seg.suma)} · ${formatPercent(e.cota)}`;
-    text.appendChild(nume);
-    text.appendChild(valoare);
-    svg.appendChild(text);
+    const g = elSvg("g", { class: "pie-label" }, strat);
+
+    // Curbă netedă din felie spre coloana etichetelor, apoi orizontal.
+    const linie = elSvg("path", {
+      class: "pie-leader",
+      d: `M ${f.x0} ${f.y0} Q ${xCot} ${f.y0} ${xCot + semn * 10} ${f.y} L ${xCapat} ${f.y}`,
+    }, g);
+    linie.style.stroke = f.seg.culoare;
+    const punctFelie = elSvg("circle", { class: "pie-dot", cx: f.x0, cy: f.y0, r: 2 }, g);
+    punctFelie.style.fill = f.seg.culoare;
+    const punctEticheta = elSvg("circle", { class: "pie-dot-end", cx: xCapat, cy: f.y, r: 3 }, g);
+    punctEticheta.style.stroke = f.seg.culoare;
+
+    const xText = semn * X_TEXT;
+    const ancora = f.dreapta ? "start" : "end";
+    const nume = elSvg("text", { class: "pie-label-name", x: xText, y: f.y - 3, "text-anchor": ancora }, g);
+    nume.textContent = f.seg.nume;
+    const rand = elSvg("text", { class: "pie-label-value", x: xText, y: f.y + 11, "text-anchor": ancora }, g);
+    const suma = elSvg("tspan", {}, rand);
+    suma.textContent = formatRON(f.seg.suma);
+    const procent = elSvg("tspan", { class: "pie-label-pct", dx: 6 }, rand);
+    procent.textContent = formatPercent(f.cota);
+
+    // Zonă invizibilă mai mare decât textul, ca hover-ul să fie ușor de nimerit.
+    const tinta = elSvg("rect", {
+      class: "pie-label-hit",
+      x: f.dreapta ? xCapat - 6 : xCapat - LATIME_TEXT,
+      y: f.y - 17,
+      width: LATIME_TEXT + 6,
+      height: 34,
+    }, g);
+    tinta.addEventListener("mouseenter", () => activeaza(f));
+    tinta.addEventListener("mouseleave", () => activeaza(null));
+
+    f.eticheta = g;
   });
 
-  // Lărgim cadrul ca să încapă etichetele de pe ambele părți.
-  const LATIME = X_TEXT + 150;
+  const LATIME = X_TEXT + LATIME_TEXT;
   svg.setAttribute("viewBox", `${-LATIME} ${sus - 4} ${2 * LATIME} ${jos - sus + 8}`);
 }
 
@@ -859,6 +870,7 @@ function randeazaDistributie(luna, camp) {
   // afișează doar pe cea potrivită.
   deseneazaInel(grafic, segmente, total);
   deseneazaInel(graficEtichete, segmente, total, true);
+  inelAnimat = true;
 
   segmente.forEach((seg) => {
     const cota = seg.suma / total;
