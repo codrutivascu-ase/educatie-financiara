@@ -48,8 +48,13 @@
         </div>
         <div class="field">
           <label for="capitalizare">Capitalizarea randamentului</label>
-          <select id="capitalizare"></select>
-          <p class="field-hint">Cât de des se adaugă câștigul la sold. Randamentul este nominal anual, ca în funcțiile FV/PMT din Excel.</p>
+          <select id="capitalizare">
+            <option value="12" selected>Lunară</option>
+            <option value="4">Trimestrială</option>
+            <option value="2">Semestrială</option>
+            <option value="1">Anuală</option>
+          </select>
+          <p class="field-hint">Capitalizarea înseamnă adăugarea dobânzii la sold. Din acel moment, dobânda produce la rândul ei dobândă. Cu cât capitalizarea este mai deasă, cu atât suma finală este mai mare.</p>
         </div>
       </div>
       <div id="prefill-slot"></div>

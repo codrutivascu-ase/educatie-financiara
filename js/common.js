@@ -671,19 +671,3 @@ function onChartNeedsRedraw(render) {
   window.addEventListener("ef-theme-change", render);
 }
 
-/**
- * Umple lista de frecvențe de capitalizare (CAPITALIZARI din finance.js)
- * și recalculează la schimbare. Trebuie apelată înainte de persistInputs,
- * ca valoarea salvată să aibă o opțiune în care să fie restaurată.
- */
-function fillCapitalizare(select, onChange) {
-  select.textContent = "";
-  CAPITALIZARI.forEach((c) => {
-    const opt = document.createElement("option");
-    opt.value = String(c.value);
-    opt.textContent = c.label;
-    select.appendChild(opt);
-  });
-  select.value = "12";
-  select.addEventListener("change", onChange);
-}

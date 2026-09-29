@@ -308,7 +308,7 @@ function ruleazaMonteCarlo() {
 document.getElementById("btn-monte-carlo").addEventListener("click", ruleazaMonteCarlo);
 
 /* Pornire */
-fillCapitalizare(document.getElementById("capitalizare"), recalc);
+document.getElementById("capitalizare").addEventListener("change", recalc);
 setupViewToggle(recalc);
 setupCsvExport("#table-view table", "simulare-investitii.csv");
 renderScenarioRows();

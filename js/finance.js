@@ -1010,17 +1010,6 @@ function purchasingPower(amount, years, inflationPct, interestPct = 0) {
 }
 
 /**
- * Frecvențele de capitalizare oferite în module: de câte ori pe an se
- * adaugă dobânda la sold.
- */
-const CAPITALIZARI = [
-  { value: 12, label: "Lunară" },
-  { value: 4, label: "Trimestrială" },
-  { value: 2, label: "Semestrială" },
-  { value: 1, label: "Anuală" },
-];
-
-/**
  * Soldul unui plan de economisire, lună cu lună, cu depuneri lunare și
  * capitalizare la frecvența aleasă.
  *

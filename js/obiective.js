@@ -101,7 +101,7 @@ function recalc() {
 }
 
 /* Pornire */
-fillCapitalizare(document.getElementById("capitalizare"), recalc);
+document.getElementById("capitalizare").addEventListener("change", recalc);
 setupViewToggle(recalc);
 setupCsvExport("#table-view table", "obiectiv-economisire.csv");
 persistInputs("obiective", recalc);

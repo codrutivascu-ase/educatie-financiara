@@ -1,16 +1,17 @@
 /**
  * Service worker: face aplicația utilizabilă fără conexiune.
  *
- * Strategia este „stale-while-revalidate”: servim imediat versiunea din
- * cache (deci pagina se deschide instantaneu și offline) și, în paralel,
- * aducem versiunea nouă pentru data viitoare.
+ * Strategia este „network-first”: cerem mereu versiunea de pe server,
+ * ocolind și cache-ul HTTP al browserului, și folosim cache-ul doar când
+ * nu există conexiune. Altfel, după o actualizare, pagina putea primi
+ * HTML nou cu JavaScript vechi (sau invers), iar modulele se stricau.
  *
  * Aplicația nu are backend și nu trimite date nicăieri, deci nu există
  * nimic sensibil de pus în cache — tot ce introduce utilizatorul rămâne
  * în localStorage, care nu trece prin service worker.
  */
 
-const CACHE_NAME = "educatie-financiara-v6";
+const CACHE_NAME = "educatie-financiara-v7";
 
 /** Tot ce trebuie disponibil offline de la prima vizită. */
 const PRECACHE = [
@@ -64,7 +65,7 @@ self.addEventListener("install", (event) => {
       .then((cache) =>
         Promise.all(
           PRECACHE.map((url) =>
-            cache.add(url).catch(() => {
+            cache.add(new Request(url, { cache: "reload" })).catch(() => {
               /* resursă indisponibilă la instalare — se va prinde la prima cerere */
             })
           )
@@ -93,23 +94,20 @@ self.addEventListener("fetch", (event) => {
   if (new URL(request.url).origin !== self.location.origin) return;
 
   event.respondWith(
-    caches.match(request).then((cached) => {
-      const network = fetch(request)
-        .then((response) => {
-          // Doar răspunsurile complete și valide merită păstrate.
-          if (response && response.status === 200 && response.type === "basic") {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-          }
-          return response;
-        })
-        .catch(() => {
-          // Offline: dacă e o navigare, dăm pagina principală din cache.
-          if (request.mode === "navigate") return caches.match("index.html");
-          return undefined;
-        });
-
-      return cached || network;
-    })
+    fetch(request, { cache: "no-cache" })
+      .then((response) => {
+        // Doar răspunsurile complete și valide merită păstrate.
+        if (response && response.status === 200 && response.type === "basic") {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        }
+        return response;
+      })
+      .catch(() =>
+        // Offline: servim din cache; la o navigare necunoscută, pagina principală.
+        caches.match(request).then(
+          (cached) => cached || (request.mode === "navigate" ? caches.match("index.html") : undefined)
+        )
+      )
   );
 });
