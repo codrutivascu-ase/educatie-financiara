@@ -761,9 +761,11 @@ button.ghost:hover { color: var(--text-primary); }
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 20px 32px;
+  justify-content: center;
+  gap: 24px 48px;
+  margin-top: 8px;
 }
-.pie-chart { width: 240px; max-width: 100%; flex: none; }
+.pie-chart { width: 340px; max-width: 100%; flex: none; }
 .pie-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
 .pie-slice {
   stroke: var(--surface-card);
@@ -775,7 +777,7 @@ button.ghost:hover { color: var(--text-primary); }
 .pie-slice:hover, .pie-slice:focus-visible { opacity: 0.8; }
 .pie-center-label { text-anchor: middle; font-size: 11px; fill: var(--text-muted); }
 .pie-center-value { text-anchor: middle; font-size: 17px; font-weight: 600; fill: var(--text-primary); }
-.legend.legend-column { flex-direction: column; gap: 8px; margin-top: 0; flex: 1 1 220px; }
+.legend.legend-column { flex-direction: column; gap: 8px; margin-top: 0; flex: none; }
 
 /* Legendă. */
 .legend {
