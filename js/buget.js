@@ -673,8 +673,12 @@ function deseneazaInel(mount, segmente, total, cuEtichete = false) {
   const punct = (raza, unghi) => [raza * Math.sin(unghi), -raza * Math.cos(unghi)];
   const felii = [];
 
-  let start = 0;
-  segmente.forEach((seg, index) => {
+  // Cu etichete, ordinea și rotația inelului se aleg astfel încât
+  // etichetele să se împartă echilibrat între stânga și dreapta.
+  const asezare = cuEtichete ? aranjeazaInel(segmente, total, R) : { ordine: segmente, rotatie: 0 };
+
+  let start = asezare.rotatie;
+  asezare.ordine.forEach((seg, index) => {
     const cota = seg.suma / total;
     const sfarsit = start + cota * 2 * Math.PI;
     const mijloc = (start + sfarsit) / 2;
@@ -737,19 +741,23 @@ function elSvg(tag, attrs = {}, parinte) {
   return n;
 }
 
-/**
- * Etichete în jurul inelului, legate de felii prin linii curbe.
- *
- * Fiecare etichetă pleacă spre stânga sau spre dreapta, după partea pe
- * care se află mijlocul feliei. Etichetele prea apropiate formează
- * grupuri centrate pe pozițiile dorite, deci nu se suprapun, iar ordinea
- * lor verticală o păstrează pe a feliilor — liniile nu se încrucișează.
- */
-function adaugaEtichete(svg, strat, felii, R, activeaza) {
-  const PAS = 34; // distanța verticală minimă dintre două etichete
-  const X_TEXT = R + 60;
-  const LATIME_TEXT = 150;
+/** Distanța verticală minimă dintre două etichete ale inelului. */
+const PAS_ETICHETE = 34;
 
+/**
+ * Poziția verticală a etichetelor, pentru feliile date (cu `mijloc`, unghiul
+ * de la ora 12, în sensul acelor de ceasornic).
+ *
+ * Fiecare etichetă stă pe partea pe care se află mijlocul feliei.
+ * Etichetele prea apropiate formează grupuri centrate pe pozițiile dorite,
+ * deci nu se suprapun, iar ordinea lor verticală o păstrează pe a feliilor,
+ * astfel că liniile nu se încrucișează.
+ *
+ * Întoarce limitele verticale ocupate și un cost: cât de departe au ajuns
+ * etichetele de felia lor, plus o penalizare pentru dezechilibrul dintre
+ * cele două părți. Costul mic înseamnă un grafic aerisit.
+ */
+function aseazaEtichete(felii, R) {
   felii.forEach((f) => {
     f.dreapta = Math.sin(f.mijloc) >= 0;
     f.x0 = (R + 4) * Math.sin(f.mijloc);
@@ -759,19 +767,22 @@ function adaugaEtichete(svg, strat, felii, R, activeaza) {
 
   let sus = -R - 10;
   let jos = R + 10;
+  let cost = 0;
+  const numar = { true: 0, false: 0 };
   [true, false].forEach((parte) => {
     const lista = felii.filter((f) => f.dreapta === parte).sort((a, b) => a.dorit - b.dorit);
+    numar[parte] = lista.length;
     const blocuri = lista.map((f) => ({ membri: [f] }));
     let schimbat = true;
     while (schimbat) {
       schimbat = false;
       blocuri.forEach((b) => {
         const medie = b.membri.reduce((s, f) => s + f.dorit, 0) / b.membri.length;
-        b.start = medie - ((b.membri.length - 1) * PAS) / 2;
+        b.start = medie - ((b.membri.length - 1) * PAS_ETICHETE) / 2;
       });
       for (let i = 1; i < blocuri.length; i++) {
         const prev = blocuri[i - 1];
-        if (prev.start + prev.membri.length * PAS > blocuri[i].start) {
+        if (prev.start + prev.membri.length * PAS_ETICHETE > blocuri[i].start) {
           prev.membri.push(...blocuri[i].membri);
           blocuri.splice(i, 1);
           schimbat = true;
@@ -779,12 +790,66 @@ function adaugaEtichete(svg, strat, felii, R, activeaza) {
         }
       }
     }
-    blocuri.forEach((b) => b.membri.forEach((f, i) => (f.y = b.start + i * PAS)));
+    blocuri.forEach((b) => b.membri.forEach((f, i) => (f.y = b.start + i * PAS_ETICHETE)));
     lista.forEach((f) => {
+      cost += Math.abs(f.y - f.dorit);
       sus = Math.min(sus, f.y - 18);
       jos = Math.max(jos, f.y + 20);
     });
   });
+  // Înălțimea totală contează și ea: un grafic înalt și îngust arată înghesuit.
+  cost += Math.abs(numar.true - numar.false) * 40 + (jos - sus) * 0.5;
+  return { sus, jos, cost };
+}
+
+/**
+ * Ordinea feliilor și rotația inelului pentru varianta cu etichete.
+ *
+ * Așezate strict descrescător, feliile mari ar umple o parte a inelului,
+ * iar toate cele mici s-ar îngrămădi pe cealaltă. Încercăm deci două
+ * ordini: pe părți (cea mai mare spre dreapta, a doua spre stânga, și tot
+ * așa) și în zigzag (mare, mică, mare, mică — feliile mici se răspândesc
+ * în jurul inelului). Pentru fiecare, încercăm rotații din 5 în 5 grade și
+ * păstrăm combinația cu etichetele cel mai bine repartizate.
+ */
+function aranjeazaInel(segmente, total, R) {
+  const peParti = [
+    ...segmente.filter((_, i) => i % 2 === 0),
+    ...segmente.filter((_, i) => i % 2 === 1).reverse(),
+  ];
+  const zigzag = [];
+  for (let i = 0, j = segmente.length - 1; i <= j; i++, j--) {
+    zigzag.push(segmente[i]);
+    if (i !== j) zigzag.push(segmente[j]);
+  }
+
+  let best = { ordine: segmente, rotatie: 0, cost: Infinity };
+  [peParti, zigzag].forEach((ordine) => {
+    for (let grade = 0; grade < 360; grade += 5) {
+      const rotatie = (grade * Math.PI) / 180;
+      let start = rotatie;
+      const felii = ordine.map((seg) => {
+        const unghi = (seg.suma / total) * 2 * Math.PI;
+        const f = { mijloc: start + unghi / 2 };
+        start += unghi;
+        return f;
+      });
+      const { cost } = aseazaEtichete(felii, R);
+      if (cost < best.cost) best = { ordine, rotatie, cost };
+    }
+  });
+  return best;
+}
+
+/**
+ * Etichete în jurul inelului, legate de felii prin linii curbe. Poziția
+ * lor vine din aseazaEtichete.
+ */
+function adaugaEtichete(svg, strat, felii, R, activeaza) {
+  const X_TEXT = R + 60;
+  const LATIME_TEXT = 150;
+
+  const { sus, jos } = aseazaEtichete(felii, R);
 
   felii.forEach((f) => {
     const semn = f.dreapta ? 1 : -1;
