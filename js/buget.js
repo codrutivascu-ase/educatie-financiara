@@ -661,7 +661,7 @@ function segmenteGrafic(luna, camp) {
  * Felii separate printr-un spațiu de culoarea fundalului, ca vecinele de
  * nuanțe apropiate să rămână distincte. În centru stă totalul lunar.
  */
-function deseneazaInel(mount, segmente, total) {
+function deseneazaInel(mount, segmente, total, cuEtichete = false) {
   const NS = "http://www.w3.org/2000/svg";
   const R = 100;
   const r = 58;
@@ -719,15 +719,116 @@ function deseneazaInel(mount, segmente, total) {
   valoare.textContent = formatRON(total);
   svg.appendChild(valoare);
 
+  if (cuEtichete) adaugaEtichete(svg, segmente, total, R);
+
   mount.appendChild(svg);
+}
+
+/**
+ * Etichete în jurul inelului, legate de felii prin linii frânte.
+ *
+ * Fiecare etichetă pleacă spre stânga sau spre dreapta, după partea pe
+ * care se află mijlocul feliei. Pe fiecare parte etichetele se ordonează
+ * vertical și se împing una de alta, ca să nu se suprapună.
+ */
+function adaugaEtichete(svg, segmente, total, R) {
+  const NS = "http://www.w3.org/2000/svg";
+  const PAS = 30; // distanța verticală minimă dintre două etichete
+  const COT = R + 14; // raza la care se proiectează poziția dorită a etichetei
+  const X_TEXT = R + 52;
+
+  let start = 0;
+  const etichete = segmente.map((seg) => {
+    const cota = seg.suma / total;
+    const mijloc = start + cota * Math.PI;
+    start += cota * 2 * Math.PI;
+    const dreapta = Math.sin(mijloc) >= 0;
+    return {
+      seg,
+      cota,
+      dreapta,
+      x0: (R + 2) * Math.sin(mijloc),
+      y0: -(R + 2) * Math.cos(mijloc),
+      y: -COT * Math.cos(mijloc),
+      y0Dorit: -COT * Math.cos(mijloc),
+    };
+  });
+
+  let sus = -R;
+  let jos = R;
+  [true, false].forEach((parte) => {
+    const lista = etichete.filter((e) => e.dreapta === parte).sort((a, b) => a.y - b.y);
+    // Etichetele prea apropiate formează grupuri; fiecare grup se
+    // centrează pe media pozițiilor dorite, deci se întinde și în sus, și
+    // în jos. Grupurile care ajung să se atingă se unesc, până nu mai
+    // există suprapuneri.
+    let grupuri = lista.map((e) => ({ membri: [e], dorit: e.y }));
+    let schimbat = true;
+    while (schimbat) {
+      schimbat = false;
+      grupuri.forEach((g) => {
+        const medie = g.membri.reduce((s, e) => s + e.y0Dorit, 0) / g.membri.length;
+        g.start = medie - ((g.membri.length - 1) * PAS) / 2;
+      });
+      for (let i = 1; i < grupuri.length; i++) {
+        const prev = grupuri[i - 1];
+        if (prev.start + prev.membri.length * PAS > grupuri[i].start) {
+          prev.membri.push(...grupuri[i].membri);
+          grupuri.splice(i, 1);
+          schimbat = true;
+          break;
+        }
+      }
+    }
+    grupuri.forEach((g) => g.membri.forEach((e, i) => (e.y = g.start + i * PAS)));
+    lista.forEach((e) => {
+      sus = Math.min(sus, e.y - 14);
+      jos = Math.max(jos, e.y + 18);
+    });
+  });
+
+  etichete.forEach((e) => {
+    const semn = e.dreapta ? 1 : -1;
+    const xCapat = semn * (X_TEXT - 6);
+    // Linia pleacă din felie direct spre coloana etichetelor și abia apoi
+    // merge orizontal. Etichetele păstrează ordinea verticală a feliilor,
+    // deci liniile de pe aceeași parte nu se încrucișează.
+    const xCot = semn * Math.max(Math.abs(e.x0) + 8, R + 24);
+    const linie = document.createElementNS(NS, "polyline");
+    linie.setAttribute("points", `${e.x0},${e.y0} ${xCot},${e.y} ${xCapat},${e.y}`);
+    linie.setAttribute("class", "pie-leader");
+    svg.appendChild(linie);
+
+    const text = document.createElementNS(NS, "text");
+    text.setAttribute("class", "pie-label");
+    text.setAttribute("text-anchor", e.dreapta ? "start" : "end");
+    const nume = document.createElementNS(NS, "tspan");
+    nume.setAttribute("x", String(semn * X_TEXT));
+    nume.setAttribute("y", String(e.y - 2));
+    nume.textContent = e.seg.nume;
+    const valoare = document.createElementNS(NS, "tspan");
+    valoare.setAttribute("class", "pie-label-value");
+    valoare.setAttribute("x", String(semn * X_TEXT));
+    valoare.setAttribute("y", String(e.y + 11));
+    valoare.textContent = `${formatRON(e.seg.suma)} · ${formatPercent(e.cota)}`;
+    text.appendChild(nume);
+    text.appendChild(valoare);
+    svg.appendChild(text);
+  });
+
+  // Lărgim cadrul ca să încapă etichetele de pe ambele părți.
+  const LATIME = X_TEXT + 150;
+  svg.setAttribute("viewBox", `${-LATIME} ${sus - 4} ${2 * LATIME} ${jos - sus + 8}`);
 }
 
 function randeazaDistributie(luna, camp) {
   const grafic = document.getElementById("pie-chart");
+  const graficEtichete = document.getElementById("pie-chart-labels");
   const legenda = document.getElementById("legend");
   const corpTabel = document.getElementById("table-body");
   const notaAltele = document.getElementById("altele-note");
   grafic.textContent = "";
+  graficEtichete.textContent = "";
   legenda.textContent = "";
   corpTabel.textContent = "";
   notaAltele.textContent = "";
@@ -753,7 +854,11 @@ function randeazaDistributie(luna, camp) {
     return;
   }
 
+  // Două variante: cu etichete legate de felii pe ecrane late, cu legendă
+  // alăturată pe telefon, unde etichetele nu ar mai avea loc. CSS-ul o
+  // afișează doar pe cea potrivită.
   deseneazaInel(grafic, segmente, total);
+  deseneazaInel(graficEtichete, segmente, total, true);
 
   segmente.forEach((seg) => {
     const cota = seg.suma / total;

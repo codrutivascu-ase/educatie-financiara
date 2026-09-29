@@ -779,6 +779,17 @@ button.ghost:hover { color: var(--text-primary); }
 .pie-center-value { text-anchor: middle; font-size: 17px; font-weight: 600; fill: var(--text-primary); }
 .legend.legend-column { flex-direction: column; gap: 8px; margin-top: 0; flex: none; }
 
+/* Varianta cu etichete legate de felii, doar pe ecrane late. */
+.pie-chart-labels { display: none; max-width: 820px; margin: 8px auto 0; }
+.pie-chart-labels svg { display: block; width: 100%; height: auto; overflow: visible; }
+.pie-leader { fill: none; stroke: var(--text-muted); stroke-width: 1px; }
+.pie-label { font-size: 11px; fill: var(--text-secondary); }
+.pie-label-value { font-weight: 600; fill: var(--text-primary); }
+@media (min-width: 900px) {
+  .pie-chart-labels { display: block; }
+  .pie-chart-labels + .pie-layout { display: none; }
+}
+
 /* Legendă. */
 .legend {
   display: flex;
