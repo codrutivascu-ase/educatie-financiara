@@ -336,7 +336,7 @@ describe("slotLiber — repartizarea culorilor", () => {
     expect(slotLiber([{ slot: 0 }, { slot: null }, { slot: null }])).toBe(1);
   });
 
-  it("fiecare culoare din paletă apare cel mult de două ori (plină și hașurată)", () => {
+  it("fiecare culoare din paletă apare cel mult de două ori (plină și pală)", () => {
     // O culoare nouă nu se generează: ar deveni indistinctă de una
     // existentă pentru cititorii cu daltonism.
     expect(SLOTURI_CULOARE).toBe(CULORI_PALETA * 2);

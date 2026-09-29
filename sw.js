@@ -11,7 +11,7 @@
  * în localStorage, care nu trece prin service worker.
  */
 
-const CACHE_NAME = "educatie-financiara-v7";
+const CACHE_NAME = "educatie-financiara-v8";
 
 /** Tot ce trebuie disponibil offline de la prima vizită. */
 const PRECACHE = [

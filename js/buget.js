@@ -606,13 +606,13 @@ function ascundeTooltip() {
 }
 
 /**
- * Fundalul unui slot: culoarea plină pentru primele opt, apoi aceeași
- * culoare hașurată pe diagonală, ca să rămână distinctă de cea plină.
+ * Culoarea unui slot: culoarea plină pentru primele opt, apoi aceeași
+ * nuanță, mai pală (amestecată cu alb), pentru următoarele opt.
  */
 function fundalSlot(slot) {
   const culoare = seriesColor(slot % CULORI_PALETA);
   if (slot < CULORI_PALETA) return culoare;
-  return `repeating-linear-gradient(45deg, ${culoare} 0 4px, var(--surface-card) 4px 7px)`;
+  return `color-mix(in srgb, ${culoare} 50%, #ffffff)`;
 }
 
 /**
@@ -631,8 +631,6 @@ function segmenteGrafic(luna, camp) {
       nume: c.nume.trim() || "Fără nume",
       suma: valoare(c),
       culoare: fundalSlot(c.slot),
-      // Pe hașură textul alb nu are contrast suficient.
-      hasurat: c.slot >= CULORI_PALETA,
       esteAltele: false,
     }));
 
@@ -657,12 +655,79 @@ function segmenteGrafic(luna, camp) {
   return cuSlot;
 }
 
+/**
+ * Graficul circular (inel) al distribuției, desenat ca SVG.
+ *
+ * Felii separate printr-un spațiu de culoarea fundalului, ca vecinele de
+ * nuanțe apropiate să rămână distincte. În centru stă totalul lunar.
+ */
+function deseneazaInel(mount, segmente, total) {
+  const NS = "http://www.w3.org/2000/svg";
+  const R = 100;
+  const r = 58;
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", "-110 -110 220 220");
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", "Distribuția cheltuielilor pe categorii");
+
+  const punct = (raza, unghi) => [raza * Math.sin(unghi), -raza * Math.cos(unghi)];
+  let start = 0;
+  segmente.forEach((seg) => {
+    const cota = seg.suma / total;
+    const sfarsit = start + cota * 2 * Math.PI;
+    let felie;
+    if (segmente.length === 1) {
+      // Un arc de 360° nu se poate desena ca path; folosim două cercuri.
+      felie = document.createElementNS(NS, "path");
+      felie.setAttribute("d", `M ${R} 0 A ${R} ${R} 0 1 1 ${-R} 0 A ${R} ${R} 0 1 1 ${R} 0 Z M ${r} 0 A ${r} ${r} 0 1 0 ${-r} 0 A ${r} ${r} 0 1 0 ${r} 0 Z`);
+      felie.setAttribute("fill-rule", "evenodd");
+    } else {
+      const mare = sfarsit - start > Math.PI ? 1 : 0;
+      const [x1, y1] = punct(R, start);
+      const [x2, y2] = punct(R, sfarsit);
+      const [x3, y3] = punct(r, sfarsit);
+      const [x4, y4] = punct(r, start);
+      felie = document.createElementNS(NS, "path");
+      felie.setAttribute(
+        "d",
+        `M ${x1} ${y1} A ${R} ${R} 0 ${mare} 1 ${x2} ${y2} L ${x3} ${y3} A ${r} ${r} 0 ${mare} 0 ${x4} ${y4} Z`
+      );
+    }
+    felie.style.fill = seg.culoare;
+    felie.classList.add("pie-slice");
+    felie.setAttribute("tabindex", "0");
+    felie.setAttribute("aria-label", `${seg.nume}: ${formatRON(seg.suma)}, ${formatPercent(cota)}`);
+    felie.addEventListener("mousemove", (e) => arataTooltipCategorie(e, seg.nume, seg.suma, cota));
+    felie.addEventListener("mouseleave", ascundeTooltip);
+    felie.addEventListener("focus", () => {
+      const b = felie.getBoundingClientRect();
+      arataTooltipCategorie({ clientX: b.left + b.width / 2, clientY: b.top }, seg.nume, seg.suma, cota);
+    });
+    felie.addEventListener("blur", ascundeTooltip);
+    svg.appendChild(felie);
+    start = sfarsit;
+  });
+
+  const eticheta = document.createElementNS(NS, "text");
+  eticheta.setAttribute("class", "pie-center-label");
+  eticheta.setAttribute("y", "-6");
+  eticheta.textContent = "Total lunar";
+  svg.appendChild(eticheta);
+  const valoare = document.createElementNS(NS, "text");
+  valoare.setAttribute("class", "pie-center-value");
+  valoare.setAttribute("y", "16");
+  valoare.textContent = formatRON(total);
+  svg.appendChild(valoare);
+
+  mount.appendChild(svg);
+}
+
 function randeazaDistributie(luna, camp) {
-  const bara = document.getElementById("stacked-bar");
+  const grafic = document.getElementById("pie-chart");
   const legenda = document.getElementById("legend");
   const corpTabel = document.getElementById("table-body");
   const notaAltele = document.getElementById("altele-note");
-  bara.textContent = "";
+  grafic.textContent = "";
   legenda.textContent = "";
   corpTabel.textContent = "";
   notaAltele.textContent = "";
@@ -688,36 +753,10 @@ function randeazaDistributie(luna, camp) {
     return;
   }
 
+  deseneazaInel(grafic, segmente, total);
+
   segmente.forEach((seg) => {
     const cota = seg.suma / total;
-
-    const el = document.createElement("div");
-    el.className = "segment";
-    el.style.width = `${(cota * 100).toFixed(2)}%`;
-    el.style.background = seg.culoare;
-    el.setAttribute("tabindex", "0");
-    el.setAttribute("role", "img");
-    el.setAttribute("aria-label", `${seg.nume}: ${formatRON(seg.suma)}, ${formatPercent(cota)}`);
-    // Eticheta apare doar dacă încape; altfel rămâne în tooltip și în tabel.
-    // Pe „Altele” o sărim: textul alb nu are contrast suficient pe griul
-    // neutru, iar valoarea este oricum în legendă și în tabel.
-    if (cota >= PRAG_ETICHETA && !seg.esteAltele && !seg.hasurat) {
-      el.textContent = formatPercent(cota);
-      el.classList.add("labelled");
-    }
-    el.addEventListener("mousemove", (e) => arataTooltipCategorie(e, seg.nume, seg.suma, cota));
-    el.addEventListener("mouseleave", ascundeTooltip);
-    el.addEventListener("focus", () => {
-      const r = el.getBoundingClientRect();
-      arataTooltipCategorie(
-        { clientX: r.left + r.width / 2, clientY: r.top },
-        seg.nume,
-        seg.suma,
-        cota
-      );
-    });
-    el.addEventListener("blur", ascundeTooltip);
-    bara.appendChild(el);
 
     const item = document.createElement("span");
     item.className = "item";
@@ -728,7 +767,7 @@ function randeazaDistributie(luna, camp) {
     item.appendChild(document.createTextNode(seg.nume + " "));
     const suma = document.createElement("span");
     suma.className = "amount";
-    suma.textContent = formatRON(seg.suma);
+    suma.textContent = `${formatRON(seg.suma)} · ${formatPercent(cota)}`;
     item.appendChild(suma);
     legenda.appendChild(item);
 
@@ -736,7 +775,7 @@ function randeazaDistributie(luna, camp) {
       notaAltele.textContent =
         `„Altele” cuprinde ${seg.numarCategorii} ${seg.numarCategorii === 1 ? "categorie" : "categorii"}, ` +
         `pentru că graficul poate arăta distinct cel mult ${SLOTURI_CULOARE} categorii ` +
-        `(${CULORI_PALETA} culori pline și aceleași culori hașurate), iar dincolo de ele segmentele nu s-ar mai putea deosebi. ` +
+        `(${CULORI_PALETA} culori pline și aceleași culori în nuanțe pale), iar dincolo de ele segmentele nu s-ar mai putea deosebi. ` +
         `În tabel apar toate, separat.`;
     }
   });

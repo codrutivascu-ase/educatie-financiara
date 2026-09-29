@@ -38,9 +38,9 @@ const FRECVENTE_CHELTUIALA = [
  * Câte categorii pot primi o reprezentare proprie în grafic.
  *
  * Paleta are opt culori distincte inclusiv pentru daltonism. Primele opt
- * categorii primesc culoarea plină; următoarele opt reiau aceleași culori,
- * dar hașurate, ca să rămână deosebite fără a inventa nuanțe noi care s-ar
- * confunda. Abia dincolo de 16 categorii restul se adună în „Altele”.
+ * categorii primesc culoarea plină; următoarele opt reiau aceleași culori
+ * în nuanțe pale, ca să rămână deosebite fără a inventa nuanțe noi care
+ * s-ar confunda. Abia dincolo de 16 categorii restul se adună în „Altele”.
  * În tabel apar toate, individual.
  *
  * „Altele” nu consumă un slot: fiind un rest, nu o categorie, primește

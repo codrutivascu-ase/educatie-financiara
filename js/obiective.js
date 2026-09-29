@@ -101,7 +101,11 @@ function recalc() {
 }
 
 /* Pornire */
-document.getElementById("capitalizare").addEventListener("change", recalc);
+document.querySelectorAll("#parametri input, #parametri select").forEach((el) => {
+  el.addEventListener("input", recalc);
+  el.addEventListener("change", recalc);
+});
+document.getElementById("btn-calculeaza").addEventListener("click", recalc);
 setupViewToggle(recalc);
 setupCsvExport("#table-view table", "obiectiv-economisire.csv");
 persistInputs("obiective", recalc);
